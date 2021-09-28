@@ -10,7 +10,7 @@ export interface ProfileType {
 
 export const ProfileCollection = new Mongo.Collection<ProfileType>('profiles');
 
-export const Profile = Class.create({
+export const Profile = Class.create<ProfileType>({
 	name: 'Profile',
 	collection: ProfileCollection,
 	fields: {

@@ -58,7 +58,7 @@ export default {
 		}
 		if (avatarSrc) {
 			user.profile.path = avatarSrc;
-			user.save();
+			user.save({ fields: ['profile'] });
 		}
 		responseMessage.message = 'User created successful';
 		return responseMessage;
@@ -87,7 +87,7 @@ export default {
 				throw new Meteor.Error('500', 'Error al subir la foto.');
 			} else {
 				newUser.profile.path = response.data.fileUrl;
-				newUser.save();
+				newUser.save({ fields: ['profile'] });
 			}
 		}
 		responseMessage.message = 'User updated successful';

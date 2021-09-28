@@ -148,11 +148,10 @@ export default (Vue as VueConstructor<Vue &
       if (await this.isFormValid(this.$refs.userFormObserver)) {
         this.$loader.activate(LOADER_MESSAGES.SAVE_PROFILE);
         Meteor.call('user.save', { user: this.user, photoFileUser: this.photoFileUser },
-            (err: Meteor.Error, response: ResponseMessage) => {
+            (error: Meteor.Error, response: ResponseMessage) => {
               this.$loader.deactivate();
-              if (err) {
-                console.log('error: ', err);
-                this.$alert.showAlertSimple('error', err.reason);
+              if (error) {
+                this.$alert.showAlertSimple('error', error.reason);
               } else {
                 this.$alert.showAlertSimple('success', response.message);
                 this.$router.push({ name: 'home.users' });

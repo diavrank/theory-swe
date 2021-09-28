@@ -1,7 +1,6 @@
 import { Meteor } from 'meteor/meteor';
-// @ts-ignore
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
-import { ProfileCollection, ProfileType } from './Profile';
+import { ProfileType, Profile } from './Profile';
 import AuthGuard from './../../middlewares/AuthGuard';
 import { ResponseMessage } from '../../startup/server/utils/ResponseMessage';
 import { check, Match } from 'meteor/check';
@@ -41,21 +40,21 @@ export const saveProfileMethod = new ValidatedMethod({
 	 * Crea un nuevo perfil de usuario. Si ya existe lo actualiza.
 	 * @param profile Información del perfil a crear.
 	 */
-	run(profile: ProfileType) {
+	run(profile: MeteorAstronomy.Model<ProfileType>) {
 		const responseMessage = new ResponseMessage();
-		if (profile._id) {//Si existe entonces lo actualiza
+		if (profile._id) {//if exists then is created
 			const users = ProfilesServ.getUsersByProfile(profile._id);
-			const oldProfile = ProfileCollection.findOne(profile._id);
+			const profileToBeUpdated = Profile.findOne(profile._id);
 			try {
-				ProfileCollection.update(profile._id, {
-					$set: {
-						name: profile.name,
-						description: profile.description,
-						permissions: profile.permissions
-					}
+				const oldProfileName = profileToBeUpdated.name;
+				profileToBeUpdated.set({
+					name: profile.name,
+					description: profile.description,
+					permissions: profile.permissions
 				});
-				if (oldProfile?.name !== profile.name) {
-					Meteor.users.update({ 'profile.profile': oldProfile?.name }, {
+				profileToBeUpdated.save();
+				if (oldProfileName !== profile.name) {
+					Meteor.users.update({ 'profile.profile': profileToBeUpdated?.name }, {
 						$set: {
 							'profile.profile': profile.name
 						}
@@ -63,21 +62,18 @@ export const saveProfileMethod = new ValidatedMethod({
 				}
 				ProfilesServ.updateProfileUsers(users, profile);
 				responseMessage.create('Se actualizó el perfil exitosamente');
-			} catch (err) {
-				console.error('Error updating profile: ', err);
-				throw new Meteor.Error('500', 'Error al actualizar el perfil', err);
+			} catch (exception) {
+				console.error('profile.save: ', exception);
+				throw new Meteor.Error('500', 'Ocurrió un error al actualizar el perfil');
 			}
-		} else { //Sino entonces lo crea
+		} else { //Otherwise is created
 			try {
-				ProfileCollection.insert({
-					name: profile.name,
-					description: profile.description,
-					permissions: profile.permissions
-				});
+				const newProfile = new Profile(profile);
+				newProfile.save();
 				responseMessage.create('Se creó el perfil exitosamente');
-			} catch (err) {
-				console.error('Error updating profile: ', err);
-				throw new Meteor.Error('500', 'Error al crear el perfil', err);
+			} catch (exception) {
+				console.error('profile.save: ', exception);
+				throw new Meteor.Error('500', 'Ocurrió un error al crear el nuevo perfil');
 			}
 		}
 		return responseMessage;
@@ -115,7 +111,7 @@ export const deleteProfileMethod = new ValidatedMethod({
 	run({ idProfile }: { idProfile: string }) {
 		const responseMessage = new ResponseMessage();
 		try {
-			ProfileCollection.remove(idProfile);
+			Profile.remove(idProfile);
 			responseMessage.create('Perfil eliminado exitosamente');
 		} catch (exception) {
 			console.error('profile.delete: ', exception);

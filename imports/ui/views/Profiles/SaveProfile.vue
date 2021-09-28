@@ -202,7 +202,6 @@ export default (Vue as VueConstructor<Vue &
             (error: Meteor.Error, response: ResponseMessage) => {
           this.$loader.deactivate();
           if (error) {
-            console.log('Client error: ', error);
             this.$alert.showAlertSimple('error', error.reason);
           } else {
             this.$alert.showAlertSimple('success', response.message);

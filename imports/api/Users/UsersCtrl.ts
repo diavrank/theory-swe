@@ -29,17 +29,13 @@ Accounts.validateLoginAttempt((loginAttempt: any) => {
 		if (!loginAttempt.user.emails[0].verified) {
 			throw new Meteor.Error('403', 'El correo de la cuenta no se ha verificado aún.');
 		}
-		if (loginAttempt.user.services.resume) {
-			if (loginAttempt.user.services.resume.loginTokens) {
-				const loginTokensOfUser = loginAttempt.user.services.resume.loginTokens;
-				if (loginTokensOfUser.length > 1) {
-					Meteor.users.update(loginAttempt.user._id, {
-						$set: {
-							'services.resume.loginTokens': [loginTokensOfUser.pop()]
-						}
-					});
+		const loginTokensOfUser = loginAttempt.user.services.resume?.loginTokens || [];
+		if (loginTokensOfUser.length > 1) {
+			Meteor.users.update(loginAttempt.user._id, {
+				$set: {
+					'services.resume.loginTokens': [loginTokensOfUser.pop()]
 				}
-			}
+			});
 		}
 		return true;
 	}
@@ -94,17 +90,17 @@ export const saveUserMethod = new ValidatedMethod({
 				userToBeUpdated.set({ username: user.username, profile: user.profile, emails: user.emails });
 				await UsersServ.updateUser(userToBeUpdated, photoFileUser);
 				responseMessage.create('Usuario actualizado');
-			} catch (err) {
-				console.error('Error updating user: ', err);
-				throw new Meteor.Error('500', 'Error al actualizar el usuario.');
+			} catch (exception) {
+				console.error('user.save: ', exception);
+				throw new Meteor.Error('500', 'Ocurrió un error al actualizar el usuario');
 			}
 		} else {//otherwise is created
 			try {
 				await UsersServ.createUser(user, photoFileUser);
 				responseMessage.create('Se ha guardado este usuario.');
-			} catch (err) {
-				console.error('Error creating user: ', err);
-				throw new Meteor.Error('500', 'Error al crear el usuario');
+			} catch (exception) {
+				console.error('user.save: ', exception);
+				throw new Meteor.Error('500', 'Ocurrió un error al crear el usuario');
 			}
 		}
 		return responseMessage;
@@ -138,9 +134,9 @@ export const deleteUserMethod = new ValidatedMethod({
 				UsersServ.deleteUser(user);
 			}
 			responseMessage.create('Se eliminó el usuario correctamente');
-		} catch (err) {
-			console.error('user.delete: ', err);
-			throw new Meteor.Error('500', 'Error al eliminar el usuario');
+		} catch (exception) {
+			console.error('user.delete: ', exception);
+			throw new Meteor.Error('500', 'Ocurrió un error al eliminar el usuario');
 		}
 		return responseMessage;
 	}
@@ -170,6 +166,7 @@ export const updatePersonalDataMethod = new ValidatedMethod({
 				}
 			});
 		} catch (exception) {
+			console.error('user.updatePersonalData: ', exception);
 			throw new Meteor.Error('403', 'La información introducida no es válida');
 		}
 		UsersServ.validateEmail(user.emails[0].address, user._id);
@@ -184,8 +181,8 @@ export const updatePersonalDataMethod = new ValidatedMethod({
 			responseMessage.create('Se actualizó la información exitosamente');
 
 		} catch (exception) {
-			console.error('Error updating user: ', exception);
-			throw new Meteor.Error('500', 'Error al actualizar');
+			console.error('user.updatePersonalData: ', exception);
+			throw new Meteor.Error('500', 'Ocurrió un error al actualizar la información');
 		}
 		return responseMessage;
 	}
