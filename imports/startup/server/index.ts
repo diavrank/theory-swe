@@ -5,7 +5,7 @@ import './services/MailServ';
 import './services/FirebaseAdmin';
 import './utils/helpers';
 import './Permissions';
-import '../../api/Users/User';
+import '../../api/Users/UserSeeder';
 import '../../api/Users/UsersCtrl';
 import '../../api/Users/UsersPubs';
 import '../../api/Rest/UsersRest';

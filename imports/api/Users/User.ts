@@ -1,35 +1,78 @@
 import { Meteor } from 'meteor/meteor';
-// @ts-ignore
-import { User } from 'meteor/socialize:user-model';
-// @ts-ignore
-import SimpleSchema from 'simpl-schema';
+import { Class } from 'meteor/jagi:astronomy';
+import { Profile, ProfileType } from '/imports/api/Profiles/Profile';
 
-export interface UserCreation{
-    username?: string;
-    email?: string;
-    password?: string;
-    profile: any;
+interface UserStatusType {
+	online: boolean;
+	idle?: boolean;
+	lastLogin?: any;
 }
 
-Meteor.users.allow({
-    insert: () => false,
-    update: () => false,
-    remove: () => false
+const UserStatus = Class.create<UserStatusType>({
+	name: 'UserStatus',
+	fields: {
+		online: Boolean,
+		idle: {
+			type: Boolean,
+			optional: true
+		},
+		lastLogin: {
+			type: Object,
+			optional: true
+		}
+	}
 });
 
-Meteor.users.deny({
-    insert: () => true,
-    update: () => true,
-    remove: () => true
+interface UserProfileType {
+	profile: string;
+	name: string;
+	path: string;
+}
+
+const UserProfile = Class.create<UserProfileType>({
+	name: 'UserProfile',
+	fields: {
+		profile: String,
+		name: String,
+		path: String
+	}
 });
 
-Meteor.users.rawCollection().createIndex({ 'profile.profile': 1 });
+export interface UserType extends Meteor.User {
+	profile: UserProfileType;
+	status: UserStatusType;
 
-const UserProfileSchema = new SimpleSchema({
-    profile: {
-        type: Object,
-        optional: false,
-        blackbox: true
-    }
+	getProfile(): ProfileType;
+}
+
+export const User = Class.create<UserType>({
+	name: 'User',
+	collection: Meteor.users as unknown as Mongo.Collection<UserType>,
+	fields: {
+		createdAt: Date,
+		emails: {
+			type: [Object],
+			default: function() {
+				return [];
+			}
+		},
+		username: String,
+		profile: {
+			type: UserProfile,
+			default: function() {
+				return {};
+			}
+		},
+		status: {
+			type: UserStatus,
+			default: function() {
+				return { online: false };
+			}
+		}
+	},
+	helpers: {
+		getProfile() {
+			return Profile.findOne({ name: this.profile.profile });
+		}
+	}
 });
-User.attachSchema(UserProfileSchema);

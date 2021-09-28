@@ -1,14 +1,14 @@
 import { Meteor } from 'meteor/meteor';
-import { Profile, ProfileType } from './Profile';
+import { ProfileCollection, ProfileType } from './Profile';
 import { StaticProfiles } from './ProfileSeeder';
 // @ts-ignore
 import { Roles } from 'meteor/alanning:roles';
 
 export default {
 	validateName(name: string, idProfile: string) {
-		const existsName = Profile.findOne({ name });
+		const existsName = ProfileCollection.findOne({ name });
 		if (idProfile) {
-			const oldProfile = Profile.findOne(idProfile);
+			const oldProfile = ProfileCollection.findOne(idProfile);
 			if (oldProfile?.name !== name && existsName) {
 				throw new Meteor.Error('403', 'Lo sentimos! Ya existe este nombre de perfil, utiliza otro. ');
 			}
@@ -17,12 +17,13 @@ export default {
 		}
 	},
 	setUserRoles(idUser: string, profileName: string) {
-		const profile = Profile.findOne({ name: profileName });
+		const profile = <ProfileType>ProfileCollection.findOne({ name: profileName });
+		// @ts-ignore
 		Meteor.roleAssignment.remove({ 'user._id': idUser });//For remove other profiles-roles
 		Roles.setUserRoles(idUser, profile?.permissions, profileName);
 	},
 	getUsersByProfile(idProfile: string) {
-		const profile = Profile.findOne(idProfile);
+		const profile = ProfileCollection.findOne(idProfile);
 		return Meteor.users.find({ 'profile.profile': profile?.name }).fetch();
 	},
 	updateProfileUsers(users: Array<Meteor.User>, profile: ProfileType) {

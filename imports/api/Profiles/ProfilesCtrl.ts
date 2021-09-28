@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 // @ts-ignore
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
-import { Profile, ProfileType } from './Profile';
+import { ProfileCollection, ProfileType } from './Profile';
 import AuthGuard from './../../middlewares/AuthGuard';
 import { ResponseMessage } from '../../startup/server/utils/ResponseMessage';
 import { check, Match } from 'meteor/check';
@@ -45,9 +45,9 @@ export const saveProfileMethod = new ValidatedMethod({
 		const responseMessage = new ResponseMessage();
 		if (profile._id) {//Si existe entonces lo actualiza
 			const users = ProfilesServ.getUsersByProfile(profile._id);
-			const oldProfile = Profile.findOne(profile._id);
+			const oldProfile = ProfileCollection.findOne(profile._id);
 			try {
-				Profile.update(profile._id, {
+				ProfileCollection.update(profile._id, {
 					$set: {
 						name: profile.name,
 						description: profile.description,
@@ -69,7 +69,7 @@ export const saveProfileMethod = new ValidatedMethod({
 			}
 		} else { //Sino entonces lo crea
 			try {
-				Profile.insert({
+				ProfileCollection.insert({
 					name: profile.name,
 					description: profile.description,
 					permissions: profile.permissions
@@ -115,7 +115,7 @@ export const deleteProfileMethod = new ValidatedMethod({
 	run({ idProfile }: { idProfile: string }) {
 		const responseMessage = new ResponseMessage();
 		try {
-			Profile.remove(idProfile);
+			ProfileCollection.remove(idProfile);
 			responseMessage.create('Perfil eliminado exitosamente');
 		} catch (exception) {
 			console.error('profile.delete: ', exception);

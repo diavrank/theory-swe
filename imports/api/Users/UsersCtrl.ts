@@ -1,16 +1,13 @@
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
-// @ts-ignore
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import AuthGuard from './../../middlewares/AuthGuard';
 import { ResponseMessage } from '../../startup/server/utils/ResponseMessage';
 import { check, Match } from 'meteor/check';
-import Utilities from '../../startup/server/utils/helpers';
 import UsersServ from './UsersServ';
 import Binnacle from '../../middlewares/Binnacle';
 import './UserPresenceConfig';
-
-//Permisos
+import { User, UserType } from '/imports/api/Users/User';
 import Permissions from '../../startup/server/Permissions';
 
 Accounts.onCreateUser((options: any, user: Meteor.User) => {
@@ -89,24 +86,25 @@ export const saveUserMethod = new ValidatedMethod({
 		UsersServ.validateEmail(user.emails[0].address, user._id);
 		UsersServ.validateUsername(user.username, user._id);
 	},
-	async run({ user, photoFileUser }: { user: Meteor.User, photoFileUser: any }) {
+	async run({ user, photoFileUser }: { user: MeteorAstronomy.Model<UserType>, photoFileUser: any }) {
 		const responseMessage = new ResponseMessage();
-		if (user._id) {//Si existe entonces actualiza
+		if (user._id) {//if exists then update it
 			try {
-				await UsersServ.updateUser(user, photoFileUser);
+				const userToBeUpdated = User.findOne(user._id);
+				userToBeUpdated.set({ username: user.username, profile: user.profile, emails: user.emails });
+				await UsersServ.updateUser(userToBeUpdated, photoFileUser);
 				responseMessage.create('Usuario actualizado');
 			} catch (err) {
 				console.error('Error updating user: ', err);
 				throw new Meteor.Error('500', 'Error al actualizar el usuario.');
 			}
-		} else {//Sino entonces lo crea
+		} else {//otherwise is created
 			try {
-				user.profile.updated_at = Utilities.currentLocalDate();
 				await UsersServ.createUser(user, photoFileUser);
 				responseMessage.create('Se ha guardado este usuario.');
 			} catch (err) {
 				console.error('Error creating user: ', err);
-				throw new Meteor.Error('500', 'Error al crear el usuario', err);
+				throw new Meteor.Error('500', 'Error al crear el usuario');
 			}
 		}
 		return responseMessage;
@@ -132,14 +130,12 @@ export const deleteUserMethod = new ValidatedMethod({
 			throw new Meteor.Error('403', 'La información introducida no es válida');
 		}
 	},
-	async run({ idUser }: { idUser: string }) {
+	run({ idUser }: { idUser: string }) {
 		const responseMessage = new ResponseMessage();
 		try {
-			const user = Meteor.users.findOne(idUser);
-			if (user) {
-				await UsersServ.deleteUser(user);
-			} else {
-				responseMessage.create('Usuario no encontrado');
+			const user = User.findOne(idUser);
+			if (user._id) {
+				UsersServ.deleteUser(user);
 			}
 			responseMessage.create('Se eliminó el usuario correctamente');
 		} catch (err) {
@@ -179,11 +175,12 @@ export const updatePersonalDataMethod = new ValidatedMethod({
 		UsersServ.validateEmail(user.emails[0].address, user._id);
 		UsersServ.validateUsername(user.username, user._id);
 	},
-	async run({ user, photoFileUser }: { user: Meteor.User, photoFileUser: any }) {
+	async run({ user, photoFileUser }: { user: MeteorAstronomy.Model<UserType>, photoFileUser: any }) {
 		const responseMessage = new ResponseMessage();
 		try {
-			user.profile.updated_at = Utilities.currentLocalDate();
-			await UsersServ.updateUser(user, photoFileUser);
+			const userToBeUpdated = User.findOne(user._id);
+			userToBeUpdated.set({ username: user.username, profile: user.profile, emails: user.emails });
+			await UsersServ.updateUser(userToBeUpdated, photoFileUser);
 			responseMessage.create('Se actualizó la información exitosamente');
 
 		} catch (exception) {

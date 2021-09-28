@@ -4,11 +4,21 @@ import { User } from 'meteor/socialize:user-model';
 // @ts-ignore
 import { UserPresence } from 'meteor/socialize:user-presence';
 import Utilities from '../../startup/server/utils/helpers';
-// @ts-ignore
 import SimpleSchema from 'simpl-schema';
+
+
+const UserProfileSchema = new SimpleSchema({
+	profile: {
+		type: Object,
+		optional: false,
+		blackbox: true
+	}
+});
+User.attachSchema(UserProfileSchema);
 
 // Schema for the fields where we will store the status data
 const StatusSchema = new SimpleSchema({
+	// @ts-ignore
 	status: Object,
 	'status.online': { type: Boolean },
 	'status.idle': { type: Boolean, optional: true },
@@ -34,7 +44,7 @@ UserPresence.onUserOnline(function onUserOnline(userId: string, connection: Mete
 				'status.online': true,
 				'status.idle': false,
 				'status.lastLogin.date': Utilities.currentLocalDate(),
-				'status.lastLogin.ipAddr': connection.clientAddress,
+				'status.lastLogin.ipAddress': connection.clientAddress,
 				// @ts-ignore
 				'status.lastLogin.userAgent': connection.httpHeaders['user-agent']
 			}

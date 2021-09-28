@@ -1,4 +1,4 @@
-import { Profile } from '../../../api/Profiles/Profile';
+import { ProfileCollection } from '../../../api/Profiles/Profile';
 import Vue from 'vue';
 
 export default Vue.extend({
@@ -7,7 +7,7 @@ export default Vue.extend({
 			'profiles': []
 		},
 		profiles() {
-			return Profile.find({}).fetch();
+			return ProfileCollection.find({}).fetch();
 		}
 	}
 })

@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 // @ts-ignore
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import AuthGuard from '../../middlewares/AuthGuard';
-import { Profile, ProfileType } from '../Profiles/Profile';
+import { ProfileCollection, ProfileType } from '../Profiles/Profile';
 
 //Permisos
 import Permissions from '../../startup/server/Permissions';
@@ -45,7 +45,7 @@ export const listProfilePermissionsMethod = new ValidatedMethod({
 	run({ idProfile }: { idProfile: string }): Array<ProfileType> {
 		let permissions = [];
 		if (idProfile) {
-			const profile = Profile.findOne(idProfile);
+			const profile = ProfileCollection.findOne(idProfile);
 			permissions = Meteor.roles.find({ _id: { $in: profile?.permissions } }).fetch();
 		}
 		return permissions;
@@ -73,7 +73,7 @@ export const listNotProfilePermissionsMethod = new ValidatedMethod({
 	run({ idProfile }: { idProfile: string }): Array<ProfileType> {
 		let permissions = [];
 		if (idProfile) {
-			const profile = Profile.findOne(idProfile);
+			const profile = ProfileCollection.findOne(idProfile);
 			permissions = Meteor.roles.find({ _id: { $not: { $in: profile?.permissions } } }).fetch();
 		}
 		return permissions;

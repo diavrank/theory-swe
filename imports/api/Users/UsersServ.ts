@@ -2,8 +2,8 @@ import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 import { ResponseMessage } from '../../startup/server/utils/ResponseMessage';
 import fileHelper from '../../startup/server/utils/FileOperations';
-import Utilities from '../../startup/server/utils/helpers';
 import ProfilesServ from '../Profiles/ProfilesServ';
+import { User, UserType } from '/imports/api/Users/User';
 
 const PATH_USER_FILES = 'users/';
 
@@ -32,7 +32,7 @@ export default {
 			throw new Meteor.Error('403', 'El nuevo nombre de usuario ya se encuentra en uso');
 		}
 	},
-	async createUser(user: Meteor.User, photoFileUser: any): Promise<ResponseMessage> {
+	async createUser(user: MeteorAstronomy.Model<UserType>, photoFileUser: any): Promise<ResponseMessage> {
 		const responseMessage = new ResponseMessage();
 		const idUser = Accounts.createUser({
 			username: user.username,
@@ -40,6 +40,8 @@ export default {
 			email: user.emails[0].address,
 			profile: user.profile
 		});
+		user = User.findOne(idUser);
+
 		let avatarSrc = null;
 		if (idUser && user.emails) {
 			responseMessage.data = { idUser };
@@ -55,18 +57,15 @@ export default {
 			}
 		}
 		if (avatarSrc) {
-			Meteor.users.update(idUser, {
-				$set: {
-					'profile.path': avatarSrc
-				}
-			});
+			user.profile.path = avatarSrc;
+			user.save();
 		}
 		responseMessage.message = 'User created successful';
 		return responseMessage;
 	},
-	async updateUser(newUser: Meteor.User, photoFileUser: any): Promise<ResponseMessage> {
+	async updateUser(newUser: MeteorAstronomy.Model<UserType>, photoFileUser: any): Promise<ResponseMessage> {
 		const responseMessage = new ResponseMessage();
-		const currentUser: Meteor.User | undefined = Meteor.users.findOne(newUser._id);
+		const currentUser = User.findOne(newUser._id);
 		if (currentUser?.emails && newUser.emails) {
 			if (currentUser.emails[0].address !== newUser.emails[0].address) {
 				Accounts.removeEmail(newUser._id, currentUser.emails[0].address);
@@ -77,42 +76,29 @@ export default {
 		if (currentUser?.username !== newUser.username && newUser.username) {
 			Accounts.setUsername(newUser._id, newUser.username);
 		}
-		Meteor.users.update(newUser._id, {
-			$set: {
-				profile: {
-					profile: newUser.profile.profile,
-					name: newUser.profile.name,
-					path: currentUser?.profile.path,
-					updated_at: Utilities.currentLocalDate()
-				}
-			}
-		});
+		newUser.save({ fields: ['profile'] });
 		ProfilesServ.setUserRoles(newUser._id, newUser.profile.profile);
 		if (photoFileUser) {
 			if (currentUser?.profile.path) {
-				fileHelper.remove(currentUser.profile.path
-					.substring(currentUser.profile.path.indexOf(PATH_USER_FILES)));
+				fileHelper.remove(currentUser.profile.path.substring(currentUser.profile.path.indexOf(PATH_USER_FILES)));
 			}
 			const response = await fileHelper.saveFileFromBase64(photoFileUser, 'avatar', PATH_USER_FILES + newUser._id);
 			if (!response.data.success) {
 				throw new Meteor.Error('500', 'Error al subir la foto.');
 			} else {
-				Meteor.users.update(newUser._id, {
-					$set: {
-						'profile.path': response.data.fileUrl
-					}
-				});
+				newUser.profile.path = response.data.fileUrl;
+				newUser.save();
 			}
 		}
 		responseMessage.message = 'User updated successful';
 		return responseMessage;
 	},
-	async deleteUser(user: Meteor.User): Promise<ResponseMessage> {
+	deleteUser(user: MeteorAstronomy.Model<UserType>): ResponseMessage {
 		const responseMessage = new ResponseMessage();
-		Meteor.users.remove(user._id);
 		fileHelper.remove(PATH_USER_FILES + user._id);
 		// @ts-ignore
 		Meteor.roleAssignment.remove({ 'user._id': user._id });
+		user.remove();
 		responseMessage.create('User removed!');
 		return responseMessage;
 	}

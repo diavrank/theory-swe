@@ -1,4 +1,4 @@
-import { Profile } from './Profile';
+import { ProfileCollection } from './Profile';
 import { PermissionMiddleware } from '../../middlewares/PermissionMiddleware';
 import Permissions from '../../startup/server/Permissions';
 import ProfilesServ from './ProfilesServ';
@@ -12,7 +12,7 @@ import { PublishEndpoint } from 'meteor/peerlibrary:middleware';
  *
  */
 const profilesPublication = new PublishEndpoint('profiles', function() {
-	return Profile.find({ name: { $nin: ProfilesServ.getStaticProfileNames() } });
+	return ProfileCollection.find({ name: { $nin: ProfilesServ.getStaticProfileNames() } });
 });
 
 profilesPublication.use(new PermissionMiddleware([Permissions.PROFILES.LIST.VALUE]));
@@ -22,7 +22,7 @@ profilesPublication.use(new PermissionMiddleware([Permissions.PROFILES.LIST.VALU
  * @publication allProfiles
  */
 const allProfilesPublication = new PublishEndpoint('allProfiles', function() {
-	return Profile.find({ name: { $nin: ProfilesServ.getStaticProfilesForExternalUsers() } });
+	return ProfileCollection.find({ name: { $nin: ProfilesServ.getStaticProfilesForExternalUsers() } });
 });
 
 allProfilesPublication.use(new LoggedUserMiddleware());

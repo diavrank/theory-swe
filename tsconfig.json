@@ -32,7 +32,8 @@
     "types": ["node", "mocha",
       "@types/meteor-mdg-validated-method",
       "@types/meteor-roles",
-      "@types/busboy"
+      "@types/busboy",
+      "@types/meteor-astronomy"
     ],
     "esModuleInterop": true,
     "preserveSymlinks": true

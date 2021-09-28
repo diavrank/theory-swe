@@ -1,4 +1,5 @@
 import { Mongo } from 'meteor/mongo';
+import { Class } from 'meteor/jagi:astronomy';
 
 export interface ProfileType {
 	_id?: string;
@@ -7,4 +8,14 @@ export interface ProfileType {
 	permissions: string[];
 }
 
-export const Profile = new Mongo.Collection<ProfileType>('profiles');
+export const ProfileCollection = new Mongo.Collection<ProfileType>('profiles');
+
+export const Profile = Class.create({
+	name: 'Profile',
+	collection: ProfileCollection,
+	fields: {
+		name: String,
+		description: String,
+		permissions: [String]
+	}
+});

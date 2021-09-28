@@ -82,7 +82,7 @@
 
 <script lang="ts">
 import { ValidationObserver, ValidationProvider } from 'vee-validate';
-import { Profile } from '../../../api/Profiles/Profile';
+import { ProfileCollection } from '../../../api/Profiles/Profile';
 import Vue, { VueConstructor } from 'vue';
 import validateForm from '/imports/ui/mixins/validateForm';
 import AlertMessage from './../../components/Utilities/Alerts/AlertMessage.vue';
@@ -166,7 +166,7 @@ export default (Vue as VueConstructor<Vue &
       'allProfiles': []
     },
     profiles() {
-      return Profile.find({}).fetch();
+      return ProfileCollection.find({}).fetch();
     }
   }
 })

@@ -582,6 +582,13 @@
   resolved "https://registry.yarnpkg.com/@types/long/-/long-4.0.1.tgz#459c65fa1867dafe6a8f322c4c51695663cc55e9"
   integrity sha512-5tXH6Bx/kNGd3MgffdmP4dy2Z+G4eaXw0SE81Tq3BNadtnMR5/ySMzX4SLEzHJzSmPNn4HIdpQsBvXMUykr58w==
 
+"@types/meteor-astronomy@^2.6.6":
+  version "2.6.6"
+  resolved "https://registry.yarnpkg.com/@types/meteor-astronomy/-/meteor-astronomy-2.6.6.tgz#96ce876c398aa1ded4be1945084c5fb0abe655aa"
+  integrity sha512-OI0fD4mp+apPgHXgtfQlyWnnOHt/j3E4DFRAtJ09zaP+YCe3zctBN9vpXm4D+YEox+wHbyg+UoRHJwz/PvwjVA==
+  dependencies:
+    "@types/meteor" "*"
+
 "@types/meteor-mdg-validated-method@^1.2.3":
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/@types/meteor-mdg-validated-method/-/meteor-mdg-validated-method-1.2.3.tgz#98addda3a02aa7b61d9c1e36c46acc5db8e5d8b3"
@@ -2994,11 +3001,6 @@ vuedraggable@^2.24.3:
   integrity sha512-6/HDXi92GzB+Hcs9fC6PAAozK1RLt1ewPTLjK0anTYguXLAeySDmcnqE8IC0xa7shvSzRjQXq3/+dsZ7ETGF3g==
   dependencies:
     sortablejs "1.10.2"
-
-vuetify-image-input@^19.2.2:
-  version "19.2.2"
-  resolved "https://registry.yarnpkg.com/vuetify-image-input/-/vuetify-image-input-19.2.2.tgz#e12e2abc3bc80d631de6345ded14d9f661691dcf"
-  integrity sha512-U3qKkMXBiYSXV3IaRyTxNCw9rpgr52lqck0zWM7geOMdUu9IXKDGN1kfIbFGzT6FU6QntFoduHwwEOcug62bxw==
 
 vuetify@^2.5.8:
   version "2.5.8"
