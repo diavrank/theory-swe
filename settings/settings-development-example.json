@@ -1,0 +1,12 @@
+{
+  "private": {
+    "ROOT_URL": "http://localhost:3000",
+    "MAIL_URL": "smtp://user:password@smtp.gmail.com:587",
+    "MONGO_URL": "mongodb://localhost:27017/theory-swe",
+    "REFRESH_PERMISSIONS": false,
+    "REFRESH_STATIC_PROFILES": false,
+    "SENDER_EMAILS": {
+      "SERVICES": "email@gmail.com"
+    }
+  }
+}
