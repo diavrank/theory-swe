@@ -12,7 +12,7 @@ interface UserStatusType {
 const UserStatus = Class.create<UserStatusType>({
 	name: 'UserStatus',
 	fields: {
-		online: Boolean,
+		online: { type: Boolean, index: 1 },
 		idle: {
 			type: Boolean,
 			optional: true
@@ -33,7 +33,7 @@ interface UserProfileType {
 const UserProfile = Class.create<UserProfileType>({
 	name: 'UserProfile',
 	fields: {
-		profile: String,
+		profile: { type: String, index: 1 },
 		name: String,
 		path: { type: String, optional: true }
 	}
