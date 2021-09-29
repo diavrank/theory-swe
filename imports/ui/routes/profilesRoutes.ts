@@ -3,9 +3,9 @@ import SaveProfile from '../views/Profiles/SaveProfile.vue';
 import { CreateElement } from 'vue';
 
 export default {
-    path: 'perfiles',
+    path: 'profiles',
     meta: {
-        breadcrumb: 'Perfiles',
+        breadcrumb: 'Profiles',
         name: 'home.profiles',
         permission: 'profiles-view'
     },
@@ -25,20 +25,20 @@ export default {
         },
         {
             name: 'home.profiles.create',
-            path: 'crear',
+            path: 'create',
             meta: {
                 type: 'create',
-                breadcrumb: 'Crear perfil',
+                breadcrumb: 'Create profile',
                 permission: 'profiles-create'
             },
             component: SaveProfile
         },
         {
             name: 'home.profiles.edit',
-            path: 'editar',
+            path: 'edit',
             meta: {
                 type: 'edit',
-                breadcrumb: 'Editar perfil',
+                breadcrumb: 'Edit profile',
                 permission: 'profiles-edit'
             },
             component: SaveProfile

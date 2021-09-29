@@ -2,7 +2,7 @@
   <v-container>
     <v-row>
       <v-col>
-        <div class="headline">Configurar cuenta</div>
+        <div class="headline">Configure account</div>
       </v-col>
     </v-row>
     <v-row>

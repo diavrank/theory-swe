@@ -3,7 +3,6 @@ import { PermissionMiddleware } from '../../middlewares/PermissionMiddleware';
 import Permissions from '../../startup/server/Permissions';
 import ProfilesServ from './ProfilesServ';
 import { LoggedUserMiddleware } from '../../middlewares/LoggedUserMiddleware';
-// @ts-ignore
 import { PublishEndpoint } from 'meteor/peerlibrary:middleware';
 
 /**

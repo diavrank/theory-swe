@@ -1,15 +1,15 @@
 <template>
   <div>
-    <div class="title">Restablecer contraseña</div>
+    <div class="title">Reset password</div>
     <ValidationObserver ref="setPasswordFormObserver">
       <v-form @submit.prevent="resetPassword">
-        <ValidationProvider v-slot="{errors}" name="nueva contraseña" vid="confirmation"
+        <ValidationProvider v-slot="{errors}" name="new password" vid="confirmation"
                             rules="strength_password|required">
           <v-text-field v-model="user.password" id="inputNewPassword"
                         :type="showPass.new ? 'text' : 'password'"
                         name="password"
                         :error-messages="errors"
-                        label="Nueva contraseña"
+                        label="New password"
                         autocomplete="new-password"
                         data-test-id="password-input"
                         required>
@@ -21,12 +21,12 @@
             </template>
           </v-text-field>
         </ValidationProvider>
-        <ValidationProvider v-slot="{errors}" name="confirmar contraseña" rules="required|confirmed:confirmation">
+        <ValidationProvider v-slot="{errors}" name="confirm password" rules="required|confirmed:confirmation">
           <v-text-field v-model="user.confirmPassword" id="inputConfirmPassword"
                         :type="showPass.confirm ? 'text' : 'password'"
                         :error-messages="errors"
                         name="password_confirmation"
-                        label="Confirmar contraseña"
+                        label="Confirm password"
                         data-test-id="input-password-confirmation"
                         required>
             <template v-slot:append>
@@ -38,7 +38,7 @@
           </v-text-field>
         </ValidationProvider>
         <div class="d-flex start mt-2">
-          <v-btn type="submit" color="primary" rounded data-test-id="change-button">Cambiar</v-btn>
+          <v-btn type="submit" color="primary" rounded data-test-id="change-button">Change</v-btn>
         </div>
       </v-form>
     </ValidationObserver>
@@ -86,9 +86,9 @@ export default (Vue as VueConstructor<Vue &
         Accounts.resetPassword(token, this.user.password || '', (err: Error | Meteor.Error | Meteor.TypedError | undefined) => {
           if (err) {
             console.error('An error occurred while resetting the password', err);
-            this.$alert.showAlertSimple('error', 'Se produjo un error al restablecer la contraseña');
+            this.$alert.showAlertSimple('error', 'An error occurred while resetting the password');
           } else {
-            this.$alert.showAlertSimple('success', 'Se restableció la contraseña exitosamente!');
+            this.$alert.showAlertSimple('success', 'Password reset successfully!');
             this.$router.push({name: 'login'});
           }
         });

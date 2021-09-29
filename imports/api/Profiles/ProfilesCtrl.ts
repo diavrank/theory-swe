@@ -32,7 +32,7 @@ export const saveProfileMethod = new ValidatedMethod({
 			});
 		} catch (exception) {
 			console.error('profile.save: ', exception);
-			throw new Meteor.Error('403', 'La información introducida no es válida');
+			throw new Meteor.Error('403', 'The information entered is not valid');
 		}
 		ProfilesServ.validateName(profile.name, profile._id);
 	},
@@ -61,19 +61,19 @@ export const saveProfileMethod = new ValidatedMethod({
 					}, { multi: true });
 				}
 				ProfilesServ.updateProfileUsers(users, profile);
-				responseMessage.create('Se actualizó el perfil exitosamente');
+				responseMessage.create('Profile updated successfully!');
 			} catch (exception) {
 				console.error('profile.save: ', exception);
-				throw new Meteor.Error('500', 'Ocurrió un error al actualizar el perfil');
+				throw new Meteor.Error('500', 'An error occurred while updating the profile');
 			}
 		} else { //Otherwise is created
 			try {
 				const newProfile = new Profile(profile);
 				newProfile.save();
-				responseMessage.create('Se creó el perfil exitosamente');
+				responseMessage.create('Profile created successfully!');
 			} catch (exception) {
 				console.error('profile.save: ', exception);
-				throw new Meteor.Error('500', 'Ocurrió un error al crear el nuevo perfil');
+				throw new Meteor.Error('500', 'An error occurred while creating the new profile');
 			}
 		}
 		return responseMessage;
@@ -96,11 +96,11 @@ export const deleteProfileMethod = new ValidatedMethod({
 			check(idProfile, String);
 		} catch (exception) {
 			console.error('profile.delete: ', exception);
-			throw new Meteor.Error('403', 'La información introducida no es válida');
+			throw new Meteor.Error('403', 'The information entered is not valid');
 		}
 		const users = ProfilesServ.getUsersByProfile(idProfile);
 		if (users.length > 0) {
-			throw new Meteor.Error('403', 'No se puede eliminar el perfil', 'Hay usuarios usando este perfil');
+			throw new Meteor.Error('403', 'Profile cannot be removed', 'There are users using this profile');
 		}
 	},
 	/**
@@ -112,10 +112,10 @@ export const deleteProfileMethod = new ValidatedMethod({
 		const responseMessage = new ResponseMessage();
 		try {
 			Profile.remove(idProfile);
-			responseMessage.create('Perfil eliminado exitosamente');
+			responseMessage.create('Profile removed successfully!');
 		} catch (exception) {
 			console.error('profile.delete: ', exception);
-			throw new Meteor.Error('500', 'Ocurrió un error al eliminar el perfil');
+			throw new Meteor.Error('500', 'An error occurred while removing the profile');
 		}
 		return responseMessage;
 	}

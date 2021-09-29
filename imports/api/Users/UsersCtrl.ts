@@ -27,7 +27,7 @@ Accounts.onCreateUser((options: any, user: Meteor.User) => {
 Accounts.validateLoginAttempt((loginAttempt: any) => {
 	if (loginAttempt.allowed) {
 		if (!loginAttempt.user.emails[0].verified) {
-			throw new Meteor.Error('403', 'El correo de la cuenta no se ha verificado aún.');
+			throw new Meteor.Error('403', 'The account email has not been verified yet.');
 		}
 		const loginTokensOfUser = loginAttempt.user.services.resume?.loginTokens || [];
 		if (loginTokensOfUser.length > 1) {
@@ -77,7 +77,7 @@ export const saveUserMethod = new ValidatedMethod({
 			});
 		} catch (exception) {
 			console.error('user.save: ', exception);
-			throw new Meteor.Error('403', 'La información introducida no es válida');
+			throw new Meteor.Error('403', 'The information entered is not valid');
 		}
 		UsersServ.validateEmail(user.emails[0].address, user._id);
 		UsersServ.validateUsername(user.username, user._id);
@@ -89,18 +89,18 @@ export const saveUserMethod = new ValidatedMethod({
 				const userToBeUpdated = User.findOne(user._id);
 				userToBeUpdated.set({ username: user.username, profile: user.profile, emails: user.emails });
 				await UsersServ.updateUser(userToBeUpdated, photoFileUser);
-				responseMessage.create('Usuario actualizado');
+				responseMessage.create('User updated!');
 			} catch (exception) {
 				console.error('user.save: ', exception);
-				throw new Meteor.Error('500', 'Ocurrió un error al actualizar el usuario');
+				throw new Meteor.Error('500', 'An error occurred while updating the user');
 			}
 		} else {//otherwise is created
 			try {
 				await UsersServ.createUser(user, photoFileUser);
-				responseMessage.create('Se ha guardado este usuario.');
+				responseMessage.create('User created!');
 			} catch (exception) {
 				console.error('user.save: ', exception);
-				throw new Meteor.Error('500', 'Ocurrió un error al crear el usuario');
+				throw new Meteor.Error('500', 'An error occurred while creating the user');
 			}
 		}
 		return responseMessage;
@@ -123,7 +123,7 @@ export const deleteUserMethod = new ValidatedMethod({
 			check(idUser, String);
 		} catch (exception) {
 			console.error('user.delete: ', exception);
-			throw new Meteor.Error('403', 'La información introducida no es válida');
+			throw new Meteor.Error('403', 'The information entered is not valid');
 		}
 	},
 	run({ idUser }: { idUser: string }) {
@@ -133,10 +133,10 @@ export const deleteUserMethod = new ValidatedMethod({
 			if (user._id) {
 				UsersServ.deleteUser(user);
 			}
-			responseMessage.create('Se eliminó el usuario correctamente');
+			responseMessage.create('User removed successfully!');
 		} catch (exception) {
 			console.error('user.delete: ', exception);
-			throw new Meteor.Error('500', 'Ocurrió un error al eliminar el usuario');
+			throw new Meteor.Error('500', 'An error occurred while removing the user');
 		}
 		return responseMessage;
 	}
@@ -167,7 +167,7 @@ export const updatePersonalDataMethod = new ValidatedMethod({
 			});
 		} catch (exception) {
 			console.error('user.updatePersonalData: ', exception);
-			throw new Meteor.Error('403', 'La información introducida no es válida');
+			throw new Meteor.Error('403', 'The information entered is not valid');
 		}
 		UsersServ.validateEmail(user.emails[0].address, user._id);
 		UsersServ.validateUsername(user.username, user._id);
@@ -178,11 +178,11 @@ export const updatePersonalDataMethod = new ValidatedMethod({
 			const userToBeUpdated = User.findOne(user._id);
 			userToBeUpdated.set({ username: user.username, profile: user.profile, emails: user.emails });
 			await UsersServ.updateUser(userToBeUpdated, photoFileUser);
-			responseMessage.create('Se actualizó la información exitosamente');
+			responseMessage.create('Information updated!');
 
 		} catch (exception) {
 			console.error('user.updatePersonalData: ', exception);
-			throw new Meteor.Error('500', 'Ocurrió un error al actualizar la información');
+			throw new Meteor.Error('500', 'An error occurred while updating the information');
 		}
 		return responseMessage;
 	}

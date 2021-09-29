@@ -3,20 +3,20 @@
     <v-card>
       <v-card-title class="headline">
         <div class="title">
-          Eliminar {{ modalData.typeElement }}
+          Remove {{ modalData.typeElement }}
         </div>
       </v-card-title>
       <v-card-text>
-        ¿Estas seguro de eliminar {{ modalData.preposition }}
+        Are you sure to remove {{ modalData.preposition }}
         {{ modalData.typeElement }} {{ modalData.mainNameElement }}?
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="default" text v-on:click="cancel">
-          Cancelar
+          Cancel
         </v-btn>
         <v-btn color="error" depressed v-on:click="removeElement">
-          Eliminar
+          Remove
         </v-btn>
       </v-card-actions>
     </v-card>

@@ -1,16 +1,16 @@
 <template>
 	<div>
-		<div class="title">Establecer contraseña</div>
+		<div class="title">Set initial password</div>
 		<ValidationObserver ref="setPasswordFormObserver">
 			<v-form @submit.prevent="setPassword">
-				<ValidationProvider v-slot="{errors}" name="nueva contraseña"
+				<ValidationProvider v-slot="{errors}" name="new password"
 				                    rules="required|min:8|strength_password"
 				                    vid="password">
 					<v-text-field v-model="user.password" id="inputNewPassword"
 					              :type="showPass.new ? 'text' : 'password'"
 					              name="password"
 					              :error-messages="errors"
-					              label="Nueva contraseña"
+					              label="New password"
                         data-test-id="password-input"
 					              autocomplete="new-password">
 						<template v-slot:append>
@@ -21,12 +21,12 @@
 						</template>
 					</v-text-field>
 				</ValidationProvider>
-				<ValidationProvider v-slot="{errors}" name="confirmar contraseña" rules="required|confirmed:password">
+				<ValidationProvider v-slot="{errors}" name="confirm password" rules="required|confirmed:password">
 					<v-text-field v-model="user.confirmPassword" id="inputConfirmPassword"
 					              :type="showPass.confirm ? 'text' : 'password'"
 					              :error-messages="errors"
 					              name="password_confirmation"
-					              label="Confirmar contraseña"
+					              label="Confirm password"
                         data-test-id="input-password-confirmation"
 					              required>
 						<template v-slot:append>
@@ -38,7 +38,7 @@
 					</v-text-field>
 				</ValidationProvider>
 				<div class="d-flex justify-start mt-2">
-					<v-btn type="submit" color="primary" rounded data-test-id="send-button">Enviar</v-btn>
+					<v-btn type="submit" color="primary" rounded data-test-id="send-button">Send</v-btn>
 				</div>
 			</v-form>
 		</ValidationObserver>
@@ -87,9 +87,9 @@
 					Accounts.resetPassword(token, this.user.password || '', (err:  Error | Meteor.Error | Meteor.TypedError | undefined) => {
 						if (err) {
 							console.error('An error occurred while setting the password\n', err);
-							this.$alert.showAlertSimple('error', 'Se produjo un error al establecer la contraseña');
+							this.$alert.showAlertSimple('error', 'An error occurred while setting the password');
 						} else {
-							this.$alert.showAlertSimple('success', 'Se estableció la contraseña exitosamente');
+							this.$alert.showAlertSimple('success', 'Password set successfully!');
 							this.$router.push({ name: 'login' });
 						}
 					});

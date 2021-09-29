@@ -1,7 +1,7 @@
 <template>
   <div align="center">
     <div v-if="loading">
-      <h3>Cargando datos. . .</h3>
+      <h3>Loading. . .</h3>
     </div>
     <div v-else>
       <v-icon size="120" :color="status?'green':'red'">
@@ -11,7 +11,7 @@
         {{ message }}
         <small v-text="description"></small>
       </h3>
-      <v-btn :to="{name:'login'}" color="primary">Regresar a login</v-btn>
+      <v-btn :to="{name:'login'}" color="primary">Return to login</v-btn>
     </div>
   </div>
 </template>
@@ -38,11 +38,11 @@ export default (Vue as VueConstructor<Vue & { $alert: InstanceType<typeof AlertM
       this.loading = false;
       if (errorVerifyEmail) {
         console.error('Verify email failed: ', errorVerifyEmail);
-        this.message = 'Ocurrió un error al verificar tu cuenta';
-        this.description = 'Intenta registrandote de nuevo o usando la opción de "Olvidé mi contraseña"';
+        this.message = 'An error occurred while verifying email';
+        this.description = 'Try enroll again or use the forgot password option';
         this.status = false;
       } else {
-        this.message = 'Se ha verficado tu correo exitosamente. Ahora puedes iniciar sesión.';
+        this.message = 'Email verified successfully. Now you can login.';
         this.status = true;
       }
     });

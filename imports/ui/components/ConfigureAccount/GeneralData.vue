@@ -4,7 +4,7 @@
       <v-card>
         <v-card-title>
           <div class="text-subtitle-2">
-            DATOS GENERALES
+            GENERAL DATA
           </div>
         </v-card-title>
         <v-row>
@@ -15,43 +15,43 @@
                 ref="imageFile"
                 v-model="file"
                 accept="image/png, image/jpeg, image/bmp"
-                placeholder="Cargar ..."
+                placeholder="Load ..."
                 prepend-icon="mdi-camera"
             ></v-file-input>
             <v-btn color="primary" class="mb-5"
                    rounded depressed @click="onClickUploadButton">
-              <span v-if="user.profile.path">Cambiar</span>
-              <span v-else>Cargar</span>
+              <span v-if="user.profile.path">Change</span>
+              <span v-else>Load</span>
             </v-btn>
           </v-col>
           <v-col cols="12" sm="12" md="9" lg="9">
             <v-card-text>
-              <ValidationProvider v-slot="{ errors }" name="nombre" rules="required|alpha_spaces">
+              <ValidationProvider v-slot="{ errors }" name="name" rules="required|alpha_spaces">
                 <v-text-field v-model="user.profile.name" id="inputName" name="name"
                               :error-messages="errors"
-                              label="Nombre completo*" required>
+                              label="Full name*" required>
                 </v-text-field>
               </ValidationProvider>
-              <ValidationProvider v-slot="{ errors }" name="usuario" rules="required|alpha_dash">
+              <ValidationProvider v-slot="{ errors }" name="username" rules="required|alpha_dash">
                 <v-text-field v-model="user.username"
                               id="inputUsername"
                               :error-messages="errors"
                               name="username"
-                              label="Usuario*" required>
+                              label="Username*" required>
                 </v-text-field>
               </ValidationProvider>
-              <ValidationProvider v-slot="{errors}" name="correo electrónico" rules="required|email">
+              <ValidationProvider v-slot="{errors}" name="email" rules="required|email">
                 <v-text-field v-model="user.emails[0].address"
                               id="inputEmail" name="email"
                               :error-messages="errors"
-                              label="Correo electrónico*"
+                              label="Email*"
                               required>
                 </v-text-field>
               </ValidationProvider>
 
               <div class="d-flex justify-center">
                 <v-btn type="submit" color="primary" rounded depressed>
-                  Guardar
+                  Save
                 </v-btn>
               </div>
             </v-card-text>
@@ -117,7 +117,7 @@ export default (Vue as VueConstructor<Vue &
     ...mapMutations('auth', ['setUser']),
     async saveUser() {
       if (await this.isFormValid(this.$refs.dataFormObserver)) {
-        this.$loader.activate('Actualizando datos');
+        this.$loader.activate('Updating data. . .');
         Meteor.call('user.updatePersonalData', { user: this.user, photoFileUser: this.photoFileUser },
             (err: Meteor.Error,response) => {
               this.$loader.deactivate();

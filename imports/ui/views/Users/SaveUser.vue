@@ -27,46 +27,46 @@
                         ref="imageFile"
                         v-model="file"
                         accept="image/png, image/jpeg, image/bmp"
-                        placeholder="Cargar ..."
+                        placeholder="Load ..."
                         prepend-icon="mdi-camera"
                     ></v-file-input>
                     <v-btn color="primary" class="mb-5 mt-5"
                            width="100%"
                            rounded depressed @click="onClickUploadButton">
-                      <span v-if="user.profile.path">Cambiar</span>
-                      <span v-else>Cargar</span>
+                      <span v-if="user.profile.path">Change</span>
+                      <span v-else>Load</span>
                     </v-btn>
                   </div>
                 </v-col>
                 <v-col sm="8" md="8">
-                  <ValidationProvider v-slot="{ errors }" name="nombre" rules="required">
+                  <ValidationProvider v-slot="{ errors }" name="name" rules="required">
                     <v-text-field v-model="user.profile.name" id="inputName"
                                   name="name"
-                                  :error-messages="errors" label="Nombre completo" required>
+                                  :error-messages="errors" label="Full name" required>
                     </v-text-field>
                   </ValidationProvider>
-                  <ValidationProvider v-slot="{ errors }" name="perfil" rules="required">
+                  <ValidationProvider v-slot="{ errors }" name="profile" rules="required">
                     <v-select v-model="user.profile.profile" :items="profiles" id="selectProfile"
                               item-text="description" item-value="name"
                               :error-messages="errors"
-                              label="Perfil"
+                              label="Profile"
                               required></v-select>
                   </ValidationProvider>
-                  <ValidationProvider v-slot="{ errors }" name="usuario" rules="required">
+                  <ValidationProvider v-slot="{ errors }" name="username" rules="required">
                     <v-text-field v-model="user.username"
                                   id="inputUsername"
                                   :error-messages="errors"
                                   name="username"
-                                  label="Usuario" required>
+                                  label="Username" required>
                     </v-text-field>
                   </ValidationProvider>
-                  <ValidationProvider v-slot="{ errors }" name="correo electrónico"
+                  <ValidationProvider v-slot="{ errors }" name="email"
                                       rules="required|email">
                     <v-text-field v-model="user.emails[0].address"
                                   id="inputEmail"
                                   :error-messages="errors"
                                   name="email"
-                                  label="Correo electrónico"
+                                  label="Email"
                                   required>
                     </v-text-field>
                   </ValidationProvider>
@@ -121,11 +121,11 @@ export default (Vue as VueConstructor<Vue &
   }),
   mounted() {
     if (this.$route.meta.type === 'create') {
-      this.dataView.title = 'Crear usuario';
-      this.dataView.targetButton = 'Crear';
+      this.dataView.title = 'Create user';
+      this.dataView.targetButton = 'Create';
     } else if (this.$route.meta.type === 'edit') {
-      this.dataView.title = 'Editar usuario';
-      this.dataView.targetButton = 'Actualizar';
+      this.dataView.title = 'Edit user';
+      this.dataView.targetButton = 'Update';
       const tempUser = this.$store.state.temporal.element;
       if (tempUser) {
         this.user = {

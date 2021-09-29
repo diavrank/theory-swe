@@ -10,7 +10,7 @@
         </v-col>
         <v-col xs="12" sm="4" md="8" class="right-side d-flex flex-column justify-center">
             <div class="text-h2 font-weight-medium mr-10 text-right white--text">
-              TheorySwe
+              Theory SwE
             </div>
         </v-col>
     </v-row>

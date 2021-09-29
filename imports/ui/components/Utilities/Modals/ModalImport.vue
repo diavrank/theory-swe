@@ -3,7 +3,7 @@
     <v-card>
       <v-card-title class="headline">
         <div class="headline">
-          Agregar {{ modalData.typeElement }}
+          Add {{ modalData.typeElement }}
         </div>
       </v-card-title>
       <v-card-text>
@@ -17,10 +17,10 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="default" text @click="cancel">
-          Cancelar
+          Cancel
         </v-btn>
         <v-btn color="primary" outlined depressed @click="uploadFile">
-          Subir
+          Upload
         </v-btn>
       </v-card-actions>
     </v-card>
