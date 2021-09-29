@@ -20,19 +20,19 @@
             <v-form @submit.prevent="saveProfile" id="saveProfile" autocomplete="off">
               <v-row>
                 <v-col md="6">
-                  <ValidationProvider v-slot="{errors}" name="nombre" rules="required">
-                    <v-text-field v-model="profile.name" id="inputNombre" name="nombre"
+                  <ValidationProvider v-slot="{errors}" name="name" rules="required">
+                    <v-text-field v-model="profile.name" id="inputName" name="name"
                                   :error-messages="errors"
-                                  label="Nombre del perfil" required>
+                                  label="Profile's name" required>
                     </v-text-field>
                   </ValidationProvider>
                 </v-col>
                 <v-col md="6">
-                  <ValidationProvider v-slot="{errors}" name="descripción" rules="required">
+                  <ValidationProvider v-slot="{errors}" name="description" rules="required">
                     <v-text-field v-model="profile.description"
                                   :error-messages="errors"
                                   id="inputDescriptionProfile" name="descriptionProfile"
-                                  label="Descripción del perfil" required>
+                                  label="Profile's description" required>
                     </v-text-field>
                   </ValidationProvider>
                 </v-col>
@@ -40,7 +40,7 @@
               <v-row>
                 <v-col>
                   <div>
-                    <p class="title font-weight-regular">Permisos de este perfil</p>
+                    <p class="title font-weight-regular">Permissions of this profile</p>
                     <v-card-text>
                       <v-text-field v-model="searchSelfPermission" placeholder="Buscar. . ."
                                     id="inputSearchSelfPermission" name="descriptionProfile">
@@ -66,7 +66,7 @@
                 </v-col>
                 <v-col>
                   <div>
-                    <p class="title font-weight-regular">Todos los permisos</p>
+                    <p class="title font-weight-regular">All permissions</p>
                     <v-card-text>
                       <v-text-field v-model="searchPermission" placeholder="Buscar. . ."
                                     id="inputSearchPermission" name="inputSearchPermission">
@@ -152,12 +152,12 @@ export default (Vue as VueConstructor<Vue &
   }),
   mounted() {
     if (this.$route.meta.type === 'create') {
-      this.dataView.title = 'Crear perfil';
-      this.dataView.targetButton = 'Crear';
+      this.dataView.title = 'Create profile';
+      this.dataView.targetButton = 'Create';
       this.listAllPermissions();
     } else if (this.$route.meta.type === 'edit') {
-      this.dataView.title = 'Editar perfil';
-      this.dataView.targetButton = 'Actualizar';
+      this.dataView.title = 'Edit profile';
+      this.dataView.targetButton = 'Update';
       if (this.$store.state.temporal.element) {
         this.profile = { ...this.$store.state.temporal.element };
         this.initPermissionLists();

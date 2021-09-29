@@ -3,9 +3,9 @@ import SaveUser from '../views/Users/SaveUser.vue';
 import { CreateElement } from 'vue';
 
 export default {
-    path: 'usuarios',
+    path: 'users',
     meta: {
-        breadcrumb: 'Usuarios',
+        breadcrumb: 'Users',
         permission: 'users-view',
         name: 'home.users'
     },
@@ -25,20 +25,20 @@ export default {
         },
         {
             name: 'home.users.create',
-            path: 'crear',
+            path: 'create',
             meta: {
                 type: 'create',
-                breadcrumb: 'Crear usuario',
+                breadcrumb: 'Create user',
                 permission: 'users-create'
             },
             component: SaveUser
         },
         {
             name: 'home.users.edit',
-            path: 'editar',
+            path: 'edit',
             meta: {
                 type: 'edit',
-                breadcrumb: 'Editar usuario',
+                breadcrumb: 'Edit user',
                 permission: 'users-edit'
             },
             component: SaveUser

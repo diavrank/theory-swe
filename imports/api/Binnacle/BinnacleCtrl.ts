@@ -17,13 +17,13 @@ export const binnacleMakeBackupMethod = new ValidatedMethod({
 			if (responseFile.data.success) {
 				const binnacleData = await FileOperations.getBinnacleBuffer(binnacleName);
 				const response = await FileOperations.saveBinnacleFromBufferToGoogleStorage(binnacleData.data.bufferData, binnacleName);
-				responseMessage.create('Respaldo de la bitacora realizado exitosamente', null, response);
+				responseMessage.create('Binnacle backup successfully performed', undefined, response);
 			} else {
-				responseMessage.create('No existe bitacora del día anterior');
+				responseMessage.create('No binnacle for the previous day');
 			}
 		} catch (exception) {
 			console.error('binnacle.makeBackup: ', exception);
-			throw new Meteor.Error('500', 'Error al realizar respaldo de la bitacora');
+			throw new Meteor.Error('500', 'An error occurred while doing binnacle backup');
 		}
 		return responseMessage;
 	}

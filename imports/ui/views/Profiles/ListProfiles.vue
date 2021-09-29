@@ -3,7 +3,7 @@
     <v-row>
       <v-col xs="12" sm="12" offset-sm="0" md="6" offset-md="3">
         <div class="d-flex justify-space-between align-baseline mb-5">
-          <div class="text-h4 font-weight-light">Perfiles</div>
+          <div class="text-h4 font-weight-light">Profiles</div>
           <v-tooltip bottom transition="fab-transition">
             <template v-slot:activator="{on}">
               <v-btn v-can:create.hide="'profiles'" color="success" v-on="on" fab dark
@@ -11,7 +11,7 @@
                 <v-icon>add</v-icon>
               </v-btn>
             </template>
-            <span>Agregar perfil</span>
+            <span>Add profile</span>
           </v-tooltip>
         </div>
         <div class="section elevation-1">
@@ -25,7 +25,7 @@
                     <v-icon>edit</v-icon>
                   </v-btn>
                 </template>
-                <span>Editar</span>
+                <span>Edit</span>
               </v-tooltip>
               <v-tooltip bottom transition="fab-transition">
                 <template v-slot:activator="{on}">
@@ -34,7 +34,7 @@
                     <v-icon>close</v-icon>
                   </v-btn>
                 </template>
-                <span>Eliminar</span>
+                <span>Remove</span>
               </v-tooltip>
             </template>
           </v-data-table>
@@ -83,13 +83,13 @@ export default (Vue as VueConstructor<Vue &
     headers: [
       {
         value: 'description',
-        text: 'Nombre del perfil',
+        text: 'Profile name',
         sortable: true,
         divider: true,
         class: ['subtitle-1', 'font-weight-light']
       },
       {
-        value: 'action', text: 'Opciones', sortable: false, align: 'center',
+        value: 'action', text: 'Options', sortable: false, align: 'center',
         class: ['subtitle-1', 'font-weight-light']
       }]
   }),
@@ -114,7 +114,7 @@ export default (Vue as VueConstructor<Vue &
         this.$loader.deactivate();
         if (err) {
           console.error('There was an error in deleteProfile: ', err);
-          if (err.reason === 'No se puede eliminar el perfil') {
+          if (err.reason === 'Profile cannot be removed') {
             this.$alert.showAlertFull('warning', 'error',
                 err.reason, 'multi-line', 5000, 'right', 'bottom', err.details);
           } else {

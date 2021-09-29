@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <div class="d-flex justify-space-between align-baseline mb-5">
-      <div class="text-h4 font-weight-light">Usuarios</div>
+      <div class="text-h4 font-weight-light">Users</div>
       <v-tooltip bottom transition="fab-transition">
         <template v-slot:activator="{on}">
           <v-btn v-can:create.hide="'users'" color="success" v-on="on" fab dark
@@ -9,7 +9,7 @@
             <v-icon>add</v-icon>
           </v-btn>
         </template>
-        <span>Agregar usuario</span>
+        <span>Add user</span>
       </v-tooltip>
     </div>
     <div class="section elevation-1">
@@ -39,7 +39,7 @@
                 <v-icon>edit</v-icon>
               </v-btn>
             </template>
-            <span>Editar</span>
+            <span>Edit</span>
           </v-tooltip>
           <v-tooltip bottom transition="fab-transition">
             <template v-slot:activator="{on}">
@@ -48,7 +48,7 @@
                 <v-icon>close</v-icon>
               </v-btn>
             </template>
-            <span>Eliminar</span>
+            <span>Remove</span>
           </v-tooltip>
         </template>
       </v-data-table>
@@ -103,19 +103,19 @@ export default (Vue as VueConstructor<Vue &
       return [
         {
           value: 'profile.path',
-          text: 'Imagen',
+          text: 'Image',
           sortable: false,
           class: ['subtitle-1', 'font-weight-light']
         },
         {
           value: 'status.online',
-          text: 'En línea',
+          text: 'Online',
           sortable: true,
           class: ['subtitle-1', 'font-weight-light']
         },
         {
           value: 'profile.name',
-          text: 'Nombre completo',
+          text: 'Full name',
           sortable: true,
           class: ['subtitle-1', 'font-weight-light'],
           filter(value: any): boolean {
@@ -127,7 +127,7 @@ export default (Vue as VueConstructor<Vue &
         },
         {
           value: 'username',
-          text: 'Usuario',
+          text: 'Username',
           sortable: true,
           class: ['subtitle-1', 'font-weight-light'],
           filter(value: any): boolean {
@@ -139,7 +139,7 @@ export default (Vue as VueConstructor<Vue &
         },
         {
           value: 'emails[0].address',
-          text: 'Correo electrónico',
+          text: 'Email',
           sortable: true,
           class: ['subtitle-1', 'font-weight-light'],
           divider: true,
@@ -150,7 +150,7 @@ export default (Vue as VueConstructor<Vue &
           }
         },
         {
-          value: 'action', text: 'Opciones', sortable: false, align: 'center',
+          value: 'action', text: 'Options', sortable: false, align: 'center',
           class: ['subtitle-1', 'font-weight-light']
         }];
     }

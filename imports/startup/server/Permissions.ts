@@ -21,24 +21,19 @@ export interface SystemModulesType {
  */
 const Permissions: SystemModulesType = {
 	PERMISSIONS: {
-		LIST: { VALUE: 'permissions-view', TEXT: 'Listar permisos' }
+		LIST: { VALUE: 'permissions-view', TEXT: 'List permissions' }
 	},
 	USERS: {
-		LIST: { VALUE: 'users-view', TEXT: 'Listar usuarios' },
-		CREATE: { VALUE: 'users-create', TEXT: 'Crear usuario' },
-		UPDATE: { VALUE: 'users-edit', TEXT: 'Actualizar usuario' },
-		DELETE: { VALUE: 'users-delete', TEXT: 'Eliminar usuario' }
+		LIST: { VALUE: 'users-view', TEXT: 'List users' },
+		CREATE: { VALUE: 'users-create', TEXT: 'Create user' },
+		UPDATE: { VALUE: 'users-edit', TEXT: 'Update user' },
+		DELETE: { VALUE: 'users-delete', TEXT: 'Remove user' }
 	},
 	PROFILES: {
-		LIST: { VALUE: 'profiles-view', TEXT: 'Listar perfiles' },
-		CREATE: { VALUE: 'profiles-create', TEXT: 'Crear perfil' },
-		UPDATE: { VALUE: 'profiles-edit', TEXT: 'Actualizar perfil' },
-		DELETE: { VALUE: 'profiles-delete', TEXT: 'Eliminar perfil' }
-	},
-	PLAYERS: {
-		LIST: { VALUE: 'players-view', TEXT: 'Listar jugadores' },
-		DETAIL: { VALUE: 'players-detail', TEXT: 'Detalle del jugador' },
-		GET_COUNT: { VALUE: 'players-get-count', TEXT: 'Conteo de jugadores' }
+		LIST: { VALUE: 'profiles-view', TEXT: 'List profiles' },
+		CREATE: { VALUE: 'profiles-create', TEXT: 'Create profile' },
+		UPDATE: { VALUE: 'profiles-edit', TEXT: 'Update profile' },
+		DELETE: { VALUE: 'profiles-delete', TEXT: 'Remove profile' }
 	}
 };
 
@@ -53,9 +48,11 @@ if (Meteor.isDevelopment) {
 		console.info('Updating permissions.');
 		const currentRoles = Roles.getAllRoles().fetch();
 		for (let permission of permissionsArray) {
+			// @ts-ignore
 			if (!currentRoles.find(_role => _role._id === permission.VALUE)) {
 				Roles.createRole(permission.VALUE);
 			}
+			// @ts-ignore
 			Meteor.roles.update(permission.VALUE, {
 				$set: {
 					publicName: permission.TEXT

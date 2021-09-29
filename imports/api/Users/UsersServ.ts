@@ -14,11 +14,11 @@ export default {
 			const oldUser = Meteor.users.findOne(userId);
 			if (oldUser?.emails) {
 				if (oldUser.emails[0].address !== newEmail && existsEmail) {
-					throw new Meteor.Error('403', 'El nuevo email ya se encuentra en uso');
+					throw new Meteor.Error('403', 'The new email is already in use');
 				}
 			}
 		} else if (existsEmail) {
-			throw new Meteor.Error('403', 'El nuevo email ya se encuentra en uso');
+			throw new Meteor.Error('403', 'The new email is already in use');
 		}
 	},
 	validateUsername(newUsername: string, userId: string) {
@@ -26,10 +26,10 @@ export default {
 		if (userId) {
 			const oldUser = Meteor.users.findOne(userId);
 			if (oldUser?.username !== newUsername && existsUsername) {
-				throw new Meteor.Error('403', 'El nuevo nombre de usuario ya se encuentra en uso');
+				throw new Meteor.Error('403', 'The new username is already in use');
 			}
 		} else if (existsUsername) {
-			throw new Meteor.Error('403', 'El nuevo nombre de usuario ya se encuentra en uso');
+			throw new Meteor.Error('403', 'The new username is already in use');
 		}
 	},
 	async createUser(user: MeteorAstronomy.Model<UserType>, photoFileUser: any): Promise<ResponseMessage> {
@@ -51,7 +51,7 @@ export default {
 		if (photoFileUser) {
 			const response = await fileHelper.saveFileFromBase64(photoFileUser, 'avatar', PATH_USER_FILES + idUser);
 			if (!response.data.success) {
-				throw new Meteor.Error('500', 'Error al subir la foto.');
+				throw new Meteor.Error('500', 'Error saving user photo.');
 			} else {
 				avatarSrc = response.data.fileUrl;
 			}
@@ -84,7 +84,7 @@ export default {
 			}
 			const response = await fileHelper.saveFileFromBase64(photoFileUser, 'avatar', PATH_USER_FILES + newUser._id);
 			if (!response.data.success) {
-				throw new Meteor.Error('500', 'Error al subir la foto.');
+				throw new Meteor.Error('500', 'Error saving user photo.');
 			} else {
 				newUser.profile.path = response.data.fileUrl;
 				newUser.save({ fields: ['profile'] });

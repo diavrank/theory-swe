@@ -4,20 +4,20 @@
 			<v-btn color="primary" icon :to="{name:'login'}">
 				<v-icon>arrow_back</v-icon>
 			</v-btn>
-			<div class="title">Olvidé mi contraseña</div>
+			<div class="title">Forgot my password</div>
 		</div>
 		<ValidationObserver ref="forgotPasswordObserver">
 			<v-form @submit.prevent="forgotPassword">
-				<ValidationProvider v-slot="{errors}" name="correo electrónico" rules="email|required">
+				<ValidationProvider v-slot="{errors}" name="email" rules="email|required">
 					<v-text-field v-model="user.email"
 					              id="inputEmail" name="email"
 					              :error-messages="errors"
-					              label="Correo electrónico*"
+					              label="Email*"
                         data-test-id="input-email"
 					              required>
 					</v-text-field>
 				</ValidationProvider>
-				<v-btn type="submit" class="mt-2" color="primary" rounded data-test-id="recover-button">Recuperar</v-btn>
+				<v-btn type="submit" class="mt-2" color="primary" rounded data-test-id="recover-button">Recover</v-btn>
 			</v-form>
 		</ValidationObserver>
 	</div>
@@ -58,12 +58,10 @@
 					Accounts.forgotPassword(this.user, (err: Meteor.Error | any) => {
 						if (err) {
 							console.error('Error sending email', err);
-							this.$alert.showAlertSimple('error',
-								'Ocurrió un error al enviar el correo.');
+							this.$alert.showAlertSimple('error', 'An error occurred while sending email.');
 						} else {
 							this.$alert.showAlertSimple('success',
-								'Correo enviado! Por favor abra su correo electrónico y haga click en el link del ' +
-								'mensaje que le enviamos.');
+                  'Email sent! Please open your email and click on the message link that we sent.');
 							setTimeout(() => {
 								this.$router.push({ name: 'login' });
 							}, 5000);

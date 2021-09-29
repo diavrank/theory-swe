@@ -17,7 +17,7 @@ const logout = (state: any) => {
 const authError = (state: any, error: number) => {
 
     if (error === 403) {
-        state.errorMessage = 'Credenciales incorrectas';
+        state.errorMessage = 'Incorrect credentials';
     }
 
     state.error = true;

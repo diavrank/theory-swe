@@ -12,8 +12,8 @@
       </v-btn>
     </template>
     <v-list>
-      <v-list-item :to="{name:'home.account'}">Cuenta</v-list-item>
-      <v-list-item href="#" @click="closeSession()">Cerrar sesión</v-list-item>
+      <v-list-item :to="{name:'home.account'}">Account</v-list-item>
+      <v-list-item href="#" @click="closeSession()">Logout</v-list-item>
     </v-list>
   </v-menu>
 </template>

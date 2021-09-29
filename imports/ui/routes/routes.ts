@@ -18,7 +18,7 @@ export default [
 		},
 		meta: {
 			requiresAuth: true,
-			breadcrumb: 'Inicio',
+			breadcrumb: 'Home',
 			name: 'home'
 		},
 		children: [
@@ -30,10 +30,10 @@ export default [
 				}
 			},
 			{
-				path: 'cuenta',
+				path: 'account',
 				name: 'home.account',
 				meta: {
-					breadcrumb: 'Configurar cuenta'
+					breadcrumb: 'Configure account'
 				},
 				components: {
 					sectionView: ConfigureAccount

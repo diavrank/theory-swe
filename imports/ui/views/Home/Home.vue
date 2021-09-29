@@ -1,5 +1,5 @@
 <template>
-  <h1>Bienvenido</h1>
+  <h1>Welcome</h1>
 </template>
 
 <script lang="ts">

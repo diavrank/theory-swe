@@ -19,15 +19,9 @@ export interface StaticProfilesType {
 export const StaticProfiles: StaticProfilesType = {
 	admin: {
 		name: 'admin',
-		description: 'Administrador',
+		description: 'Administrator',
 		permissions: permissionsArray.map(p => p.VALUE),
 		external: false
-	},
-	player: {
-		name: 'player',
-		description: 'Jugador',
-		permissions: [],
-		external: true
 	}
 };
 if (Meteor.isDevelopment) {

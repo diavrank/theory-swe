@@ -28,7 +28,7 @@
           Vue.prototype.$loader = this;
         },
         methods:{
-            activate(progressLabel = 'Cargando...') {
+            activate(progressLabel = 'Loading...') {
                 this.loader = true;
                 this.progressLabel = progressLabel;
             },

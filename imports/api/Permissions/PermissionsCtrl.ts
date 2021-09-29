@@ -1,5 +1,4 @@
 import { Meteor } from 'meteor/meteor';
-// @ts-ignore
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import AuthGuard from '../../middlewares/AuthGuard';
 import { ProfileCollection, ProfileType } from '../Profiles/Profile';

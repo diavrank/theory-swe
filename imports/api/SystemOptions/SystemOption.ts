@@ -15,14 +15,14 @@ export interface SystemOptionType {
 const systemOptions: SystemOptionType[] = [
 	{
 		icon: 'mdi-account-group',
-		title: 'Usuarios',
+		title: 'Users',
 		description: null,
 		permission: Permissions.USERS.LIST.VALUE,
 		namePath: 'home.users'
 	},
 	{
 		icon: 'mdi-account-key',
-		title: 'Perfiles',
+		title: 'Profiles',
 		description: null,
 		permission: Permissions.PROFILES.LIST.VALUE,
 		namePath: 'home.profiles'

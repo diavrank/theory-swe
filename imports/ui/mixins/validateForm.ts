@@ -13,12 +13,12 @@ export default (Vue as VueConstructor<Vue &
                 // @ts-ignore
                 this.$alert.showAlertFull('mdi-close-circle',
                     'error',
-                    'Error en el formulario',
+                    'Error in the form',
                     '',
                     5000,
                     'right',
                     'bottom',
-                    'Por favor complete todos los campos obligatorios con valores válidos.'
+                    'Please, complete all required fields with valid values.'
                 );
             }
             return valid;

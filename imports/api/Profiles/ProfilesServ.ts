@@ -10,10 +10,10 @@ export default {
 		if (idProfile) {
 			const oldProfile = ProfileCollection.findOne(idProfile);
 			if (oldProfile?.name !== name && existsName) {
-				throw new Meteor.Error('403', 'Lo sentimos! Ya existe este nombre de perfil, utiliza otro. ');
+				throw new Meteor.Error('403', 'Sorry! The new profile name already exists, please use another. ');
 			}
 		} else if (existsName) {
-			throw new Meteor.Error('403', 'Lo sentimos! Ya existe este nombre de perfil, utiliza otro.');
+			throw new Meteor.Error('403', 'Sorry! The new profile name already exists, please use another.');
 		}
 	},
 	setUserRoles(idUser: string, profileName: string) {

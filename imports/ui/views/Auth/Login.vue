@@ -1,28 +1,28 @@
 <template>
   <div class="login-wrapper">
-    <div class="title secondary--text">Bienvenido!</div>
-    <div class="display-1 mb-0 secondary--text">Iniciar sesión</div>
+    <div class="title secondary--text">Welcome!</div>
+    <div class="display-1 mb-0 secondary--text">Login</div>
     <ValidationObserver ref="loginObserver">
       <v-form @submit.prevent="login" autocomplete="nope">
         <ValidationProvider v-slot="{errors}" name=" " rules="required">
           <v-text-field id="inputUser" v-model="user.userOrEmail" autocomplete="off" required color="primary"
-                        type="text" :error-messages="errors" label="Usuario" name="email"
+                        type="text" :error-messages="errors" label="Username" name="email"
                         prepend-icon="person" data-test-id="input-user">
           </v-text-field>
         </ValidationProvider>
-        <ValidationProvider v-slot="{errors}" name="contraseña" rules="required">
-          <v-text-field id="inputPassword" label="Contraseña" name="password" prepend-icon="lock"
+        <ValidationProvider v-slot="{errors}" name="password" rules="required">
+          <v-text-field id="inputPassword" label="Password" name="password" prepend-icon="lock"
                         :error-messages="errors" v-model="user.password" required type="password"
                         data-test-id="input-password">
           </v-text-field>
         </ValidationProvider>
         <div class="d-flex justify-end">
           <v-btn color="primary" tabindex="-1" text :to="{name:'forgotPassword'}" small>
-            ¿Olvidé mi contraseña?
+            Forgot password?
           </v-btn>
         </div>
         <div class="d-flex justify-start">
-          <v-btn type="submit" rounded color="primary" transition="fade" data-test-id="login-button">Entrar</v-btn>
+          <v-btn type="submit" rounded color="primary" transition="fade" data-test-id="login-button">Enter</v-btn>
         </div>
       </v-form>
     </ValidationObserver>
@@ -71,7 +71,7 @@ export default (Vue as VueConstructor<Vue &
     successLogin() {
       Meteor.logoutOtherClients((error: Meteor.Error | any) => {
         if (error) {
-          console.error('Error al cerrar sesión en otros clientes: ', error);
+          console.error('Error to logout other clients: ', error);
         }
       });
       this.$alert.closeAlert();
