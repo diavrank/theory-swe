@@ -1,7 +1,6 @@
 import { Subscription } from 'meteor/meteor';
 // @ts-ignore
 import { PublishMiddleware } from 'meteor/peerlibrary:middleware';
-// @ts-ignore
 import { Roles } from 'meteor/alanning:roles';
 
 export class PermissionMiddleware extends PublishMiddleware {
@@ -54,10 +53,11 @@ export class PermissionMiddleware extends PublishMiddleware {
 		return publish.ready();
 	}
 
-	checkPermission(idUser: string | null) {
-		if (idUser) {
-			const group = Roles.getScopesForUser(idUser)[0];
-			return Roles.userIsInRole(idUser, this.permissions, group);
+	checkPermission(userId: string | null) {
+		if (userId) {
+			// @ts-ignore
+			const group = Roles.getScopesForUser(userId)[0];
+			return Roles.userIsInRole(userId, this.permissions, group);
 		}
 		return false;
 	}

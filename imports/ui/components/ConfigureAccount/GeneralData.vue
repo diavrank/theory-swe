@@ -103,7 +103,6 @@ export default (Vue as VueConstructor<Vue &
   created() {
     const user: User = this.$store.state.auth.user;
     this.user = {
-      _id: user._id,
       username: user.username,
       emails: user.emails,
       profile:{

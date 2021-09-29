@@ -44,7 +44,7 @@ export const permissionsArray = Object.keys(Permissions).reduce((accumulator: Pe
 }, []);
 
 if (Meteor.isDevelopment) {
-	if (Meteor.settings.private?.REFRESH_PERMISSIONS) {
+	if (Meteor.settings.private?.REFRESH_PERMISSIONS || Meteor.isAppTest) {
 		console.info('Updating permissions.');
 		const currentRoles = Roles.getAllRoles().fetch();
 		for (let permission of permissionsArray) {

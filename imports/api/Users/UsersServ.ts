@@ -32,24 +32,21 @@ export default {
 			throw new Meteor.Error('403', 'The new username is already in use');
 		}
 	},
-	async createUser(user: MeteorAstronomy.Model<UserType>, photoFileUser: any): Promise<ResponseMessage> {
-		const responseMessage = new ResponseMessage();
-		const idUser = Accounts.createUser({
+	async createUser(user: MeteorAstronomy.Model<UserType>, photoFileUser: any) {
+		const userId = Accounts.createUser({
 			username: user.username,
 			// @ts-ignore
 			email: user.emails[0].address,
 			profile: user.profile
 		});
-		user = User.findOne(idUser);
-
+		user = User.findOne(userId);
 		let avatarSrc = null;
-		if (idUser && user.emails) {
-			responseMessage.data = { idUser };
-			ProfilesServ.setUserRoles(idUser, user.profile.profile);
-			Accounts.sendEnrollmentEmail(idUser, user.emails[0].address);
+		if (userId && user.emails) {
+			ProfilesServ.setUserRoles(userId, user.profile.profile);
+			Accounts.sendEnrollmentEmail(userId, user.emails[0].address);
 		}
 		if (photoFileUser) {
-			const response = await fileHelper.saveFileFromBase64(photoFileUser, 'avatar', PATH_USER_FILES + idUser);
+			const response = await fileHelper.saveFileFromBase64(photoFileUser, 'avatar', PATH_USER_FILES + userId);
 			if (!response.data.success) {
 				throw new Meteor.Error('500', 'Error saving user photo.');
 			} else {
@@ -60,8 +57,6 @@ export default {
 			user.profile.path = avatarSrc;
 			user.save({ fields: ['profile'] });
 		}
-		responseMessage.message = 'User created successful';
-		return responseMessage;
 	},
 	async updateUser(newUser: MeteorAstronomy.Model<UserType>, photoFileUser: any): Promise<ResponseMessage> {
 		const responseMessage = new ResponseMessage();
@@ -77,7 +72,6 @@ export default {
 			Accounts.setUsername(newUser._id, newUser.username);
 		}
 		newUser.save({ fields: ['profile'] });
-		ProfilesServ.setUserRoles(newUser._id, newUser.profile.profile);
 		if (photoFileUser) {
 			if (currentUser?.profile.path) {
 				fileHelper.remove(currentUser.profile.path.substring(currentUser.profile.path.indexOf(PATH_USER_FILES)));

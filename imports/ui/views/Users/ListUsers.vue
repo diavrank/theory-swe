@@ -168,9 +168,9 @@ export default (Vue as VueConstructor<Vue &
       this.modalData.mainNameElement = user.profile.name;
       this.$refs.refModalRemove.dialog = true;
     },
-    deleteUser(idUser: string): void {
+    deleteUser(userId: string): void {
       this.$loader.activate();
-      Meteor.call('user.delete', { idUser },
+      Meteor.call('user.delete', { userId },
           (err: Meteor.Error, response: ResponseMessage) => {
         this.$loader.deactivate();
         if (err) {
