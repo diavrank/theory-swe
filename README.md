@@ -28,7 +28,7 @@ Applies concepts like:
   - [ ] What is a Web API?
   - [ ] Which tools can be used to test Web APIs?
   - [ ] Error handling tools
-- [ ] TDD
+- [X] TDD
 
 **Tech stack:** Meteor (Node.js), MongoDB, Vue 2, Vuetify, TypeScript, Mocha.
 
@@ -133,3 +133,11 @@ yarn run:windows
 **Note:**
 You can configure your Jetbrains IDE to run the project from the IDE execution button.
 
+
+Usage
+---------------
+
+User to login:
+
+ - **Username/Email:** admin or admin@example.com
+ - **Password:** Theory_5w3
