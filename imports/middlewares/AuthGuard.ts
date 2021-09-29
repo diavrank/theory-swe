@@ -1,5 +1,4 @@
 import { Meteor } from 'meteor/meteor';
-// @ts-ignore
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import { Roles } from 'meteor/alanning:roles';
 
@@ -10,12 +9,13 @@ import { Roles } from 'meteor/alanning:roles';
  * @param methodOptions Method options
  */
 const checkPermission: (this: Meteor.MethodThisType, ...args: any[]) => any = function(methodArgs: any, methodOptions: any): any {
-	const idUser = this.userId;
+	const userId = this.userId;
 	const permissions = methodOptions.permissions;
 	let hasPermission = false;
-	if (idUser !== null) {
-		const scope = Roles.getScopesForUser(idUser)[0];
-		hasPermission = Roles.userIsInRole(idUser, permissions, scope);
+	if (userId !== null) {
+		// @ts-ignore
+		const scope = Roles.getScopesForUser(userId)[0];
+		hasPermission = Roles.userIsInRole(userId, permissions, scope);
 	}
 	if (!hasPermission) {
 		throw new Meteor.Error('403', 'Access denied',
@@ -25,8 +25,7 @@ const checkPermission: (this: Meteor.MethodThisType, ...args: any[]) => any = fu
 };
 
 const isUserLogged: (this: Meteor.MethodThisType, ...args: any[]) => any = function(methodArgs: any): any {
-	const idUserLogged = this.userId;
-	if (!idUserLogged) {
+	if (!this.userId) {
 		throw new Meteor.Error('403', 'Access denied',
 			'You do not have permission to execute this action.');
 	}
@@ -46,11 +45,12 @@ const isUserLogged: (this: Meteor.MethodThisType, ...args: any[]) => any = funct
 export const checkPermissionMethod = new ValidatedMethod({
 	name: 'checkPermission',
 	validate: null,
-	run(userData: { idUser: string, permission: string }) {
+	run(userData: { userId: string, permission: string }) {
 		let response = false;
-		if (userData.idUser && userData.permission) {
-			const group = Roles.getScopesForUser(userData.idUser)[0];
-			response = Roles.userIsInRole(userData.idUser, userData.permission, group);
+		if (userData.userId && userData.permission) {
+			// @ts-ignore
+			const group = Roles.getScopesForUser(userData.userId)[0];
+			response = Roles.userIsInRole(userData.userId, userData.permission, group);
 		}
 		return response;
 	}

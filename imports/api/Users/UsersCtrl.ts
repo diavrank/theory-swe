@@ -70,7 +70,7 @@ export const saveUserMethod = new ValidatedMethod({
 				username: String,
 				emails: [{ address: String, verified: Boolean }],
 				profile: {
-					profile: String,
+					profile: String,//TODO: Add CatTypes files
 					name: String,
 					path: Match.Maybe(String)
 				}
@@ -110,7 +110,7 @@ export const saveUserMethod = new ValidatedMethod({
 /**
  * @summary Delete a user
  * @method user.delete
- * @param idUser  - { idUser: string }
+ * @param userId  - { userId: string }
  */
 export const deleteUserMethod = new ValidatedMethod({
 	name: 'user.delete',
@@ -118,18 +118,21 @@ export const deleteUserMethod = new ValidatedMethod({
 	permissions: [Permissions.USERS.DELETE.VALUE],
 	beforeHooks: [Binnacle.checkIn, AuthGuard.checkPermission],
 	afterHooks: [Binnacle.checkOut],
-	validate({ idUser }: { idUser: string }) {
+	validate({ userId }: { userId: string }) {
 		try {
-			check(idUser, String);
+			check(userId, String);
 		} catch (exception) {
 			console.error('user.delete: ', exception);
 			throw new Meteor.Error('403', 'The information entered is not valid');
 		}
+		if (!User.findOne(userId)) {
+			throw new Meteor.Error('403', 'User does not exists');
+		}
 	},
-	run({ idUser }: { idUser: string }) {
+	run({ userId }: { userId: string }) {
 		const responseMessage = new ResponseMessage();
 		try {
-			const user = User.findOne(idUser);
+			const user = User.findOne(userId);
 			if (user._id) {
 				UsersServ.deleteUser(user);
 			}
@@ -143,7 +146,7 @@ export const deleteUserMethod = new ValidatedMethod({
 });
 
 /**
- * @summary Update personal data of a user
+ * @summary Update personal data of the user logged in
  * @method user.updatePersonalData
  * @param user
  * {user:Meteor.User}
@@ -156,30 +159,29 @@ export const updatePersonalDataMethod = new ValidatedMethod({
 	validate({ user }: { user: Meteor.User }) {
 		try {
 			check(user, {
-				_id: Match.OneOf(String, null),
 				username: String,
 				emails: [{ address: String, verified: Boolean }],
 				profile: {
 					profile: String,
 					name: String,
-					path: Match.OneOf(String, null)
+					path: Match.Maybe(String)
 				}
 			});
 		} catch (exception) {
 			console.error('user.updatePersonalData: ', exception);
 			throw new Meteor.Error('403', 'The information entered is not valid');
 		}
-		UsersServ.validateEmail(user.emails[0].address, user._id);
-		UsersServ.validateUsername(user.username, user._id);
+		UsersServ.validateEmail(user.emails[0].address, this.userId);
+		UsersServ.validateUsername(user.username, this.userId);
 	},
 	async run({ user, photoFileUser }: { user: MeteorAstronomy.Model<UserType>, photoFileUser: any }) {
 		const responseMessage = new ResponseMessage();
 		try {
-			const userToBeUpdated = User.findOne(user._id);
-			userToBeUpdated.set({ username: user.username, profile: user.profile, emails: user.emails });
+			const userToBeUpdated = User.findOne(this.userId);
+			// @ts-ignore
+			userToBeUpdated.set({ username: user.username, 'profile.name': user.profile.name, emails: user.emails });
 			await UsersServ.updateUser(userToBeUpdated, photoFileUser);
 			responseMessage.create('Information updated!');
-
 		} catch (exception) {
 			console.error('user.updatePersonalData: ', exception);
 			throw new Meteor.Error('500', 'An error occurred while updating the information');

@@ -37,6 +37,9 @@ const getBinnacleContent = (methodInvokation: any, user: Meteor.User | null, bin
 };
 
 const checkIn: (this: Meteor.MethodThisType, ...args: any[]) => any = function(methodArgs: any): any {
+	if (Meteor.isTest || Meteor.isAppTest) {
+		return methodArgs;
+	}
 	const user = Meteor.user();
 	const fileName = getBinnacleName();
 	const responseFile = SyncPromise(FileOperations.binnacleExist(fileName));
@@ -50,6 +53,9 @@ const checkIn: (this: Meteor.MethodThisType, ...args: any[]) => any = function(m
 };
 
 const checkOut: (this: Meteor.MethodThisType, ...args: any[]) => any = function(_methodArgs: any, returnValue: any): any {
+	if (Meteor.isTest || Meteor.isAppTest) {
+		return returnValue;
+	}
 	const user = Meteor.user();
 	const fileName = getBinnacleName();
 	const responseFile = SyncPromise(FileOperations.binnacleExist(fileName));

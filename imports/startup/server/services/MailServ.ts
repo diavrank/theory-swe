@@ -4,7 +4,7 @@ import { Accounts } from 'meteor/accounts-base';
 import { SSR } from 'meteor/meteorhacks:ssr';
 
 if (Meteor.isDevelopment) {
-	if (Meteor.settings.private.SENDER_EMAILS) {
+	if (Meteor.settings.private?.SENDER_EMAILS) {
 		process.env.EMAIL_SERVICES = Meteor.settings.private.SENDER_EMAILS.SERVICES;
 	} else {
 		console.warn('[TheorySwe] - Emails sender are not configured. Emails will not be sent. ');
@@ -74,7 +74,7 @@ emailTemplates.verifyEmail = {
 
 //Activate the service of Mails.
 if (Meteor.isDevelopment) {
-	if (Meteor.settings.private && Meteor.settings.private.MAIL_URL) {
+	if (Meteor.settings.private?.MAIL_URL) {
 		process.env.MAIL_URL = Meteor.settings.private.MAIL_URL;
 		process.env.ROOT_URL = Meteor.settings.private.ROOT_URL;
 	} else {

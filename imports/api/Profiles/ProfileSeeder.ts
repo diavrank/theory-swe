@@ -25,7 +25,7 @@ export const StaticProfiles: StaticProfilesType = {
 	}
 };
 if (Meteor.isDevelopment) {
-	if (Meteor.settings.private?.REFRESH_STATIC_PROFILES) {
+	if (Meteor.settings.private?.REFRESH_STATIC_PROFILES || Meteor.isAppTest) {
 		console.log('Updating static profiles.');
 		Object.keys(StaticProfiles).forEach((staticProfileName) => {
 			ProfileCollection.upsert({ name: StaticProfiles[staticProfileName].name }, {
