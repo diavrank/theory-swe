@@ -1,7 +1,7 @@
-import { Meteor } from 'meteor/meteor';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import AuthGuard from '../../middlewares/AuthGuard';
-import { ProfileCollection, ProfileType } from '../Profiles/Profile';
+import { Profile } from '../Profiles/Profile';
+import { check } from 'meteor/check';
 
 //Permisos
 import Permissions from '../../startup/server/Permissions';
@@ -10,7 +10,7 @@ import Binnacle from '../../middlewares/Binnacle';
 /**
  * @summary List all permissions of the system
  * @method permissions.list
- * @return Array of {@link ProfileType}
+ * @return Array of {@link RoleType}
  */
 export const listPermissionsMethod = new ValidatedMethod({
 	name: 'permissions.list',
@@ -19,10 +19,7 @@ export const listPermissionsMethod = new ValidatedMethod({
 	beforeHooks: [Binnacle.checkIn, AuthGuard.checkPermission],
 	afterHooks: [Binnacle.checkOut],
 	validate: null,
-	/**
-	 * Lista todos los permisos del sistema
-	 */
-	run(): Array<ProfileType> {
+	run() {
 		return Meteor.roles.find({}).fetch();
 	}
 });
@@ -30,51 +27,57 @@ export const listPermissionsMethod = new ValidatedMethod({
 /**
  * @summary List permissions of a profile
  * @method permissions.listByIdProfile
- * @param idProfile - {idProfile:string}
- * @return Array of {@link ProfileType}
+ * @param profileId - {profileId:string}
+ * @return Array of {@link RoleType}
  */
 export const listProfilePermissionsMethod = new ValidatedMethod({
 	name: 'permissions.listByIdProfile',
-	// @ts-ignore
 	mixins: [MethodHooks],
 	permissions: [Permissions.PERMISSIONS.LIST.VALUE],
 	beforeHooks: [Binnacle.checkIn, AuthGuard.checkPermission],
 	afterHooks: [Binnacle.checkOut],
-	validate: null,
-	run({ idProfile }: { idProfile: string }): Array<ProfileType> {
-		let permissions = [];
-		if (idProfile) {
-			const profile = ProfileCollection.findOne(idProfile);
-			permissions = Meteor.roles.find({ _id: { $in: profile?.permissions } }).fetch();
+	validate({ profileId }: { profileId: string }) {
+		try {
+			check(profileId, String);
+		} catch (exception) {
+			console.error('permissions.listByIdProfile: ', exception);
+			throw new Meteor.Error('403', 'The information entered is not valid');
 		}
-		return permissions;
+		if (!Profile.findOne(profileId)) {
+			throw new Meteor.Error('403', 'Profile does not exist');
+		}
+	},
+	run({ profileId }: { profileId: string }) {
+		const profile = Profile.findOne(profileId);
+		return profile.getPermissions().fetch();
 	}
 });
 
 /**
  * @summary List permissions not associated to a profile
  * @method permissions.listOthersForIdProfile
- * @param idProfile - {idProfile:string}
- * @return Array of {@link ProfileType}
+ * @param profileId - {profileId:string}
+ * @return Array of {@link RoleType}
  */
 export const listNotProfilePermissionsMethod = new ValidatedMethod({
 	name: 'permissions.listOthersForIdProfile',
-	// @ts-ignore
 	mixins: [MethodHooks],
 	permissions: [Permissions.PERMISSIONS.LIST.VALUE],
 	beforeHooks: [Binnacle.checkIn, AuthGuard.checkPermission],
 	afterHooks: [Binnacle.checkOut],
-	validate: null,
-	/**
-	 * Lista los permisos que no están asociados a un perfil
-	 * @param idProfile
-	 */
-	run({ idProfile }: { idProfile: string }): Array<ProfileType> {
-		let permissions = [];
-		if (idProfile) {
-			const profile = ProfileCollection.findOne(idProfile);
-			permissions = Meteor.roles.find({ _id: { $not: { $in: profile?.permissions } } }).fetch();
+	validate({ profileId }: { profileId: string }) {
+		try {
+			check(profileId, String);
+		} catch (exception) {
+			console.error('permissions.listOthersForIdProfile: ', exception);
+			throw new Meteor.Error('403', 'The information entered is not valid');
 		}
-		return permissions;
+		if (!Profile.findOne(profileId)) {
+			throw new Meteor.Error('403', 'Profile does not exist');
+		}
+	},
+	run({ profileId }: { profileId: string }) {
+		const profile = Profile.findOne(profileId);
+		return profile.getPermissionsComplement().fetch();
 	}
 });

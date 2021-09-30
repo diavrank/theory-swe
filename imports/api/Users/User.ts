@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { Class } from 'meteor/jagi:astronomy';
+import { AstronomyEvent, Class } from 'meteor/jagi:astronomy';
 import { Profile, ProfileType } from '/imports/api/Profiles/Profile';
 import ProfilesServ from '/imports/api/Profiles/ProfilesServ';
 import fileHelper from '/imports/startup/server/utils/FileOperations';
@@ -48,24 +48,7 @@ export interface UserType extends Meteor.User {
 	getProfile(): ProfileType;
 }
 
-interface AstronomyEvent<T> {
-	cancelable: boolean;
-	propagates: boolean;
-	doc: MeteorAstronomy.Model<T>,
-	stopOnFirstError: boolean;
-	fields: string[];
-	simulation: boolean;
-	forceUpdate: any;
-	trusted: boolean;
-	oldDoc: MeteorAstronomy.Model<T>;
-	type: string;
-	timeStamp: number;
-	target: MeteorAstronomy.Model<T>;
-	currentTarget: MeteorAstronomy.Model<T>;
-	defaultPrevented: boolean;
-	propagationStopped: boolean;
-	immediatePropagationStopped: boolean;
-}
+
 
 export const User = Class.create<UserType>({
 	name: 'User',

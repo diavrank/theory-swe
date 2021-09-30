@@ -106,9 +106,9 @@ export default (Vue as VueConstructor<Vue &
       this.setElement(profile);
       this.$router.push({ name: 'home.profiles.edit' });
     },
-    deleteProfile(idProfile: Profile) {
+    deleteProfile(profileId: Profile) {
       this.$loader.activate();
-      Meteor.call('profile.delete', { idProfile },
+      Meteor.call('profile.delete', { profileId },
           (err: Meteor.Error,
            response: ResponseMessage) => {
         this.$loader.deactivate();
