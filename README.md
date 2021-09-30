@@ -16,6 +16,7 @@ Applies concepts like:
     - Factory
     - Singleton
   - Structural
+    - Facade
   - Behavorial
     - Observer (Publish/Subscribe)
 - [ ] SOLID principles (theory)
@@ -68,36 +69,6 @@ mongorestore --db theory-swe ./database/theory-swe
 - Export a backup of the database (data exported as formats BSON and JSON):
 ```shell
 mongodump --db theory-swe --out ./database/
-```
-
-- Import more data of a specific collection to the database:
-```shell
-mongoimport --db theory-swe --collection <collection_name> <path_collection_json>
-```
-
-- Export data of a specific collection from the database:
-```shell
-mongoexport --db theory-swe --collection <collection_name>
-```
-
-- Restore backup of database from external database:
-```shell
-mongorestore --host <HOST> --port <PORT> --username=<USERNAME> --password=<PASSWORD> --authenticationDatabase admin --db <DATABASE> ./database/theory-swe
-```
-
-- Export backup of database from external database:
-```shell
-mongodump --host <HOST> --port <PORT> --username=<USERNAME> --password=<PASSWORD> --authenticationDatabase admin --db <DATABASE> --out ./path_to_save
-```
-
-- Restore backup of database from Mongo Atlas:
-```shell
-mongorestore --uri mongodb+srv://<USER>:<PASSWORD>@<HOST> --db theory-swe ./database/theory-swe
-```
-
-- Export backup of database from Mongo Atlas:
-```shell
-mongodump --uri mongodb+srv://<USER>:<PASSWORD>@<HOST>/<DATABASE> --out ./path_to_save
 ```
 
 **Installing dependencies**
