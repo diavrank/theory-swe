@@ -2,6 +2,8 @@ import { Meteor } from 'meteor/meteor';
 import { Class } from 'meteor/jagi:astronomy';
 import { Profile, ProfileType } from '/imports/api/Profiles/Profile';
 import ProfilesServ from '/imports/api/Profiles/ProfilesServ';
+import fileHelper from '/imports/startup/server/utils/FileOperations';
+import { PATH_USER_FILES } from '/imports/api/Users/UsersServ';
 
 interface UserStatusType {
 	online: boolean;
@@ -100,6 +102,13 @@ export const User = Class.create<UserType>({
 			if (event.doc.profile.profile !== event.oldDoc?.profile.profile) {
 				ProfilesServ.setUserRoles(event.currentTarget._id, event.currentTarget.profile.profile);
 			}
+		},
+		beforeRemove(event: AstronomyEvent<UserType>) {
+			fileHelper.remove(PATH_USER_FILES + event.currentTarget._id);
+		},
+		afterRemove(event: AstronomyEvent<UserType>) {
+			// @ts-ignore
+			Meteor.roleAssignment.remove({ 'user._id': event.currentTarget._id });
 		}
 	}
 });
