@@ -1,7 +1,9 @@
 import { Meteor } from 'meteor/meteor';
-import { Class } from 'meteor/jagi:astronomy';
+import { AstronomyEvent, Class } from 'meteor/jagi:astronomy';
 import { Profile, ProfileType } from '/imports/api/Profiles/Profile';
 import ProfilesServ from '/imports/api/Profiles/ProfilesServ';
+import fileHelper from '/imports/startup/server/utils/FileOperations';
+import { PATH_USER_FILES } from '/imports/api/Users/UsersServ';
 
 interface UserStatusType {
 	online: boolean;
@@ -46,24 +48,7 @@ export interface UserType extends Meteor.User {
 	getProfile(): ProfileType;
 }
 
-interface AstronomyEvent<T> {
-	cancelable: boolean;
-	propagates: boolean;
-	doc: MeteorAstronomy.Model<T>,
-	stopOnFirstError: boolean;
-	fields: string[];
-	simulation: boolean;
-	forceUpdate: any;
-	trusted: boolean;
-	oldDoc: MeteorAstronomy.Model<T>;
-	type: string;
-	timeStamp: number;
-	target: MeteorAstronomy.Model<T>;
-	currentTarget: MeteorAstronomy.Model<T>;
-	defaultPrevented: boolean;
-	propagationStopped: boolean;
-	immediatePropagationStopped: boolean;
-}
+
 
 export const User = Class.create<UserType>({
 	name: 'User',
@@ -100,6 +85,13 @@ export const User = Class.create<UserType>({
 			if (event.doc.profile.profile !== event.oldDoc?.profile.profile) {
 				ProfilesServ.setUserRoles(event.currentTarget._id, event.currentTarget.profile.profile);
 			}
+		},
+		beforeRemove(event: AstronomyEvent<UserType>) {
+			fileHelper.remove(PATH_USER_FILES + event.currentTarget._id);
+		},
+		afterRemove(event: AstronomyEvent<UserType>) {
+			// @ts-ignore
+			Meteor.roleAssignment.remove({ 'user._id': event.currentTarget._id });
 		}
 	}
 });

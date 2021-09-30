@@ -43,24 +43,14 @@ export const saveProfileMethod = new ValidatedMethod({
 	run(profile: MeteorAstronomy.Model<ProfileType>) {
 		const responseMessage = new ResponseMessage();
 		if (profile._id) {//if exists then is created
-			const users = ProfilesServ.getUsersByProfile(profile._id);
 			const profileToBeUpdated = Profile.findOne(profile._id);
 			try {
-				const oldProfileName = profileToBeUpdated.name;
 				profileToBeUpdated.set({
 					name: profile.name,
 					description: profile.description,
 					permissions: profile.permissions
 				});
 				profileToBeUpdated.save();
-				if (oldProfileName !== profile.name) {
-					Meteor.users.update({ 'profile.profile': profileToBeUpdated?.name }, {
-						$set: {
-							'profile.profile': profile.name
-						}
-					}, { multi: true });
-				}
-				ProfilesServ.updateProfileUsers(users, profile);
 				responseMessage.create('Profile updated successfully!');
 			} catch (exception) {
 				console.error('profile.save: ', exception);
@@ -68,7 +58,11 @@ export const saveProfileMethod = new ValidatedMethod({
 			}
 		} else { //Otherwise is created
 			try {
-				const newProfile = new Profile(profile);
+				const newProfile = new Profile({
+					name: profile.name,
+					description: profile.description,
+					permissions: profile.permissions
+				});
 				newProfile.save();
 				responseMessage.create('Profile created successfully!');
 			} catch (exception) {
@@ -83,7 +77,7 @@ export const saveProfileMethod = new ValidatedMethod({
 /**
  * @summary Delete a profile
  * @method profile.delete
- * @param idProfile - {idProfile:string}
+ * @param profileId - {profileId:string}
  */
 export const deleteProfileMethod = new ValidatedMethod({
 	name: 'profile.delete',
@@ -91,27 +85,22 @@ export const deleteProfileMethod = new ValidatedMethod({
 	permissions: [Permissions.PROFILES.DELETE.VALUE],
 	beforeHooks: [Binnacle.checkIn, AuthGuard.checkPermission],
 	afterHooks: [Binnacle.checkOut],
-	validate({ idProfile }: { idProfile: string }) {
+	validate({ profileId }: { profileId: string }) {
 		try {
-			check(idProfile, String);
+			check(profileId, String);
 		} catch (exception) {
 			console.error('profile.delete: ', exception);
 			throw new Meteor.Error('403', 'The information entered is not valid');
 		}
-		const users = ProfilesServ.getUsersByProfile(idProfile);
+		const users = ProfilesServ.getUsersByProfile(profileId);
 		if (users.length > 0) {
 			throw new Meteor.Error('403', 'Profile cannot be removed', 'There are users using this profile');
 		}
 	},
-	/**
-	 * Elimina un perfil de la base de datos
-	 * @param idProfile Id del perfil a eliminar
-	 * @returns {any} Si es exitoso no regresa nada, de lo contrario regresa un mensaje de error.
-	 */
-	run({ idProfile }: { idProfile: string }) {
+	run({ profileId }: { profileId: string }) {
 		const responseMessage = new ResponseMessage();
 		try {
-			Profile.remove(idProfile);
+			Profile.remove(profileId);
 			responseMessage.create('Profile removed successfully!');
 		} catch (exception) {
 			console.error('profile.delete: ', exception);

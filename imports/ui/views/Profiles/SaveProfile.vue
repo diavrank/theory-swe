@@ -214,7 +214,7 @@ export default (Vue as VueConstructor<Vue &
       this.profile.permissions = this.selfPermissions.map((roleType: RoleType) => roleType._id);
     },
     initPermissionLists() {
-      Meteor.call('permissions.listOthersForIdProfile', { idProfile: this.profile._id },
+      Meteor.call('permissions.listOthersForIdProfile', { profileId: this.profile._id },
           (err: Meteor.Error, response: RoleType[]) => {
         if (err) {
           console.error('Error listing permissions: ', err);
@@ -223,7 +223,7 @@ export default (Vue as VueConstructor<Vue &
         this.allPermissions = response;
       });
 
-      Meteor.call('permissions.listByIdProfile', { idProfile: this.profile._id },
+      Meteor.call('permissions.listByIdProfile', { profileId: this.profile._id },
           (err: Meteor.Error, response: RoleType[]) => {
         if (err) {
           console.error('Error listing profile permissions: ', err);

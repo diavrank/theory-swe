@@ -5,7 +5,7 @@ import fileHelper from '../../startup/server/utils/FileOperations';
 import ProfilesServ from '../Profiles/ProfilesServ';
 import { User, UserType } from '/imports/api/Users/User';
 
-const PATH_USER_FILES = 'users/';
+export const PATH_USER_FILES = 'users/';
 
 export default {
 	validateEmail(newEmail: string, userId: string) {
@@ -85,15 +85,6 @@ export default {
 			}
 		}
 		responseMessage.message = 'User updated successful';
-		return responseMessage;
-	},
-	deleteUser(user: MeteorAstronomy.Model<UserType>): ResponseMessage {
-		const responseMessage = new ResponseMessage();
-		fileHelper.remove(PATH_USER_FILES + user._id);
-		// @ts-ignore
-		Meteor.roleAssignment.remove({ 'user._id': user._id });
-		user.remove();
-		responseMessage.create('User removed!');
 		return responseMessage;
 	}
 };

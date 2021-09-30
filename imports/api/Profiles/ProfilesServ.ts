@@ -26,11 +26,6 @@ export default {
 		const profile = ProfileCollection.findOne(profileId);
 		return Meteor.users.find({ 'profile.profile': profile?.name }).fetch();
 	},
-	updateProfileUsers(users: Array<Meteor.User>, profile: ProfileType) {
-		users.forEach((user) => {
-			this.setUserRoles(user._id, profile.name);
-		});
-	},
 	getStaticProfileNames() {
 		return Object.keys(StaticProfiles).map((staticProfileName: string) => {
 			return StaticProfiles[staticProfileName].name;
