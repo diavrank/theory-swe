@@ -3,8 +3,6 @@ import { ProfileCollection } from './Profile';
 import { Meteor } from 'meteor/meteor';
 import { Roles } from 'meteor/alanning:roles';
 
-ProfileCollection.rawCollection().createIndex({ 'name': 1 }, { unique: true });
-
 export interface StaticProfileType {
 	name: string;
 	description: string,
