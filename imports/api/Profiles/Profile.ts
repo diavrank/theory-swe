@@ -22,6 +22,12 @@ export const Profile = Class.create<ProfileType>({
 		description: String,
 		permissions: [String]
 	},
+	indexes: {
+		name: {
+			fields: { name: 1 },
+			options: { unique: true }
+		}
+	},
 	helpers: {
 		getPermissions() {
 			return Meteor.roles.find({ _id: { $in: this.permissions } });

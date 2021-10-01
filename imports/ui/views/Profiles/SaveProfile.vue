@@ -140,7 +140,7 @@ export default (Vue as VueConstructor<Vue &
       targetButton: ''
     },
     profile: {
-      _id: null,
+      _id: undefined,
       name: null,
       description: null,
       permissions: [] as string[]

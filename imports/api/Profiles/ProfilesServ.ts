@@ -1,19 +1,19 @@
 import { Meteor } from 'meteor/meteor';
 import { ProfileCollection, ProfileType } from './Profile';
 import { StaticProfiles } from './ProfileSeeder';
-// @ts-ignore
 import { Roles } from 'meteor/alanning:roles';
 
 export default {
 	validateName(name: string, profileId: string) {
+		const errorMessage = 'Sorry! The new profile name already exists, please use another.';
 		const existsName = ProfileCollection.findOne({ name });
 		if (profileId) {
 			const oldProfile = ProfileCollection.findOne(profileId);
 			if (oldProfile?.name !== name && existsName) {
-				throw new Meteor.Error('403', 'Sorry! The new profile name already exists, please use another. ');
+				throw new Meteor.Error('403', errorMessage);
 			}
 		} else if (existsName) {
-			throw new Meteor.Error('403', 'Sorry! The new profile name already exists, please use another.');
+			throw new Meteor.Error('403', errorMessage);
 		}
 	},
 	setUserRoles(userId: string, profileName: string) {

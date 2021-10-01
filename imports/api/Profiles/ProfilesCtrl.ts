@@ -25,7 +25,7 @@ export const saveProfileMethod = new ValidatedMethod({
 	validate(profile: ProfileType) {
 		try {
 			check(profile, {
-				_id: Match.OneOf(String, null),
+				_id: Match.Maybe(String),
 				name: String,
 				description: String,
 				permissions: [String]
