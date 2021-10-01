@@ -70,7 +70,7 @@ export const saveUserMethod = new ValidatedMethod({
 				username: String,
 				emails: [{ address: String, verified: Boolean }],
 				profile: {
-					profile: String,//TODO: Add CatTypes files
+					profile: String,
 					name: String,
 					path: Match.Maybe(String)
 				}
@@ -81,6 +81,7 @@ export const saveUserMethod = new ValidatedMethod({
 		}
 		UsersServ.validateEmail(user.emails[0].address, user._id);
 		UsersServ.validateUsername(user.username, user._id);
+		UsersServ.validateProfile(user.profile.profile);
 	},
 	async run({ user, photoFileUser }: { user: MeteorAstronomy.Model<UserType>, photoFileUser: any }) {
 		const responseMessage = new ResponseMessage();

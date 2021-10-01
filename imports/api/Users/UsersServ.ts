@@ -4,6 +4,7 @@ import { ResponseMessage } from '../../startup/server/utils/ResponseMessage';
 import fileHelper from '../../startup/server/utils/FileOperations';
 import ProfilesServ from '../Profiles/ProfilesServ';
 import { User, UserType } from '/imports/api/Users/User';
+import { Profile } from '/imports/api/Profiles/Profile';
 
 export const PATH_USER_FILES = 'users/';
 
@@ -30,6 +31,11 @@ export default {
 			}
 		} else if (existsUsername) {
 			throw new Meteor.Error('403', 'The new username is already in use');
+		}
+	},
+	validateProfile(profileName: string) {
+		if (!Profile.findOne({ name: profileName })) {
+			throw new Meteor.Error('403', 'Invalid profile name');
 		}
 	},
 	async createUser(user: MeteorAstronomy.Model<UserType>, photoFileUser: any) {
