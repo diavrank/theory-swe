@@ -92,11 +92,5 @@ export default {
 		}
 		responseMessage.message = 'User updated successful';
 		return responseMessage;
-	},
-	deleteUser(userId: string) {
-		Meteor.users.remove(userId);
-		// @ts-ignore
-		Meteor.roleAssignment.remove({ 'user._id': userId });
-		fileHelper.remove(PATH_USER_FILES + userId);
 	}
 };
