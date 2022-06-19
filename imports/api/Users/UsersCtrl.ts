@@ -133,8 +133,7 @@ export const deleteUserMethod = new ValidatedMethod({
 	run({ userId }: { userId: string }) {
 		const responseMessage = new ResponseMessage();
 		try {
-			const user = User.findOne(userId);
-			user.remove();
+			UsersServ.deleteUser(userId);
 			responseMessage.create('User removed successfully!');
 		} catch (exception) {
 			console.error('user.delete: ', exception);
