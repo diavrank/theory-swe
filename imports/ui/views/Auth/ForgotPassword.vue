@@ -24,7 +24,7 @@
 
 <script lang="ts">
 	import validateForm from './../../mixins/validateForm';
-  import {Field, FormContext} from 'vee-validate';
+  import { Field, Form, FormContext } from 'vee-validate';
   import {defineComponent} from 'vue';
   import { Meteor } from 'meteor/meteor';
   import { Accounts } from 'meteor/accounts-base'
@@ -34,7 +34,7 @@
 		mixins: [validateForm],
 		components: {
 			Field,
-			ValidationObserver
+			Form
 		},
 		data() {
 			return {
