@@ -1,6 +1,6 @@
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 
-export default Vue.extend({
+export default defineComponent({
     methods: {
         /**
          * Set all key values to null recursively.

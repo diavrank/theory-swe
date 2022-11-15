@@ -11,12 +11,11 @@
 <script lang="ts">
 	import AlertMessage from './components/Utilities/Alerts/AlertMessage.vue';
 	import Loader from './components/Utilities/Loaders/Loader.vue';
-	import Vue from 'vue';
 
-	export default Vue.extend({
+	export default {
 		name: 'App',
 		components: { AlertMessage, Loader },
-	})
+	}
 </script>
 
 <style>

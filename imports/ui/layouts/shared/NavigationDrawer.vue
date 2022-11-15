@@ -14,31 +14,20 @@
     <v-list dense
             nav
             class="py-0">
-      <v-list-item class="pa-5 text-center">
-        <v-list-item-avatar>
-          <img alt="METEOR" src="/img/meteor-vue.png" height="50px">
-        </v-list-item-avatar>
-        <v-list-item-content>
-          <v-list-item-title>TheorySwe</v-list-item-title>
-        </v-list-item-content>
+      <v-list-item class="pa-5 text-center"
+                   prepend-avatar="/img/meteor-vue.png"
+                   title="TheorySwe">
       </v-list-item>
     </v-list>
     <v-divider></v-divider>
-    <v-list dense nav class="py-0">
-      <v-list-item-group v-model="optionSelected" active-class="active">
-        <template v-for="option in options">
-          <v-list-item :key="option.title" :to="{ name: option.namePath }" link>
-            <v-list-item-icon>
-              <v-icon>{{ option.icon }}</v-icon>
-            </v-list-item-icon>
-
-            <v-list-item-content>
-              <v-list-item-title>{{ option.title }}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
+    <v-list :lines="false" density="compact" nav v-model="optionSelected" class="py-0">
+        <v-list-item v-for="(option,i) in options" :key="i" :value="option" active-color="primary">
+          <template v-slot:prepend>
+            <v-icon :icon="option.icon"></v-icon>
+          </template>
+          <v-list-item-title>{{ option.title }}</v-list-item-title>
           <v-divider v-if="option.divider"></v-divider>
-        </template>
-      </v-list-item-group>
+        </v-list-item>
     </v-list>
     <footer-view></footer-view>
   </v-navigation-drawer>
@@ -47,7 +36,7 @@
 <script lang="ts">
 	import FooterView from './FooterView.vue';
 	import { mapMutations, mapState } from 'vuex';
-	import Vue from 'vue';
+  import {defineComponent} from 'vue';
 	import { Meteor } from 'meteor/meteor';
 
 	interface SystemOption {
@@ -57,7 +46,7 @@
 		divider: boolean;
 	}
 
-	export default Vue.extend({
+	export default defineComponent({
 		name: 'NavigationDrawer',
 		components: { FooterView },
 		data: () => ({

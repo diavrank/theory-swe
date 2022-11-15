@@ -24,10 +24,10 @@
 </template>
 
 <script lang="ts">
-import Vue, {PropType} from 'vue';
-import { ModalData } from '/imports/ui/typings/utilities.ts';
+import {defineComponent, PropType} from 'vue';
+import { ModalData } from '/imports/ui/typings/utilities';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'ModalRemove',
   props: {
     modalData: {

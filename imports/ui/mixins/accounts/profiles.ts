@@ -1,7 +1,7 @@
 import { ProfileCollection } from '../../../api/Profiles/Profile';
-import Vue from 'vue';
+import { defineComponent } from 'vue';
 
-export default Vue.extend({
+export default defineComponent({
 	meteor: {
 		$subscribe: {
 			'profiles': []

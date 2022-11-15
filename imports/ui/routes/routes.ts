@@ -7,7 +7,7 @@ import Home from '../views/Home/Home.vue';
 
 export default [
 	{
-		path: '*',
+		path: '/:pathMatch(.*)*',
 		redirect: '/login'
 	},
 	loginRoutes,

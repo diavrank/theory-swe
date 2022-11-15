@@ -15,17 +15,13 @@
 </template>
 
 <script lang="ts">
-import HeaderView from "./shared/HeaderView.vue";
-import FooterView from "./shared/FooterView.vue";
+import HeaderView from './shared/HeaderView.vue';
+import FooterView from './shared/FooterView.vue';
 import NavigationDrawer from './shared/NavigationDrawer.vue';
-import Vue, { VueConstructor } from 'vue';
+import { defineComponent } from 'vue';
 
-export default (Vue as VueConstructor<Vue &
-    {
-      $subscribe: Function
-    }
-    >).extend({
-  name: "LytSPA",
+export default defineComponent({
+  name: 'LytSPA',
   components: {
     NavigationDrawer,
     HeaderView,
@@ -42,9 +38,10 @@ export default (Vue as VueConstructor<Vue &
     }
   },
   mounted() {
+    // @ts-ignore
     this.$subscribe('roles', []);
   }
-})
+});
 </script>
 
 <style scoped lang="sass">

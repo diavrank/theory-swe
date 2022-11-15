@@ -1,6 +1,6 @@
-import Vue, { VNode } from 'vue';
-import { Meteor } from 'meteor/meteor';
-import { DirectiveBinding } from 'vue/types/options';
+import {DirectiveBinding, VNode} from 'vue';
+import {Meteor} from 'meteor/meteor';
+
 
 /**
  * Create comment node
@@ -13,19 +13,16 @@ function commentNode(el: HTMLElement, vNode: VNode) {
     Object.defineProperty(comment, 'setAttribute', {
         value: () => undefined
     })
-
-    vNode.text = ' '
-    vNode.elm = comment
-    vNode.isComment = true
-    vNode.context = undefined
-    vNode.tag = undefined
-    if (vNode.data) {
-        vNode.data.directives = undefined
+    vNode.el = comment
+    vNode.appContext = null
+    vNode.scopeId = null
+    if (vNode.dirs) {
+        vNode.dirs = null
     }
 
-    if (vNode.componentInstance) {
+    if (vNode.component) {
         // @ts-ignore
-        vNode.componentInstance['$el'] = comment
+        vNode.component.el = comment
     }
 
     if (el.parentNode) {
@@ -33,7 +30,7 @@ function commentNode(el: HTMLElement, vNode: VNode) {
     }
 }
 
-Vue.directive('can', function (el: HTMLElement, binding: DirectiveBinding, vNode: VNode) {
+export const VCan = function (el: HTMLElement, binding: DirectiveBinding, vNode: VNode) {
     const behaviour = binding.modifiers.disable ? 'disable' : 'hide';
     // @ts-ignore
     const hasPermission = Roles.userIsInRole(Meteor.userId(), `${binding.value}-${binding.arg}`,
@@ -46,4 +43,4 @@ Vue.directive('can', function (el: HTMLElement, binding: DirectiveBinding, vNode
             el.disabled = true
         }
     }
-});
+}

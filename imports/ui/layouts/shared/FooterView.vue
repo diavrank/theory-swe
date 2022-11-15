@@ -10,11 +10,9 @@
 
 <script lang="ts">
 import dateMixin from './../../mixins/helpers/date';
-import Vue, { VueConstructor } from 'vue';
+import {defineComponent} from 'vue';
 
-export default (Vue as VueConstructor<Vue &
-    InstanceType<typeof dateMixin>
-    >).extend({
+export default defineComponent({
   name: "FooterView",
   mixins: [dateMixin]
 })

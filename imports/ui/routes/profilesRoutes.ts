@@ -1,6 +1,6 @@
 import ListProfiles from '../views/Profiles/ListProfiles.vue';
 import SaveProfile from '../views/Profiles/SaveProfile.vue';
-import { CreateElement } from 'vue';
+import { h, resolveComponent } from 'vue';
 
 export default {
     path: 'profiles',
@@ -11,7 +11,7 @@ export default {
     },
     components: {
         sectionView: {
-            render: (c: CreateElement) => c('router-view')
+            render: () => h(resolveComponent('router-view'))
         }
     },
     children: [

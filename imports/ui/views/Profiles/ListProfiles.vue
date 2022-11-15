@@ -15,29 +15,46 @@
           </v-tooltip>
         </div>
         <div class="section elevation-1">
-          <v-data-table :headers="headers" :items="profiles" sort-by="description"
-                        @dblclick:row="(event,{item})=>openEditProfile(item)">
-            <template v-slot:item.action="{ item }">
-              <v-tooltip bottom transition="fab-transition">
-                <template v-slot:activator="{on}">
-                  <v-btn v-can:edit.hide="'profiles'" fab color="success" v-on="on" x-small class="mr-2"
-                         @click="openEditProfile(item)">
-                    <v-icon>edit</v-icon>
-                  </v-btn>
-                </template>
-                <span>Edit</span>
-              </v-tooltip>
-              <v-tooltip bottom transition="fab-transition">
-                <template v-slot:activator="{on}">
-                  <v-btn v-can:delete.hide="'profiles'" fab color="error" v-on="on" x-small class="mr-2"
-                         @click="openRemoveModal(item)">
-                    <v-icon>close</v-icon>
-                  </v-btn>
-                </template>
-                <span>Remove</span>
-              </v-tooltip>
-            </template>
-          </v-data-table>
+          <v-table @dblclick:row="(event,{item})=>openEditProfile(item)">
+            <thead>
+            <tr>
+              <th class="text-left">
+                Profile name
+              </th>
+              <th class="text-left">
+                Options
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr
+                v-for="item in profiles"
+                :key="item._id"
+            >
+              <td>{{ item.description }}</td>
+              <td>
+                <v-tooltip bottom transition="fab-transition">
+                  <template v-slot:activator="{on}">
+                    <v-btn v-can:edit.hide="'profiles'" fab color="success" v-on="on" x-small class="mr-2"
+                           @click="openEditProfile(item)">
+                      <v-icon>edit</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Edit</span>
+                </v-tooltip>
+                <v-tooltip bottom transition="fab-transition">
+                  <template v-slot:activator="{on}">
+                    <v-btn v-can:delete.hide="'profiles'" fab color="error" v-on="on" x-small class="mr-2"
+                           @click="openRemoveModal(item)">
+                      <v-icon>close</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Remove</span>
+                </v-tooltip>
+              </td>
+            </tr>
+            </tbody>
+          </v-table>
           <modal-remove ref="refModalRemove"
                         preposition="el"
                         type-element="perfil"
@@ -53,24 +70,13 @@
 import { mapMutations } from 'vuex';
 import ModalRemove from './../../components/Utilities/Modals/ModalRemove.vue';
 import profilesMixin from '../../mixins/accounts/profiles';
-import Vue, { VueConstructor } from 'vue';
+import  {defineComponent} from 'vue';
 import { Profile } from '../../typings/users';
 import { ModalData } from '/imports/ui/typings/utilities';
 import { Meteor } from 'meteor/meteor';
-import Loader from './../../components/Utilities/Loaders/Loader.vue';
-import AlertMessage from './../../components/Utilities/Alerts/AlertMessage.vue';
 import { ResponseMessage } from '/imports/startup/server/utils/ResponseMessage';
 
-export default (Vue as VueConstructor<Vue &
-    InstanceType<typeof profilesMixin> &
-    {
-      $refs: {
-        refModalRemove: InstanceType<typeof ModalRemove>
-      },
-      $alert: InstanceType<typeof AlertMessage>
-      $loader: InstanceType<typeof Loader>
-    }
-    >).extend({
+export default defineComponent({
   name: 'ListProfiles',
   components: { ModalRemove },
   mixins: [profilesMixin],

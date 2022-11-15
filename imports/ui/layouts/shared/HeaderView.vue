@@ -13,9 +13,9 @@
 import UserLogged from '../../components/UserLogged/UserLogged.vue';
 import Breadcrumb from './Breadcrumb.vue';
 import { mapState, mapMutations } from 'vuex';
-import Vue from 'vue';
+import {defineComponent} from 'vue';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'HeaderView',
   components: {
     Breadcrumb,

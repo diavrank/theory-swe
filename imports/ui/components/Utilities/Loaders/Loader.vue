@@ -14,18 +14,15 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
+import {defineComponent} from 'vue';
 
-    export default Vue.extend({
+    export default defineComponent({
         name:"Loader",
         data(){
             return{
                 loader:false,
                 progressLabel:''
             }
-        },
-        mounted() {
-          Vue.prototype.$loader = this;
         },
         methods:{
             activate(progressLabel = 'Loading...') {

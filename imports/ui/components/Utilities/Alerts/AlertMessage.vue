@@ -34,21 +34,9 @@
 </template>
 
 <script lang="ts">
-    import Vue from 'vue';
+    import { defineComponent } from 'vue';
 
-    interface AlertMessageType {
-      color?: string;
-      mode?: string;
-      snackbar: boolean;
-      title?: string;
-      text?: string;
-      timeout: number;
-      x: string;
-      y: string;
-      icon: string;
-    }
-
-    export default Vue.extend({
+    export default defineComponent({
         name: "AlertMessage",
         data() {
             return {
@@ -61,10 +49,7 @@
                 x: '',
                 y: '',
                 icon: ''
-            } as AlertMessageType
-        },
-        mounted() {
-          Vue.prototype.$alert = this;
+            }
         },
         methods: {
             /**

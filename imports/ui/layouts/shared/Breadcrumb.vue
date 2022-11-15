@@ -15,7 +15,7 @@
 
 <script lang="ts">
 	import { mapState } from 'vuex';
-	import Vue from 'vue';
+	import { defineComponent } from 'vue';
 
   interface BreadcrumbItem {
     text: string;
@@ -23,7 +23,7 @@
     disabled: boolean;
   }
 
-	export default Vue.extend({
+	export default defineComponent({
 		name: 'Breadcrumb',
 		data: () => ({
 			items: [] as BreadcrumbItem[]
@@ -49,7 +49,7 @@
 				this.items = matched
 					.filter(routeItem => routeItem.meta.breadcrumb)
 					.map(routeItem => ({
-						text: routeItem.meta.breadcrumb,
+						text: routeItem.meta.breadcrumb as string,
 						to: { name: routeItem.meta.name },
 						disabled: !routeItem.meta.name
 					}));

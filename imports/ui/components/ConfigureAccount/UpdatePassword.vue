@@ -1,6 +1,6 @@
 <template>
-  <ValidationObserver ref="passwordFormObserver">
-    <form @submit.prevent="updatePassword" ref="updatePasswordForm" data-vv-scope="update-password-form">
+    <Form as="v-form" @submit.prevent="updatePassword" ref="passwordFormObserver"
+    id="updatePassword" autocomplete="off">
       <v-card>
         <v-card-title>
           <div class="text-subtitle-2">
@@ -9,7 +9,7 @@
         </v-card-title>
 
         <v-card-text>
-          <ValidationProvider v-slot="{errors}" name="current password" rules="required">
+          <Field v-slot="{errors}" name="current password" rules="required">
             <v-text-field v-model="password.old" id="inputPassword"
                           :append-icon="showPass.old ? 'mdi-eye' : 'mdi-eye-off'"
                           :type="showPass.old ? 'text' : 'password'"
@@ -19,8 +19,8 @@
                           autocomplete="off"
                           :error-messages="errors">
             </v-text-field>
-          </ValidationProvider>
-          <ValidationProvider v-slot="{errors}" name="new password"
+          </Field>
+          <Field v-slot="{errors}" name="new password"
                               rules="required|min:8|strength_password"
                               vid="password">
             <v-text-field v-model="password.new" id="inputNewPassword"
@@ -32,8 +32,8 @@
                           autocomplete="new-password"
                           :error-messages="errors">
             </v-text-field>
-          </ValidationProvider>
-          <ValidationProvider v-slot="{errors}" name="confirm password"
+          </Field>
+          <Field v-slot="{errors}" name="confirm password"
                               rules="required|confirmed:password">
             <v-text-field v-model="password.confirm" id="inputConfirmPassword"
                           :append-icon="showPass.confirm ? 'mdi-eye' : 'mdi-eye-off'"
@@ -43,7 +43,7 @@
                           @click:append="showPass.confirm = !showPass.confirm"
                           :error-messages="errors">
             </v-text-field>
-          </ValidationProvider>
+          </Field>
         </v-card-text>
 
         <v-card-actions>
@@ -52,16 +52,15 @@
           </v-row>
         </v-card-actions>
       </v-card>
-    </form>
-  </ValidationObserver>
+    </Form>
+
 </template>
 
 <script lang="ts">
 import JsonHelper from '/imports/ui/mixins/helpers/json';
-import { ValidationProvider, ValidationObserver } from 'vee-validate';
-import Vue, { VueConstructor } from 'vue';
+import { Form, Field, FormContext} from 'vee-validate';
+import  {defineComponent} from 'vue';
 import validateForm from '/imports/ui/mixins/validateForm';
-import AlertMessage from './../../components/Utilities/Alerts/AlertMessage.vue';
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base'
 
@@ -71,20 +70,11 @@ interface PasswordInput {
   confirm: string | null;
 }
 
-export default (Vue as VueConstructor<Vue &
-    InstanceType<typeof validateForm> &
-    InstanceType<typeof JsonHelper> &
-    {
-      $refs: {
-        passwordFormObserver: InstanceType<typeof ValidationObserver>
-      },
-      $alert: InstanceType<typeof AlertMessage>
-    }
-    >).extend({
+export default defineComponent({
   name: 'UpdatePassword',
   components: {
-    ValidationProvider,
-    ValidationObserver
+    Form,
+    Field
   },
   mixins: [validateForm, JsonHelper],
   data() {
@@ -103,8 +93,9 @@ export default (Vue as VueConstructor<Vue &
   },
   methods: {
     async updatePassword() {
-      if (await this.isFormValid(this.$refs.passwordFormObserver)) {
-        Accounts.changePassword(this.password.old || '', this.password.new || '', async (error:  Error | Meteor.Error | Meteor.TypedError | undefined) => {
+      if (await this.isFormValid(this.$refs.passwordFormObserver as FormContext)) {
+        Accounts.changePassword(this.password.old || '', this.password.new || '',
+            async (error:  Error | Meteor.Error | Meteor.TypedError | undefined) => {
           this.setNulls(this.password);
           await this.$refs.passwordFormObserver.reset();
           if (error) {
@@ -118,7 +109,6 @@ export default (Vue as VueConstructor<Vue &
       }
     }
   }
-
 })
 </script>
 

@@ -17,23 +17,22 @@
 </template>
 
 <script lang="ts">
-import Vue, { VueConstructor } from 'vue';
-import { Meteor } from 'meteor/meteor';
-import { Accounts } from 'meteor/accounts-base';
-import AlertMessage from './../../components/Utilities/Alerts/AlertMessage.vue';
+import {defineComponent} from 'vue';
+import {Meteor} from 'meteor/meteor';
+import {Accounts} from 'meteor/accounts-base';
 
-export default (Vue as VueConstructor<Vue & { $alert: InstanceType<typeof AlertMessage> }>).extend({
+export default defineComponent({
   name: 'VerifyAccount',
   data() {
     return {
       loading: true,
       status: false,
-      message: null,
-      description: null
+      message: '',
+      description: ''
     };
   },
   mounted() {
-    const token = this.$route.params.token;
+    const token = <string>this.$route.params.token;
     Accounts.verifyEmail(token, (errorVerifyEmail: Error | Meteor.Error | Meteor.TypedError | undefined) => {
       this.loading = false;
       if (errorVerifyEmail) {

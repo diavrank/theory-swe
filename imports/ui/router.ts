@@ -1,16 +1,18 @@
-import Vue from 'vue';
-import VueRouter, { Route } from 'vue-router';
+import {
+	createRouter, createWebHistory, NavigationGuardNext,
+	RouteLocationNormalized
+} from 'vue-router';
 import routes from '/imports/ui/routes/routes';
 import store from './store';
 import { Meteor } from 'meteor/meteor';
 
-Vue.use(VueRouter);
-const router = new VueRouter({
-	mode: 'history',
+const router = createRouter({
+	history: createWebHistory(),
 	routes
 });
 
-router.beforeEach((to: Route, from: Route, next) => {
+router.beforeEach((to: RouteLocationNormalized, from: RouteLocationNormalized,
+                   next: NavigationGuardNext) => {
 	const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
 	const isLogged = store.state.auth.isLogged;
 	if (!requiresAuth && isLogged && to.path === '/login') {

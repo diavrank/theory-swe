@@ -19,17 +19,17 @@
 </template>
 
 <script lang="ts">
-import { mapMutations } from 'vuex';
-import Vue from 'vue';
-import { Meteor } from 'meteor/meteor';
-import { User } from '/imports/ui/typings/users';
-import { LogoutHook } from './../../typings/accounts'
+import {mapMutations} from 'vuex';
+import {Meteor} from 'meteor/meteor';
+import {User} from '/imports/ui/typings/users';
+import {LogoutHook} from './../../typings/accounts'
+import {defineComponent} from "vue";
 
 declare module Accounts {
   function onLogout(func: Function): LogoutHook;
 }
 
-export default Vue.extend({
+export default defineComponent({
   name: 'UserLogged',
   data() {
     return {
@@ -46,7 +46,7 @@ export default Vue.extend({
 
   },
   mounted() {
-    this.$root.$on('setUserLogged', () => {
+    this.emitter.on('setUserLogged', () => {
       this.setSession();
     });
     this.onLogoutHook = Accounts.onLogout(() => {
@@ -60,19 +60,22 @@ export default Vue.extend({
         this.onLogoutHook.stop();
         Meteor.logout();
         this.logout();
-        this.$router.push({ name: 'login' });
+        this.$router.push({name: 'login'});
       }
     },
-    closeFrontSession(){
+    closeFrontSession() {
       if (this.onLogoutHook) {
         this.onLogoutHook.stop();
         this.logout();
-        this.$router.push({ name: 'login' });
+        this.$router.push({name: 'login'});
       }
     },
     setSession() {
       if (Meteor.userId() !== null) {
-        this.user = this.$store.state.auth.user;
+        this.user = this.$store.state.auth.user || {
+          emails: [],
+          profile: {},
+        };
       } else {
         this.closeSession();
       }
@@ -81,7 +84,7 @@ export default Vue.extend({
   computed: {
     usernameInitials() {
       let initials = '';
-      if (this.user.username) {
+      if (this.user?.username) {
         const words = this.user.username.split(' ');
         initials = words.reduce((acc, word) => {
           return acc + word[0];

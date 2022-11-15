@@ -16,64 +16,58 @@
     <v-row justify="center">
       <v-col xs="12" sm="12" md="10" lg="8" xl="5">
         <div class="section elevation-1">
-          <ValidationObserver ref="userFormObserver" v-slot="{validation, reset}">
-            <v-form @submit.prevent="saveUser" id="saveUser" autocomplete="off">
-              <v-row>
-                <v-col sm="4" md="4">
-                  <div class="d-flex flex-column align-center">
-                    <img :src="user.profile.path || '/img/user.png'" :alt="user.profile.name" width="100px">
-                    <v-file-input
-                        v-show="false"
-                        ref="imageFile"
-                        v-model="file"
-                        accept="image/png, image/jpeg, image/bmp"
-                        placeholder="Load ..."
-                        prepend-icon="mdi-camera"
-                    ></v-file-input>
-                    <v-btn color="primary" class="mb-5 mt-5"
-                           width="100%"
-                           rounded depressed @click="onClickUploadButton">
-                      <span v-if="user.profile.path">Change</span>
-                      <span v-else>Load</span>
-                    </v-btn>
-                  </div>
-                </v-col>
-                <v-col sm="8" md="8">
-                  <ValidationProvider v-slot="{ errors }" name="name" rules="required">
-                    <v-text-field v-model="user.profile.name" id="inputName"
-                                  name="name"
-                                  :error-messages="errors" label="Full name" required>
-                    </v-text-field>
-                  </ValidationProvider>
-                  <ValidationProvider v-slot="{ errors }" name="profile" rules="required">
-                    <v-select v-model="user.profile.profile" :items="profiles" id="selectProfile"
-                              item-text="description" item-value="name"
-                              :error-messages="errors"
-                              label="Profile"
-                              required></v-select>
-                  </ValidationProvider>
-                  <ValidationProvider v-slot="{ errors }" name="username" rules="required">
-                    <v-text-field v-model="user.username"
-                                  id="inputUsername"
-                                  :error-messages="errors"
-                                  name="username"
-                                  label="Username" required>
-                    </v-text-field>
-                  </ValidationProvider>
-                  <ValidationProvider v-slot="{ errors }" name="email"
-                                      rules="required|email">
-                    <v-text-field v-model="user.emails[0].address"
-                                  id="inputEmail"
-                                  :error-messages="errors"
-                                  name="email"
-                                  label="Email"
-                                  required>
-                    </v-text-field>
-                  </ValidationProvider>
-                </v-col>
-              </v-row>
-            </v-form>
-          </ValidationObserver>
+          <Form as="v-form" @submit.prevent="saveUser" ref="userFormObserver"
+                id="saveUser" autocomplete="off">
+            <v-row>
+              <v-col sm="4" md="4">
+                <div class="d-flex flex-column align-center">
+                  <img :src="user.profile.path || '/img/user.png'" :alt="user.profile.name" width="100px">
+                  <v-file-input
+                      v-show="false"
+                      ref="imageFile"
+                      v-model="file"
+                      accept="image/png, image/jpeg, image/bmp"
+                      placeholder="Load ..."
+                      prepend-icon="mdi-camera"
+                  ></v-file-input>
+                  <v-btn color="primary" class="mb-5 mt-5"
+                         width="100%"
+                         rounded depressed @click="onClickUploadButton">
+                    <span v-if="user.profile.path">Change</span>
+                    <span v-else>Load</span>
+                  </v-btn>
+                </div>
+              </v-col>
+              <v-col sm="8" md="8">
+                <Field name="name" v-slot="{ errors }" rules="required">
+                  <v-text-field v-model="user.profile.name" label="Full name"
+                                :error-messages="errors" required>
+                  </v-text-field>
+                </Field>
+                <Field name="profile" v-slot="{ errors }" rules="required">
+                  <v-select v-model="user.profile.profile" :items="profiles" id="selectProfile"
+                            item-text="description" item-value="name"
+                            :error-messages="errors"
+                            label="Profile"
+                            required></v-select>
+                </Field>
+                <Field name="username" v-slot="{ errors }" rules="required">
+                  <v-text-field v-model="user.username"
+                                id="inputUsername"
+                                :error-messages="errors"
+                                label="Username" required>
+                  </v-text-field>
+                </Field>
+                <Field name="email" v-slot="{ errors }" rules="required|email">
+                  <v-text-field v-model="user.emails[0].address"
+                                id="inputEmail"
+                                :error-messages="errors"
+                                label="Email"
+                                required></v-text-field>
+                </Field>
+              </v-col>
+            </v-row>
+          </Form>
         </div>
       </v-col>
     </v-row>
@@ -81,44 +75,51 @@
 </template>
 
 <script lang="ts">
-import { ValidationObserver, ValidationProvider } from 'vee-validate';
-import { ProfileCollection } from '../../../api/Profiles/Profile';
-import Vue, { VueConstructor } from 'vue';
+import {Field, Form, FormContext} from 'vee-validate';
+import {ProfileCollection} from '../../../api/Profiles/Profile';
 import validateForm from '/imports/ui/mixins/validateForm';
-import AlertMessage from './../../components/Utilities/Alerts/AlertMessage.vue';
-import Loader from './../../components/Utilities/Loaders/Loader.vue';
-import { ResponseMessage } from '/imports/startup/server/utils/ResponseMessage';
-import { Meteor } from 'meteor/meteor';
-import { LOADER_MESSAGES } from "/imports/ui/constants/loader-messages.const";
+import {ResponseMessage} from '/imports/startup/server/utils/ResponseMessage';
+import {Meteor} from 'meteor/meteor';
+import {LOADER_MESSAGES} from "/imports/ui/constants/loader-messages.const";
 import uploadImage from '/imports/ui/mixins/users/uploadImage';
+import {defineComponent} from "vue";
 
-export default (Vue as VueConstructor<Vue &
-    InstanceType<typeof validateForm> &
-    {
-      $alert: InstanceType<typeof AlertMessage>,
-      $loader: InstanceType<typeof Loader>,
-      $refs: {
-        userFormObserver: InstanceType<typeof ValidationObserver>
-      }
-    }
-    >).extend({
+export default defineComponent({
   name: 'SaveUser',
-  mixins: [validateForm,uploadImage],
+  mixins: [validateForm, uploadImage],
   components: {
-    ValidationProvider,
-    ValidationObserver
+    Form,
+    Field
   },
-  data: () => ({
-    dataView: {
-      title: '',
-      targetButton: ''
-    },
-    user: {
-      emails: [{ verified: false }],
-      profile: {}
-    } as Meteor.User,
-    photoFileUser: null
-  }),
+  data: () => {
+    /* const schema = yup.object({
+       name: yup.string().required().label('Name'),
+       profile: yup.string().required().label('Profile'),
+       username: yup.string().required().label('Username'),
+       email: yup.string().email().required().label('Email'),
+     });
+
+     const initialValues={
+       name:'',
+       profile:'',
+       username:'',
+       email:'',
+     }
+ */
+    return {
+      dataView: {
+        title: '',
+        targetButton: ''
+      },
+      user: {
+        emails: [{verified: false}],
+        profile: {}
+      } as Meteor.User,
+      photoFileUser: null,
+      /*schema,
+      initialValues*/
+    }
+  },
   mounted() {
     if (this.$route.meta.type === 'create') {
       this.dataView.title = 'Create user';
@@ -138,23 +139,30 @@ export default (Vue as VueConstructor<Vue &
             path: tempUser.profile.path
           },
         };
+        /*this.initialValues={
+          name:tempUser.profile.name,
+          profile:tempUser.profile.profile,
+          username:tempUser.username,
+          email:tempUser.emails[0].address,
+        }*/
       } else {
-        this.$router.push({ name: 'home.users' });
+        this.$router.push({name: 'home.users'});
       }
     }
   },
   methods: {
     async saveUser() {
-      if (await this.isFormValid(this.$refs.userFormObserver)) {
+      if (await this.isFormValid(this.$refs.userFormObserver as FormContext)) {
         this.$loader.activate(LOADER_MESSAGES.SAVE_PROFILE);
-        Meteor.call('user.save', { user: this.user, photoFileUser: this.photoFileUser },
+        //TODO: Refresh this.user with values from
+        Meteor.call('user.save', {user: this.user, photoFileUser: this.photoFileUser},
             (error: Meteor.Error, response: ResponseMessage) => {
               this.$loader.deactivate();
               if (error) {
                 this.$alert.showAlertSimple('error', error.reason);
               } else {
                 this.$alert.showAlertSimple('success', response.message);
-                this.$router.push({ name: 'home.users' });
+                this.$router.push({name: 'home.users'});
               }
             });
       }

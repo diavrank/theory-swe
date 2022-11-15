@@ -6,9 +6,8 @@
 			</v-btn>
 			<div class="title">Forgot my password</div>
 		</div>
-		<ValidationObserver ref="forgotPasswordObserver">
-			<v-form @submit.prevent="forgotPassword">
-				<ValidationProvider v-slot="{errors}" name="email" rules="email|required">
+			<Form as="v-form" @submit.prevent="forgotPassword" ref="forgotPasswordObserver">
+				<Field v-slot="{errors}" name="email" rules="email|required">
 					<v-text-field v-model="user.email"
 					              id="inputEmail" name="email"
 					              :error-messages="errors"
@@ -16,33 +15,25 @@
                         data-test-id="input-email"
 					              required>
 					</v-text-field>
-				</ValidationProvider>
+				</Field>
 				<v-btn type="submit" class="mt-2" color="primary" rounded data-test-id="recover-button">Recover</v-btn>
-			</v-form>
-		</ValidationObserver>
+			</Form>
+
 	</div>
 </template>
 
 <script lang="ts">
 	import validateForm from './../../mixins/validateForm';
-	import { ValidationProvider, ValidationObserver } from 'vee-validate';
-  import Vue, { VueConstructor} from 'vue';
-  import AlertMessage from './../../components/Utilities/Alerts/AlertMessage.vue';
+  import {Field, FormContext} from 'vee-validate';
+  import {defineComponent} from 'vue';
   import { Meteor } from 'meteor/meteor';
   import { Accounts } from 'meteor/accounts-base'
 
-	export default (Vue as VueConstructor<Vue &
-      InstanceType<typeof validateForm> &
-      {
-        $refs: {
-          forgotPasswordObserver: InstanceType<typeof ValidationObserver>
-        },
-        $alert: InstanceType<typeof AlertMessage>
-      }>).extend({
+	export default defineComponent({
 		name: 'ForgotPassword',
 		mixins: [validateForm],
 		components: {
-			ValidationProvider,
+			Field,
 			ValidationObserver
 		},
 		data() {
@@ -54,7 +45,7 @@
 		},
 		methods: {
 			async forgotPassword() {
-				if (await this.isFormValid(this.$refs.forgotPasswordObserver)) {
+				if (await this.isFormValid(this.$refs.forgotPasswordObserver as FormContext)) {
 					Accounts.forgotPassword(this.user, (err: Meteor.Error | any) => {
 						if (err) {
 							console.error('Error sending email', err);
