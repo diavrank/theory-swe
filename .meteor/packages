@@ -25,7 +25,6 @@ peerlibrary:middleware
 meteorhacks:async
 alanning:roles
 maka:rest
-jquery
 tracker@1.2.0
 socialize:user-presence
 meteorhacks:ssr
