@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
-import { ProfileType, Profile } from './Profile';
+import { Profile } from './Profile';
+import { ProfileType } from '/imports/api/Profiles/ProfileCollection';
 import AuthGuard from './../../middlewares/AuthGuard';
 import { ResponseMessage } from '../../startup/server/utils/ResponseMessage';
 import { check, Match } from 'meteor/check';

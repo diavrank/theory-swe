@@ -36,7 +36,6 @@
 import { Form, Field, FormContext} from 'vee-validate';
 import  {defineComponent} from 'vue';
 import validateForm from './../../mixins/validateForm';
-import {Accounts} from 'meteor/accounts-base';
 import {Meteor} from 'meteor/meteor';
 
 export default defineComponent({

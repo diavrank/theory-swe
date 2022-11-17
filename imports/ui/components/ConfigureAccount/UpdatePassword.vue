@@ -62,7 +62,6 @@ import { Form, Field, FormContext} from 'vee-validate';
 import  {defineComponent} from 'vue';
 import validateForm from '/imports/ui/mixins/validateForm';
 import { Meteor } from 'meteor/meteor';
-import { Accounts } from 'meteor/accounts-base'
 
 interface PasswordInput {
   old: string | null;

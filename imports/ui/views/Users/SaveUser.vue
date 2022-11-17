@@ -75,14 +75,14 @@
 </template>
 
 <script lang="ts">
-import {Field, Form, FormContext} from 'vee-validate';
-import {ProfileCollection} from '../../../api/Profiles/Profile';
+import { Field, Form, FormContext } from 'vee-validate';
+import { ProfileCollection } from '../../../api/Profiles/ProfileCollection';
 import validateForm from '/imports/ui/mixins/validateForm';
-import {ResponseMessage} from '/imports/startup/server/utils/ResponseMessage';
-import {Meteor} from 'meteor/meteor';
-import {LOADER_MESSAGES} from "/imports/ui/constants/loader-messages.const";
+import { ResponseMessage } from '/imports/startup/server/utils/ResponseMessage';
+import { Meteor } from 'meteor/meteor';
+import { LOADER_MESSAGES } from '/imports/ui/constants/loader-messages.const';
 import uploadImage from '/imports/ui/mixins/users/uploadImage';
-import {defineComponent} from "vue";
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'SaveUser',
@@ -112,13 +112,13 @@ export default defineComponent({
         targetButton: ''
       },
       user: {
-        emails: [{verified: false}],
+        emails: [{ verified: false }],
         profile: {}
       } as Meteor.User,
-      photoFileUser: null,
+      photoFileUser: null
       /*schema,
       initialValues*/
-    }
+    };
   },
   mounted() {
     if (this.$route.meta.type === 'create') {
@@ -137,7 +137,7 @@ export default defineComponent({
             profile: tempUser.profile.profile,
             name: tempUser.profile.name,
             path: tempUser.profile.path
-          },
+          }
         };
         /*this.initialValues={
           name:tempUser.profile.name,
@@ -146,7 +146,7 @@ export default defineComponent({
           email:tempUser.emails[0].address,
         }*/
       } else {
-        this.$router.push({name: 'home.users'});
+        this.$router.push({ name: 'home.users' });
       }
     }
   },
@@ -155,14 +155,14 @@ export default defineComponent({
       if (await this.isFormValid(this.$refs.userFormObserver as FormContext)) {
         this.$loader.activate(LOADER_MESSAGES.SAVE_PROFILE);
         //TODO: Refresh this.user with values from
-        Meteor.call('user.save', {user: this.user, photoFileUser: this.photoFileUser},
+        Meteor.call('user.save', { user: this.user, photoFileUser: this.photoFileUser },
             (error: Meteor.Error, response: ResponseMessage) => {
               this.$loader.deactivate();
               if (error) {
                 this.$alert.showAlertSimple('error', error.reason);
               } else {
                 this.$alert.showAlertSimple('success', response.message);
-                this.$router.push({name: 'home.users'});
+                this.$router.push({ name: 'home.users' });
               }
             });
       }
@@ -176,7 +176,7 @@ export default defineComponent({
       return ProfileCollection.find({}).fetch();
     }
   }
-})
+});
 </script>
 
 <style scoped lang="sass">

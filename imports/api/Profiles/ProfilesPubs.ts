@@ -1,9 +1,9 @@
-import { ProfileCollection } from './Profile';
 import { PermissionMiddleware } from '../../middlewares/PermissionMiddleware';
 import Permissions from '../../startup/server/Permissions';
 import ProfilesServ from './ProfilesServ';
 import { LoggedUserMiddleware } from '../../middlewares/LoggedUserMiddleware';
 import { PublishEndpoint } from 'meteor/peerlibrary:middleware';
+import { ProfileCollection } from '/imports/api/Profiles/ProfileCollection';
 
 /**
  * @summary List all non static profiles

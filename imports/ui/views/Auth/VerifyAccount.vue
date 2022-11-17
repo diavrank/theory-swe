@@ -19,7 +19,6 @@
 <script lang="ts">
 import {defineComponent} from 'vue';
 import {Meteor} from 'meteor/meteor';
-import {Accounts} from 'meteor/accounts-base';
 
 export default defineComponent({
   name: 'VerifyAccount',

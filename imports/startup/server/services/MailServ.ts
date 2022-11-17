@@ -1,5 +1,4 @@
 import { Meteor } from 'meteor/meteor';
-import { Accounts } from 'meteor/accounts-base';
 // @ts-ignore
 import { SSR } from 'meteor/meteorhacks:ssr';
 

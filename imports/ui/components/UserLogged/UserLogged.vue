@@ -19,15 +19,15 @@
 </template>
 
 <script lang="ts">
-import {mapMutations} from 'vuex';
-import {Meteor} from 'meteor/meteor';
-import {User} from '/imports/ui/typings/users';
-import {LogoutHook} from './../../typings/accounts'
-import {defineComponent} from "vue";
+import { mapMutations } from 'vuex';
+import { Meteor } from 'meteor/meteor';
+import { User } from '/imports/ui/typings/users';
+import { LogoutHook } from './../../typings/accounts';
+import { defineComponent } from 'vue';
 
-declare module Accounts {
+/*declare module Accounts {
   function onLogout(func: Function): LogoutHook;
-}
+}*/
 
 export default defineComponent({
   name: 'UserLogged',
@@ -35,7 +35,7 @@ export default defineComponent({
     return {
       user: {
         emails: [],
-        profile: {},
+        profile: {}
       } as User,
       onLogoutHook: null as LogoutHook | null
     };
@@ -49,9 +49,9 @@ export default defineComponent({
     this.emitter.on('setUserLogged', () => {
       this.setSession();
     });
-    this.onLogoutHook = Accounts.onLogout(() => {
+    /*this.onLogoutHook = Accounts.onLogout(() => {
       this.closeFrontSession();
-    });
+    });*/
   },
   methods: {
     ...mapMutations('auth', ['logout']),
@@ -60,21 +60,21 @@ export default defineComponent({
         this.onLogoutHook.stop();
         Meteor.logout();
         this.logout();
-        this.$router.push({name: 'login'});
+        this.$router.push({ name: 'login' });
       }
     },
     closeFrontSession() {
       if (this.onLogoutHook) {
         this.onLogoutHook.stop();
         this.logout();
-        this.$router.push({name: 'login'});
+        this.$router.push({ name: 'login' });
       }
     },
     setSession() {
       if (Meteor.userId() !== null) {
         this.user = this.$store.state.auth.user || {
           emails: [],
-          profile: {},
+          profile: {}
         };
       } else {
         this.closeSession();
@@ -93,7 +93,7 @@ export default defineComponent({
       return initials.toUpperCase();
     }
   }
-})
+});
 </script>
 
 <style>

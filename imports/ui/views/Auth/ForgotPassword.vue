@@ -27,7 +27,6 @@
   import { Field, Form, FormContext } from 'vee-validate';
   import {defineComponent} from 'vue';
   import { Meteor } from 'meteor/meteor';
-  import { Accounts } from 'meteor/accounts-base'
 
 	export default defineComponent({
 		name: 'ForgotPassword',

@@ -1,4 +1,3 @@
-import { Accounts } from 'meteor/accounts-base';
 import { Random } from 'meteor/random';
 import { resetDatabase } from 'meteor/xolvio:cleaner';
 import { deleteUserMethod, saveUserMethod, updatePersonalDataMethod } from '/imports/api/Users/UsersCtrl';

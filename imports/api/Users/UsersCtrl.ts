@@ -1,5 +1,4 @@
 import { Meteor } from 'meteor/meteor';
-import { Accounts } from 'meteor/accounts-base';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import AuthGuard from './../../middlewares/AuthGuard';
 import { ResponseMessage } from '../../startup/server/utils/ResponseMessage';

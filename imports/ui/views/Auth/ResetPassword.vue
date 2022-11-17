@@ -49,7 +49,6 @@ import {Form, Field, FormContext} from 'vee-validate';
 import  {defineComponent} from 'vue';
 import validateForm from './../../mixins/validateForm';
 import { Meteor } from 'meteor/meteor';
-import { Accounts } from 'meteor/accounts-base'
 
 export default defineComponent({
   name: 'ResetPassword',
