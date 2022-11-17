@@ -2,9 +2,10 @@ import { resetDatabase } from 'meteor/xolvio:cleaner';
 import { User, UserType } from '/imports/api/Users/User';
 import { Factory } from 'meteor/dburles:factory';
 import { deleteProfileMethod, saveProfileMethod } from '/imports/api/Profiles/ProfilesCtrl';
-import { Profile, ProfileType } from '/imports/api/Profiles/Profile';
+import { Profile } from '/imports/api/Profiles/Profile';
 import chai from 'chai';
 import { StaticProfiles } from '/imports/api/Profiles/ProfileSeeder';
+import { ProfileType } from '/imports/api/Profiles/ProfileCollection';
 
 describe('ProfilesCtrl', function() {
 	let adminUser: MeteorAstronomy.Model<UserType>;
