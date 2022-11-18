@@ -1,21 +1,23 @@
 <template>
-	<v-app id="allPageView">
-		<transition :name="$router.currentRoute.name">
-			<router-view name="allPageView"></router-view>
-		</transition>
-		<alert-message/>
-		<loader/>
-	</v-app>
+  <v-app id="allPageView">
+    <router-view name="allPageView" v-slot="{Component}">
+      <transition :name="$router.currentRoute.name">
+        <component :is="Component"/>
+      </transition>
+    </router-view>
+    <alert-message/>
+    <loader/>
+  </v-app>
 </template>
 
 <script lang="ts">
-	import AlertMessage from './components/Utilities/Alerts/AlertMessage.vue';
-	import Loader from './components/Utilities/Loaders/Loader.vue';
+import AlertMessage from './components/Utilities/Alerts/AlertMessage.vue';
+import Loader from './components/Utilities/Loaders/Loader.vue';
 
-	export default {
-		name: 'App',
-		components: { AlertMessage, Loader },
-	}
+export default {
+  name: 'App',
+  components: { AlertMessage, Loader }
+};
 </script>
 
 <style>

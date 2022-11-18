@@ -1,27 +1,29 @@
 <template>
-    <v-row>
-        <v-col xs="12" sm="8" md="4" class="d-flex flex-column justify-center pa-12">
-            <div class="text-center">
-                <img src="/img/vuetify.png" alt="Vuetify" height="180px" width="auto"/>
-            </div>
-            <transition name="section-view">
-                <router-view name="sectionView"/>
-            </transition>
-        </v-col>
-        <v-col xs="12" sm="4" md="8" class="right-side d-flex flex-column justify-center">
-            <div class="text-h2 font-weight-medium mr-10 text-right white--text">
-              Theory SwE
-            </div>
-        </v-col>
-    </v-row>
+  <v-row>
+    <v-col xs="12" sm="8" md="4" class="d-flex flex-column justify-center pa-12">
+      <div class="text-center">
+        <img src="/img/vuetify.png" alt="Vuetify" height="180"/>
+      </div>
+      <router-view name="sectionView" v-slot="{Component}">
+        <transition name="section-view">
+          <component :is="Component"/>
+        </transition>
+      </router-view>
+    </v-col>
+    <v-col xs="12" sm="4" md="8" class="right-side d-flex flex-column justify-center">
+      <div class="text-h2 font-weight-medium mr-10 text-right white--text">
+        Theory Ivan 1
+      </div>
+    </v-col>
+  </v-row>
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue';
+import { defineComponent } from 'vue';
 
-    export default defineComponent({
-        name: "LytAuth",
-    })
+export default defineComponent({
+  name: 'LytAuth'
+});
 </script>
 
 <style scoped lang="sass">

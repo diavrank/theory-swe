@@ -32,6 +32,11 @@ export default createVuetify({
 			md
 		}
 	},
+	defaults: {
+		VTextField: {
+			variant: 'underlined'
+		}
+	},
 	locale: {
 		locale: 'es',
 		messages: { es }
