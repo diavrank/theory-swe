@@ -50,8 +50,8 @@ export default defineComponent({
       error: false
     };
   },
-  async mounted() {
-    await this.$refs.loginObserver.reset();
+  mounted() {
+    this.$refs.loginObserver.resetForm();
   },
   computed: {
     ...mapState('auth', ['errorMessage'])

@@ -96,7 +96,7 @@ export default defineComponent({
         Accounts.changePassword(this.password.old || '', this.password.new || '',
             async (error:  Error | Meteor.Error | Meteor.TypedError | undefined) => {
           this.setNulls(this.password);
-          await this.$refs.passwordFormObserver.reset();
+          this.$refs.passwordFormObserver.resetForm();
           if (error) {
             console.error('Error changing password: ', error);
             this.$alert.showAlertSimple('error', 'An error occurred while changing the password.');

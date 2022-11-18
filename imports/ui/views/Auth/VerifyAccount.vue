@@ -17,8 +17,8 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from 'vue';
-import {Meteor} from 'meteor/meteor';
+import { defineComponent } from 'vue';
+import { Meteor } from 'meteor/meteor';
 
 export default defineComponent({
   name: 'VerifyAccount',
