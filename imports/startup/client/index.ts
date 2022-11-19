@@ -16,11 +16,13 @@ import mitt, { Emitter, EventType } from 'mitt';
 import vuetify from '../../ui/plugins/vuetify';
 import { loadFonts } from '/imports/ui/plugins/webfontloader';
 import '../../ui/plugins';
+import filters from '/imports/ui/filters';
 
 declare module 'vue' {
 	interface ComponentCustomProperties {
 		$alert: typeof AlertMessage;
 		$loader: typeof Loader;
+		$filters: Object,
 		emitter: Emitter<Record<EventType, unknown>>;
 	}
 }
@@ -47,6 +49,7 @@ Meteor.startup(() => {
 	app.use(VueMeteor);
 	app.use(vuetify);
 	app.directive('can', VCan);
+	app.config.globalProperties.$filters = filters;
 	app.config.globalProperties.emitter = emitter;
 	app.mount('app');
 });

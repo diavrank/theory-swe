@@ -1,7 +1,7 @@
 <template>
   <v-footer padless>
     <div class="d-flex flex-column align-center justify-center">
-      <p class="white--text text-caption">
+      <p class="text-white text-caption">
         ©{{ currentLocalDate().getFullYear() }} By Diavrank.
       </p>
     </div>

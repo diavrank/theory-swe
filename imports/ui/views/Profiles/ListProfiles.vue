@@ -4,11 +4,10 @@
       <v-col xs="12" sm="12" offset-sm="0" md="6" offset-md="3">
         <div class="d-flex justify-space-between align-baseline mb-5">
           <div class="text-h4 font-weight-light">Profiles</div>
-          <v-tooltip bottom transition="fab-transition">
-            <template v-slot:activator="{on}">
-              <v-btn v-can:create.hide="'profiles'" color="success" v-on="on" fab theme="dark"
+          <v-tooltip location="bottom" transition="fab-transition">
+            <template v-slot:activator="{props}">
+              <v-btn v-can:create.hide="'profiles'" color="success" v-bind="props" icon="add" theme="dark"
                      :to="{name: 'home.profiles.create'}">
-                <v-icon>add</v-icon>
               </v-btn>
             </template>
             <span>Add profile</span>
@@ -33,20 +32,18 @@
             >
               <td>{{ item.description }}</td>
               <td>
-                <v-tooltip bottom transition="fab-transition">
-                  <template v-slot:activator="{on}">
-                    <v-btn v-can:edit.hide="'profiles'" fab color="success" v-on="on" x-small class="mr-2"
+                <v-tooltip location="bottom" transition="fab-transition">
+                  <template v-slot:activator="{props}">
+                    <v-btn v-can:edit.hide="'profiles'" icon="edit" color="success" v-bind="props" size="x-small" class="mr-2"
                            @click="openEditProfile(item)">
-                      <v-icon>edit</v-icon>
                     </v-btn>
                   </template>
                   <span>Edit</span>
                 </v-tooltip>
-                <v-tooltip bottom transition="fab-transition">
-                  <template v-slot:activator="{on}">
-                    <v-btn v-can:delete.hide="'profiles'" fab color="error" v-on="on" x-small class="mr-2"
+                <v-tooltip location="bottom" transition="fab-transition">
+                  <template v-slot:activator="{props}">
+                    <v-btn v-can:delete.hide="'profiles'" icon="close" color="error" v-bind="props" size="x-small" class="mr-2"
                            @click="openRemoveModal(item)">
-                      <v-icon>close</v-icon>
                     </v-btn>
                   </template>
                   <span>Remove</span>
