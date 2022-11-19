@@ -5,7 +5,7 @@
         <v-btn variant="text" exact @click="$router.back()">
           <v-icon>mdi:mdi-chevron-left</v-icon>
         </v-btn>
-        <div class="display-1 font-weight-light">{{ dataView.title }}</div>
+        <div class="text-h5 font-weight-light">{{ dataView.title }}</div>
       </v-col>
       <v-col xs="12" sm="2" md="2" lg="2" xl="1">
         <v-btn block type="submit" form="saveProfile" color="primary"
@@ -16,41 +16,38 @@
     <v-row justify="center">
       <v-col xs="12" sm="12" md="10" lg="8" xl="5">
         <div class="section elevation-1">
-          <Form as="v-form" @submit.prevent="saveProfile" ref="profileObserver"
-                id="saveProfile" autocomplete="off">
-            <v-row>
-              <v-col md="6">
-                <Field v-slot="{errors}" name="name" rules="required">
-                  <v-text-field v-model="profile.name" id="inputName" name="name"
-                                :error-messages="errors"
-                                label="Profile's name" required>
-                  </v-text-field>
-                </Field>
-              </v-col>
-              <v-col md="6">
-                <Field v-slot="{errors}" name="description" rules="required">
-                  <v-text-field v-model="profile.description"
-                                :error-messages="errors"
-                                id="inputDescriptionProfile" name="descriptionProfile"
-                                label="Profile's description" required>
-                  </v-text-field>
-                </Field>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <div>
-                  <p class="title font-weight-regular">Permissions of this profile</p>
-                  <v-card-text>
-                    <v-text-field v-model="searchSelfPermission" placeholder="Buscar. . ."
-                                  id="inputSearchSelfPermission" name="descriptionProfile">
+          <Form as="div" v-slot="{handleSubmit}" :initial-values="initialValues" ref="profileObserver">
+            <v-form @submit="handleSubmit($event,saveProfile)" id="saveProfile" autocomplete="off">
+              <v-row>
+                <v-col md="6">
+                  <Field v-slot="{ field, errors }" name="name" rules="required">
+                    <v-text-field v-bind="field" v-model="profile.name"
+                                  :error-messages="errors" label="Profile's name" required>
                     </v-text-field>
-                  </v-card-text>
-                  <v-sheet
-                      id="scrolling-techniques-2"
-                      class="overflow-y-auto"
-                      max-height="500">
-                    <v-list style="height: 400px;">
+                  </Field>
+                </v-col>
+                <v-col md="6">
+                  <Field v-slot="{ field, errors }" name="description" rules="required">
+                    <v-text-field v-bind="field" v-model="profile.description" :error-messages="errors"
+                                  label="Profile's description" required>
+                    </v-text-field>
+                  </Field>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col>
+                  <div>
+                    <p class="title font-weight-regular">Permissions of this profile</p>
+                    <v-card-text>
+                      <v-text-field v-model="searchSelfPermission" placeholder="Buscar. . ."
+                                    id="inputSearchSelfPermission" name="inputSelfPermission">
+                      </v-text-field>
+                    </v-card-text>
+                    <v-sheet
+                        id="scrolling-techniques-2"
+                        class="overflow-y-auto"
+                        max-height="500">
+                      <v-list style="height: 400px;">
                         <draggable :list="filteredSelfPermissions"
                                    @change="(ev) => onChangeDragList(ev, 'selfPermissions')"
                                    item-key="_id"
@@ -59,36 +56,37 @@
                             <v-list-item v-text="permission.publicName"></v-list-item>
                           </template>
                         </draggable>
-                    </v-list>
-                  </v-sheet>
-                </div>
-              </v-col>
-              <v-col>
-                <div>
-                  <p class="title font-weight-regular">All permissions</p>
-                  <v-card-text>
-                    <v-text-field v-model="searchPermission" placeholder="Buscar. . ."
-                                  id="inputSearchPermission" name="inputSearchPermission">
-                    </v-text-field>
-                  </v-card-text>
-                  <v-sheet
-                      id="scrolling-techniques-3"
-                      class="overflow-y-auto"
-                      max-height="500">
-                    <v-list style="height: 400px;">
-                      <draggable class="list-item-group" :list="filteredPermissions"
-                                 @change="(ev) => onChangeDragList(ev, 'allPermissions')"
-                                 item-key="_id"
-                                 group="permissions">
-                        <template #item="{element: permission}">
-                          <v-list-item v-text="permission.publicName"></v-list-item>
-                        </template>
-                      </draggable>
-                    </v-list>
-                  </v-sheet>
-                </div>
-              </v-col>
-            </v-row>
+                      </v-list>
+                    </v-sheet>
+                  </div>
+                </v-col>
+                <v-col>
+                  <div>
+                    <p class="title font-weight-regular">All permissions</p>
+                    <v-card-text>
+                      <v-text-field v-model="searchPermission" placeholder="Buscar. . ."
+                                    id="inputSearchPermission" name="inputSearchPermission">
+                      </v-text-field>
+                    </v-card-text>
+                    <v-sheet
+                        id="scrolling-techniques-3"
+                        class="overflow-y-auto"
+                        max-height="500">
+                      <v-list style="height: 400px;">
+                        <draggable class="list-item-group" :list="filteredPermissions"
+                                   @change="(ev) => onChangeDragList(ev, 'allPermissions')"
+                                   item-key="_id"
+                                   group="permissions">
+                          <template #item="{element: permission}">
+                            <v-list-item v-text="permission.publicName"></v-list-item>
+                          </template>
+                        </draggable>
+                      </v-list>
+                    </v-sheet>
+                  </div>
+                </v-col>
+              </v-row>
+            </v-form>
           </Form>
         </div>
       </v-col>
@@ -98,14 +96,14 @@
 
 <script lang="ts">
 import draggable from 'vuedraggable';
-import {Field, Form, FormContext} from 'vee-validate';
+import { Field, Form, FormContext } from 'vee-validate';
 import validateForm from '/imports/ui/mixins/validateForm';
-import {defineComponent} from 'vue';
-import {Meteor} from 'meteor/meteor';
-import {ResponseMessage} from '/imports/startup/server/utils/ResponseMessage';
-import {RoleType} from '/imports/api/Permissions/Permission';
-import {LOADER_MESSAGES} from '/imports/ui/constants/loader-messages.const';
-import {VueDraggableEvents} from '../../typings/utilities';
+import { defineComponent } from 'vue';
+import { Meteor } from 'meteor/meteor';
+import { ResponseMessage } from '/imports/startup/server/utils/ResponseMessage';
+import { RoleType } from '/imports/api/Permissions/Permission';
+import { LOADER_MESSAGES } from '/imports/ui/constants/loader-messages.const';
+import { VueDraggableEvents } from '../../typings/utilities';
 
 enum PermissionGroup {
   Self = 'selfPermissions',
@@ -131,6 +129,10 @@ export default defineComponent({
       description: null,
       permissions: [] as string[]
     },
+    initialValues: {
+      name: null,
+      description: null
+    },
     searchSelfPermission: '',
     searchPermission: '',
     selfPermissions: [] as RoleType[],
@@ -145,10 +147,14 @@ export default defineComponent({
       this.dataView.title = 'Edit profile';
       this.dataView.targetButton = 'Update';
       if (this.$store.state.temporal.element) {
-        this.profile = {...this.$store.state.temporal.element};
+        this.profile = { ...this.$store.state.temporal.element };
         this.initPermissionLists();
+        this.initialValues = {
+          name: this.profile.name,
+          description: this.profile.description
+        };
       } else {
-        this.$router.push({name: 'home.profiles'});
+        this.$router.push({ name: 'home.profiles' });
       }
     }
   },
@@ -191,7 +197,7 @@ export default defineComponent({
                 this.$alert.showAlertSimple('error', error.reason);
               } else {
                 this.$alert.showAlertSimple('success', response.message);
-                this.$router.push({name: 'home.profiles'});
+                this.$router.push({ name: 'home.profiles' });
               }
             });
       }
@@ -200,7 +206,7 @@ export default defineComponent({
       this.profile.permissions = this.selfPermissions.map((roleType: RoleType) => roleType._id);
     },
     initPermissionLists() {
-      Meteor.call('permissions.listOthersForIdProfile', {profileId: this.profile._id},
+      Meteor.call('permissions.listOthersForIdProfile', { profileId: this.profile._id },
           (err: Meteor.Error, response: RoleType[]) => {
             if (err) {
               console.error('Error listing permissions: ', err);
@@ -209,7 +215,7 @@ export default defineComponent({
             this.allPermissions = response;
           });
 
-      Meteor.call('permissions.listByIdProfile', {profileId: this.profile._id},
+      Meteor.call('permissions.listByIdProfile', { profileId: this.profile._id },
           (err: Meteor.Error, response: RoleType[]) => {
             if (err) {
               console.error('Error listing profile permissions: ', err);
@@ -228,7 +234,7 @@ export default defineComponent({
       });
     }
   }
-})
+});
 </script>
 
 <style scoped lang="sass">

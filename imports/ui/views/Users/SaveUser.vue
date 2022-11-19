@@ -16,12 +16,12 @@
     <v-row justify="center">
       <v-col xs="12" sm="12" md="10" lg="8" xl="5">
         <div class="section elevation-1">
-          <Form as="div" v-slot="{handleSubmit}" ref="userFormObserver">
+          <Form as="div" v-slot="{handleSubmit}" :initial-values="initialValues" ref="userFormObserver">
             <v-form @submit="handleSubmit($event,saveUser)" id="saveUser" autocomplete="off">
               <v-row>
                 <v-col sm="4" md="4">
                   <div class="d-flex flex-column align-center">
-                    <img :src="user.profile.path || '/img/user.png'" :alt="user.profile.name" width="100"/>
+                    <v-img :src="user.profile.path || '/img/user.png'" :alt="user.profile.name" width="100"/>
                     <v-file-input
                         id="fileUpload"
                         v-show="false"
@@ -40,9 +40,9 @@
                   </div>
                 </v-col>
                 <v-col sm="8" md="8">
-                  <Field name="name" v-slot="{ field, errors }" rules="required">
-                    <v-text-field v-bind="field" v-model="user.profile.name" label="Full name"
-                                  :error-messages="errors" required>
+                  <Field type="text" name="name" v-slot="{ field, errors }" rules="required">
+                    <v-text-field v-bind="field" label="Full name" v-model="user.profile.name"
+                                  :error-messages="errors">
                     </v-text-field>
                   </Field>
                   <Field name="profile" v-slot="{ field, errors }" rules="required">
@@ -102,7 +102,13 @@ export default defineComponent({
       user: {
         emails: [{ verified: false }],
         profile: {}
-      } as Meteor.User
+      } as Meteor.User,
+      initialValues: {
+        name: '',
+        profile: '',
+        username: '',
+        email: ''
+      }
     };
   },
   mounted() {
@@ -123,6 +129,12 @@ export default defineComponent({
             name: tempUser.profile.name,
             path: tempUser.profile.path
           }
+        };
+        this.initialValues = {
+          name: tempUser.profile.name,
+          profile: tempUser.profile.profile,
+          username: tempUser.username,
+          email: tempUser.emails[0].address
         };
       } else {
         this.$router.push({ name: 'home.users' });

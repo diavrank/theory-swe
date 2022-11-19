@@ -2,7 +2,7 @@
   <v-row>
     <v-col xs="12" sm="8" md="4" class="d-flex flex-column justify-center pa-12">
       <div class="text-center">
-        <img src="/img/vuetify.png" alt="Vuetify" height="180"/>
+        <v-img src="/img/vuetify.png" alt="Vuetify" height="180px"></v-img>
       </div>
       <router-view name="sectionView" v-slot="{Component}">
         <transition name="section-view">

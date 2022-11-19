@@ -9,7 +9,7 @@
       </v-card-title>
       <v-row>
         <v-col cols="12" sm="12" md="3" lg="3" class="pl-10">
-          <img :src="user.profile.path || '/img/user.png'" :alt="user.profile.name" width="100px">
+          <v-img :src="user.profile.path || '/img/user.png'" :alt="user.profile.name" width="100px"/>
           <v-file-input
               v-show="false"
               ref="imageFile"

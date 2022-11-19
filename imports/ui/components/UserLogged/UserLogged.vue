@@ -6,8 +6,8 @@
                     <span v-if="user.profile.path==null" class="text-white text-h5">
                         {{ usernameInitials }}
                     </span>
-          <img v-else id="face-preview" :src="user.profile.path"
-               :alt="user.username">
+          <v-img v-else id="face-preview" :src="user.profile.path"
+               :alt="user.username" />
         </v-avatar>
       </v-btn>
     </template>

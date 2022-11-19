@@ -46,7 +46,7 @@
                     <span v-if="item.profile.path == null" class="text-dark text-h5">
                         {{ $filters.initials(item.username, 2) }}
                     </span>
-                <img v-else :src="item.profile.path || '/img/user.png'" alt="Avatar">
+                <v-img v-else :src="item.profile.path || '/img/user.png'" alt="Avatar"></v-img>
               </v-avatar>
             </div>
           </td>
