@@ -1,7 +1,7 @@
 <template>
   <v-menu offset-y>
-    <template v-slot:activator="{on}">
-      <v-btn text v-on="on">
+    <template v-slot:activator="{props}">
+      <v-btn variant="text" v-bind="props">
         <v-avatar color="indigo" size="36">
                     <span v-if="user.profile.path==null" class="white--text text-h5">
                         {{ usernameInitials }}
@@ -25,9 +25,9 @@ import { User } from '/imports/ui/typings/users';
 import { LogoutHook } from './../../typings/accounts';
 import { defineComponent } from 'vue';
 
-/*declare module Accounts {
+declare module Accounts {
   function onLogout(func: Function): LogoutHook;
-}*/
+}
 
 export default defineComponent({
   name: 'UserLogged',
@@ -49,9 +49,9 @@ export default defineComponent({
     this.emitter.on('setUserLogged', () => {
       this.setSession();
     });
-    /*this.onLogoutHook = Accounts.onLogout(() => {
+    this.onLogoutHook = Accounts.onLogout(() => {
       this.closeFrontSession();
-    });*/
+    });
   },
   methods: {
     ...mapMutations('auth', ['logout']),

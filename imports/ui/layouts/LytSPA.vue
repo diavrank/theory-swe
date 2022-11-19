@@ -1,14 +1,14 @@
 <template>
   <v-container fluid>
-    <transition appear name="appear-header">
-      <header-view></header-view>
-    </transition>
+    <header-view></header-view>
     <navigation-drawer></navigation-drawer>
     <transition appear name="appear-section-spa">
       <v-main id="main_section">
-        <transition name="section-view">
-          <router-view class="section-view" name="sectionView" v-if="loggedUser"></router-view>
-        </transition>
+        <router-view class="section-view" name="sectionView" v-slot="{Component}" v-if="loggedUser">
+          <transition name="section-view">
+            <component :is="Component"/>
+          </transition>
+        </router-view>
       </v-main>
     </transition>
   </v-container>
@@ -37,9 +37,10 @@ export default defineComponent({
       }
     }
   },
-  mounted() {
-    // @ts-ignore
-    this.$subscribe('roles', []);
+  meteor: {
+    $subscribe: {
+      roles: []
+    }
   }
 });
 </script>

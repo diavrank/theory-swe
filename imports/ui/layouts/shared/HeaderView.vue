@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app elevate-on-scroll light>
+  <v-app-bar>
     <v-btn text @click="setDrawer(!drawer)">
       <v-icon>menu</v-icon>
     </v-btn>
@@ -13,7 +13,7 @@
 import UserLogged from '../../components/UserLogged/UserLogged.vue';
 import Breadcrumb from './Breadcrumb.vue';
 import { mapState, mapMutations } from 'vuex';
-import {defineComponent} from 'vue';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'HeaderView',
@@ -27,7 +27,7 @@ export default defineComponent({
   methods: {
     ...mapMutations('temporal', ['setDrawer'])
   }
-})
+});
 </script>
 
 <style scoped>

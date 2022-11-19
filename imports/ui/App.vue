@@ -1,7 +1,7 @@
 <template>
   <v-app id="allPageView">
     <router-view name="allPageView" v-slot="{Component}">
-      <transition :name="$router.currentRoute.name">
+      <transition :name="$router.currentRoute.value.name">
         <component :is="Component"/>
       </transition>
     </router-view>
@@ -13,11 +13,12 @@
 <script lang="ts">
 import AlertMessage from './components/Utilities/Alerts/AlertMessage.vue';
 import Loader from './components/Utilities/Loaders/Loader.vue';
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   name: 'App',
-  components: { AlertMessage, Loader }
-};
+  components: { AlertMessage, Loader },
+});
 </script>
 
 <style>
