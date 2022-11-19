@@ -47,8 +47,6 @@ Meteor.startup(() => {
 	app.use(VueMeteor);
 	app.use(vuetify);
 	app.directive('can', VCan);
-	app.config.globalProperties.$loader = Loader;
-	app.config.globalProperties.$alert = AlertMessage;
 	app.config.globalProperties.emitter = emitter;
 	app.mount('app');
 });

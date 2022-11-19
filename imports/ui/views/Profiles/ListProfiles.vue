@@ -122,7 +122,7 @@ export default defineComponent({
           console.error('There was an error in deleteProfile: ', err);
           if (err.reason === 'Profile cannot be removed') {
             this.$alert.showAlertFull('warning', 'error',
-                err.reason, 'multi-line', 5000, 'right', 'bottom', err.details);
+                err.reason, 'multi-line', 5000,  'bottom right', err.details);
           } else {
             this.$alert.showAlertSimple('error', err.reason);
           }
