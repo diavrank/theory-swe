@@ -1,6 +1,6 @@
 <template>
   <v-app-bar>
-    <v-btn text @click="setDrawer(!drawer)">
+    <v-btn variant="text" @click="setDrawer(!drawer)">
       <v-icon>menu</v-icon>
     </v-btn>
     <breadcrumb></breadcrumb>

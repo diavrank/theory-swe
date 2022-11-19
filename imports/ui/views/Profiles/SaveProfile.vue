@@ -2,7 +2,7 @@
   <v-container>
     <v-row justify="center">
       <v-col class="d-flex" xs="12" sm="9" md="8" lg="6" xl="4">
-        <v-btn text exact @click="$router.back()">
+        <v-btn variant="text" exact @click="$router.back()">
           <v-icon>mdi:mdi-chevron-left</v-icon>
         </v-btn>
         <div class="display-1 font-weight-light">{{ dataView.title }}</div>

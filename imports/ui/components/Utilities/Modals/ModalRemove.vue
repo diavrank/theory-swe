@@ -12,7 +12,7 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="default" text v-on:click="cancel">
+        <v-btn color="default" variant="text" v-on:click="cancel">
           Cancel
         </v-btn>
         <v-btn color="error" depressed v-on:click="removeElement">

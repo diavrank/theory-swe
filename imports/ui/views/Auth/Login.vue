@@ -36,8 +36,8 @@ import { defineComponent } from 'vue';
 import { Meteor } from 'meteor/meteor';
 
 export default defineComponent({
-  mixins: [validateForm],
   name: 'Login',
+  mixins: [validateForm],
   components: {
     Form,
     Field
