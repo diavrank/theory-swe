@@ -15,12 +15,12 @@
             <v-icon size="small">close</v-icon>
           </v-btn>
         </template>
-        <span>Cerrar</span>
+        <span>Close</span>
       </v-tooltip>
     </template>
     <v-row>
       <v-col cols="12" md="1">
-        <v-icon v-if="icon" dark start>
+        <v-icon v-if="icon" theme="dark" start>
           cancel
         </v-icon>
       </v-col>

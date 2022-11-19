@@ -12,7 +12,7 @@
                     label="New password"
                     data-test-id="password-input"
                     @click:append="showPass.new = !showPass.new"
-                    :append-icon="!showPass.new ? 'mdi-eye' : 'mdi-eye-off'"
+                    :append-icon="!showPass.new ? 'mdi:mdi-eye' : 'mdi:mdi-eye-off'"
                     autocomplete="new-password"></v-text-field>
     </Field>
     <Field v-slot="{errors}" name="confirm password" rules="required|confirmed:password">
@@ -23,7 +23,7 @@
                     label="Confirm password"
                     data-test-id="input-password-confirmation"
                     @click:append="showPass.confirm = !showPass.confirm"
-                    :append-icon="!showPass.confirm ? 'mdi-eye' : 'mdi-eye-off'"
+                    :append-icon="!showPass.confirm ? 'mdi:mdi-eye' : 'mdi:mdi-eye-off'"
                     required></v-text-field>
     </Field>
     <div class="d-flex justify-start mt-2">

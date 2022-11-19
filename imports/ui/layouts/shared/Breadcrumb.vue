@@ -1,7 +1,7 @@
 <template>
 		<div class="breadcrumb-item" v-for="(item, index) in items" :key="item.text">
 			<v-icon v-if="index > 0" color="primary">
-				mdi-chevron-right
+				mdi:mdi-chevron-right
 			</v-icon>
 			<a @click="routeTo(item)"
 			   :class="{active: index === last}"

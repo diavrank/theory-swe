@@ -11,7 +11,7 @@
         <v-card-text>
           <Field v-slot="{errors}" name="current password" rules="required">
             <v-text-field v-model="password.old" id="inputPassword"
-                          :append-icon="showPass.old ? 'mdi-eye' : 'mdi-eye-off'"
+                          :append-icon="showPass.old ? 'mdi:mdi-eye' : 'mdi:mdi-eye-off'"
                           :type="showPass.old ? 'text' : 'password'"
                           name="current_password"
                           label="Current password"
@@ -24,7 +24,7 @@
                               rules="required|min:8|strength_password"
                               vid="password">
             <v-text-field v-model="password.new" id="inputNewPassword"
-                          :append-icon="showPass.new ? 'mdi-eye' : 'mdi-eye-off'"
+                          :append-icon="showPass.new ? 'mdi:mdi-eye' : 'mdi:mdi-eye-off'"
                           :type="showPass.new ? 'text' : 'password'"
                           name="password"
                           label="New password"
@@ -36,7 +36,7 @@
           <Field v-slot="{errors}" name="confirm password"
                               rules="required|confirmed:password">
             <v-text-field v-model="password.confirm" id="inputConfirmPassword"
-                          :append-icon="showPass.confirm ? 'mdi-eye' : 'mdi-eye-off'"
+                          :append-icon="showPass.confirm ? 'mdi:mdi-eye' : 'mdi:mdi-eye-off'"
                           :type="showPass.confirm ? 'text' : 'password'"
                           name="password_confirmation"
                           label="Confirm password"

@@ -3,7 +3,7 @@
             hide-overlay
             persistent
             width="300">
-    <v-card color="primary" dark>
+    <v-card color="primary" theme="dark">
       <v-card-text>
         {{ progressLabel }}
         <v-progress-linear indeterminate color="white" class="mb-0">

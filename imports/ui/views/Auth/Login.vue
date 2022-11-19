@@ -77,10 +77,10 @@ export default defineComponent({
           if (err) {
             console.error('Error in login: ', err);
             if (err.error === '403') {
-              this.$alert.showAlertFull('cancel', 'warning', err.reason,
+              this.$alert.showAlertFull('mdi:mdi-close-circle', 'warning', err.reason,
                   '', 5000,  'bottom');
             } else {
-              this.$alert.showAlertFull('cancel', 'error', 'Incorrect credentials');
+              this.$alert.showAlertFull('mdi:mdi-close-circle', 'error', 'Incorrect credentials');
             }
             this.authError(err.error);
             this.error = true;

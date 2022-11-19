@@ -16,7 +16,7 @@
               v-model="file"
               accept="image/png, image/jpeg, image/bmp"
               placeholder="Load ..."
-              prepend-icon="mdi-camera"
+              prepend-icon="mdi:mdi-camera"
           ></v-file-input>
           <v-btn color="primary" class="mb-5"
                  rounded depressed @click="onClickUploadButton">

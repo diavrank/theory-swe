@@ -14,8 +14,8 @@
                         required>
             <template v-slot:append>
               <v-btn icon @click="showPass.new = !showPass.new" tabindex="-1">
-                <v-icon v-if="!showPass.new">mdi-eye</v-icon>
-                <v-icon v-else>mdi-eye-off</v-icon>
+                <v-icon v-if="!showPass.new">mdi:mdi-eye</v-icon>
+                <v-icon v-else>mdi:mdi-eye-off</v-icon>
               </v-btn>
             </template>
           </v-text-field>
@@ -30,8 +30,8 @@
                         required>
             <template v-slot:append>
               <v-btn icon @click="showPass.confirm = !showPass.confirm" tabindex="-1">
-                <v-icon v-if="!showPass.confirm">mdi-eye</v-icon>
-                <v-icon v-else>mdi-eye-off</v-icon>
+                <v-icon v-if="!showPass.confirm">mdi:mdi-eye</v-icon>
+                <v-icon v-else>mdi:mdi-eye-off</v-icon>
               </v-btn>
             </template>
           </v-text-field>

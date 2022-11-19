@@ -6,7 +6,7 @@
           <div class="text-h4 font-weight-light">Profiles</div>
           <v-tooltip bottom transition="fab-transition">
             <template v-slot:activator="{on}">
-              <v-btn v-can:create.hide="'profiles'" color="success" v-on="on" fab dark
+              <v-btn v-can:create.hide="'profiles'" color="success" v-on="on" fab theme="dark"
                      :to="{name: 'home.profiles.create'}">
                 <v-icon>add</v-icon>
               </v-btn>

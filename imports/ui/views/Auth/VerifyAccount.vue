@@ -5,7 +5,7 @@
     </div>
     <div v-else>
       <v-icon size="120" :color="status?'green':'red'">
-        {{ status ? 'mdi-check-circle' : 'mdi-cancel' }}
+        {{ status ? 'mdi:mdi-check-circle' : 'mdi:mdi-cancel' }}
       </v-icon>
       <h3 class="text-wrap">
         {{ message }}

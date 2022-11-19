@@ -4,7 +4,7 @@
       <div class="text-h4 font-weight-light">Users</div>
       <v-tooltip bottom transition="fab-transition">
         <template v-slot:activator="{on}">
-          <v-btn v-can:create.hide="'users'" color="success" v-on="on" fab dark
+          <v-btn v-can:create.hide="'users'" color="success" v-on="on" fab theme="dark"
                  :to="{name:'home.users.create'}">
             <v-icon>add</v-icon>
           </v-btn>
@@ -54,7 +54,7 @@
           <td>
             <div class="d-flex align-center pt-5 pb-5">
               <v-icon :color="item.status.online?'green':'red'">
-                mdi-checkbox-blank-circle
+                mdi:mdi-checkbox-blank-circle
               </v-icon>
             </div>
           </td>

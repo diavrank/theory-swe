@@ -1,13 +1,13 @@
 <template>
   <v-navigation-drawer
       app
-      dark
+      theme="dark"
       hide-overlay
       overlay-color="#000"
       :overlay-opacity="0"
       @input="toggle($event)"
       v-model="navigationDrawer"
-      src="/img/meteorImpact.jpg">
+      image="/img/meteorImpact.jpg">
     <template v-slot:prepend>
       <div class="overlay"></div>
     </template>
