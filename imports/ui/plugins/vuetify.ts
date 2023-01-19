@@ -5,8 +5,12 @@ import { mdi } from 'vuetify/iconsets/mdi';
 import { aliases, md } from 'vuetify/iconsets/md';
 // @ts-ignore
 import { es } from 'vuetify/locale';
+import { VDataTable } from 'vuetify/labs/VDataTable';
 
 export default createVuetify({
+	components: {
+		VDataTable,
+	},
 	theme: {
 		defaultTheme: 'myCustomLightTheme',
 		themes: {

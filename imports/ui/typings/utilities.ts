@@ -7,8 +7,8 @@ interface ModalData {
 }
 
 interface DatatableHeader {
-    value: string;
-    text: string;
+    key: string;
+    title: string;
     sortable: boolean;
     class: string[];
     filter?: Function;
