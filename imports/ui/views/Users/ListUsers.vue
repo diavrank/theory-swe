@@ -12,81 +12,43 @@
       </v-tooltip>
     </div>
     <div class="section elevation-1">
-      <v-table @dblclick:row="(event,{item})=>openEditUser(item)">
-        <thead>
-        <tr>
-          <th class="text-left">
-            Image
-          </th>
-          <th class="text-left">
-            Online
-          </th>
-          <th class="text-left">
-            Full name
-          </th>
-          <th class="text-left">
-            Username
-          </th>
-          <th class="text-left">
-            Email
-          </th>
-          <th class="text-left">
-            Options
-          </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr
-            v-for="item in users"
-            :key="item._id"
-        >
-          <td>
-            <div class="d-flex align-center pt-5 pb-5">
-              <v-avatar>
-                    <span v-if="item.profile.path == null" class="text-dark text-h5">
-                        {{ $filters.initials(item.username, 2) }}
+      <v-data-table :headers="headers" :items="users" @dblclick:row="(event,{item})=>openEditUser(item)">
+        <template v-slot:item.profile.path="{item}">
+          <div class="d-flex align-center pt-5 pb-5">
+            <v-avatar>
+                    <span v-if="item.raw.profile.path == null" class="text-dark text-h5">
+                        {{ $filters.initials(item.raw.username, 2) }}
                     </span>
-                <v-img v-else :src="item.profile.path || '/img/user.png'" alt="Avatar"></v-img>
-              </v-avatar>
-            </div>
-          </td>
-          <td>
-            <div class="d-flex align-center pt-5 pb-5">
-              <v-icon :color="item.status.online?'green':'red'">
-                mdi:mdi-checkbox-blank-circle
-              </v-icon>
-            </div>
-          </td>
-          <td>
-            {{ item.profile.name }}
-          </td>
-          <td>
-            {{ item.username }}
-          </td>
-          <td>
-            {{ item.emails[0].address }}
-          </td>
-          <td>
-            <v-tooltip location="bottom" transition="fab-transition">
-              <template v-slot:activator="{props}">
-                <v-btn v-can:edit.hide="'users'" icon="edit" color="success" v-bind="props" size="x-small" class="mr-2"
-                       @click="openEditUser(item)">
-                </v-btn>
-              </template>
-              <span>Edit</span>
-            </v-tooltip>
-            <v-tooltip location="bottom" transition="fab-transition">
-              <template v-slot:activator="{props}">
-                <v-btn v-can:delete.hide="'users'" icon="close" color="error" v-bind="props" size="x-small" class="mr-2"
-                       @click="openRemoveModal(item)">
-                </v-btn>
-              </template>
-              <span>Remove</span>
-            </v-tooltip>
-          </td>
-        </tr>
-        </tbody>
-      </v-table>
+              <v-img v-else :src="item.raw.profile.path || '/img/user.png'" alt="Avatar"></v-img>
+            </v-avatar>
+          </div>
+        </template>
+        <template v-slot:item.status.online="{item}">
+          <div class="d-flex align-center pt-5 pb-5">
+            <v-icon :color="item.raw.status.online?'green':'red'">
+              mdi:mdi-checkbox-blank-circle
+            </v-icon>
+          </div>
+        </template>
+        <template v-slot:item.action="{ item }">
+          <v-tooltip location="bottom" transition="fab-transition">
+            <template v-slot:activator="{props}">
+              <v-btn v-can:edit.hide="'users'" icon="edit" color="success" v-bind="props" size="x-small" class="mr-2"
+                     @click="openEditUser(item.raw)">
+              </v-btn>
+            </template>
+            <span>Edit</span>
+          </v-tooltip>
+          <v-tooltip location="bottom" transition="fab-transition">
+            <template v-slot:activator="{props}">
+              <v-btn v-can:delete.hide="'users'" icon="close" color="error" v-bind="props" size="x-small" class="mr-2"
+                     @click="openRemoveModal(item.raw)">
+              </v-btn>
+            </template>
+            <span>Remove</span>
+          </v-tooltip>
+        </template>
+      </v-data-table>
       <modal-remove ref="refModalRemove"
                     preposition="al"
                     type-element="usuario"
@@ -100,7 +62,7 @@
 import ModalRemove from '../../components/Utilities/Modals/ModalRemove.vue';
 import { mapMutations } from 'vuex';
 import { defineComponent } from 'vue';
-import { ModalData } from '/imports/ui/typings/utilities';
+import { DatatableHeader, ModalData } from '/imports/ui/typings/utilities';
 import { Meteor } from 'meteor/meteor';
 import { ResponseMessage } from '/imports/startup/server/utils/ResponseMessage';
 import { User } from '/imports/ui/typings/users';
@@ -113,8 +75,73 @@ export default defineComponent({
       mainNameElement: '',
       _id: undefined,
       element: {}
-    } as ModalData
+    } as ModalData,
+    headersData: {
+      path: '',
+      status: {},
+      fullname: '',
+      username: '',
+      email: ''
+    }
   }),
+  computed: {
+    headers(): DatatableHeader[] {
+      const self = this;
+      return [
+        {
+          key: 'profile.path',
+          title: 'Image',
+          sortable: false,
+          class: ['subtitle-1', 'font-weight-light']
+        },
+        {
+          key: 'status.online',
+          title: 'Online',
+          sortable: true,
+          class: ['subtitle-1', 'font-weight-light']
+        },
+        {
+          key: 'profile.name',
+          title: 'Full name',
+          sortable: true,
+          class: ['subtitle-1', 'font-weight-light'],
+          filter(value: any): boolean {
+            return value != null &&
+                typeof value === 'string' &&
+                value.toString().toLocaleLowerCase()
+                    .indexOf(self.headersData.fullname.toLocaleLowerCase()) !== -1;
+          }
+        },
+        {
+          key: 'username',
+          title: 'Username',
+          sortable: true,
+          class: ['subtitle-1', 'font-weight-light'],
+          filter(value: any): boolean {
+            return value != null &&
+                typeof value === 'string' &&
+                value.toString().toLocaleLowerCase()
+                    .indexOf(self.headersData.username.toLocaleLowerCase()) !== -1;
+          }
+        },
+        {
+          key: 'emails[0].address',
+          title: 'Email',
+          sortable: true,
+          class: ['subtitle-1', 'font-weight-light'],
+          divider: true,
+          filter(value: any): boolean {
+            return value != null &&
+                typeof value === 'string' &&
+                value.toString().indexOf(self.headersData.email) !== -1;
+          }
+        },
+        {
+          key: 'action', title: 'Options', sortable: false, align: 'center',
+          class: ['subtitle-1', 'font-weight-light']
+        }];
+    }
+  },
   methods: {
     ...mapMutations('temporal', ['setElement']),
     openEditUser(user: User): void {
