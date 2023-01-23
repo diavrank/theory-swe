@@ -49,11 +49,15 @@
                         max-height="500">
                       <v-list style="height: 400px;">
                         <draggable :list="filteredSelfPermissions"
+                                   class="list-group"
                                    @change="(ev) => onChangeDragList(ev, 'selfPermissions')"
                                    item-key="_id"
                                    group="permissions">
                           <template #item="{element: permission}">
-                            <v-list-item v-text="permission.publicName"></v-list-item>
+                            <div>
+                              <v-list-item class="list-group-item" v-text="permission.publicName"></v-list-item>
+                              <v-divider></v-divider>
+                            </div>
                           </template>
                         </draggable>
                       </v-list>
@@ -73,12 +77,15 @@
                         class="overflow-y-auto"
                         max-height="500">
                       <v-list style="height: 400px;">
-                        <draggable class="list-item-group" :list="filteredPermissions"
+                        <draggable class="list-group" :list="filteredPermissions"
                                    @change="(ev) => onChangeDragList(ev, 'allPermissions')"
                                    item-key="_id"
                                    group="permissions">
                           <template #item="{element: permission}">
-                            <v-list-item v-text="permission.publicName"></v-list-item>
+                            <div>
+                              <v-list-item class="list-group-item" v-text="permission.publicName"></v-list-item>
+                              <v-divider></v-divider>
+                            </div>
                           </template>
                         </draggable>
                       </v-list>
@@ -242,4 +249,7 @@ export default defineComponent({
   padding: 25px
   background-color: white
   border-radius: 10px
+
+.list-group-item
+  cursor: move
 </style>
