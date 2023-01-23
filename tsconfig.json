@@ -25,7 +25,17 @@
     "baseUrl": ".",
     "paths": {
       /* Support absolute /imports/* with a leading '/' */
-      "/*": ["*"]
+      "/*": ["*"],
+      "@api/*": ["imports/api/*"],
+      "@server/*": ["imports/startup/server/*"],
+      "@middlewares/*": ["imports/middlewares/*"],
+      // UI aliases
+      "@components/*": ["imports/ui/components/*"],
+      "@views/*": ["imports/ui/views/*"],
+      "@layouts/*": ["imports/ui/layouts/*"],
+      "@routes/*": ["imports/ui/routes/*"],
+      "@mixins/*": ["imports/ui/mixins/*"],
+      "@typings/*": ["imports/ui/typings/*"]
     },
     "moduleResolution": "node",
     "resolveJsonModule": true,

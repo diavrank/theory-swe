@@ -1,5 +1,5 @@
-import ListProfiles from '../views/Profiles/ListProfiles.vue';
-import SaveProfile from '../views/Profiles/SaveProfile.vue';
+import ListProfiles from '@views/Profiles/ListProfiles.vue';
+import SaveProfile from '@views/Profiles/SaveProfile.vue';
 import { h, resolveComponent } from 'vue';
 
 export default {

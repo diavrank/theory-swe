@@ -1,4 +1,4 @@
-import { NavigationState } from '/imports/ui/typings/vuex-store';
+import { NavigationState } from '@typings/vuex-store';
 import { MutationTree } from 'vuex';
 
 const setPathAndTitle = (state: any, {path, title}: {path:string, title: string}) => {

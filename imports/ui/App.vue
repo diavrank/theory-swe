@@ -11,8 +11,8 @@
 </template>
 
 <script lang="ts">
-import AlertMessage from './components/Utilities/Alerts/AlertMessage.vue';
-import Loader from './components/Utilities/Loaders/Loader.vue';
+import AlertMessage from '@components/Utilities/Alerts/AlertMessage.vue';
+import Loader from '@components/Utilities/Loaders/Loader.vue';
 import { defineComponent } from 'vue';
 
 export default defineComponent({

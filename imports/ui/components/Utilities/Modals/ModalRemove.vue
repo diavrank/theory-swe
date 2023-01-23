@@ -24,8 +24,8 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, PropType} from 'vue';
-import { ModalData } from '/imports/ui/typings/utilities';
+import { defineComponent, PropType } from 'vue';
+import { ModalData } from '@typings/utilities';
 
 export default defineComponent({
   name: 'ModalRemove',

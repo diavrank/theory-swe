@@ -1,6 +1,6 @@
 import state from './state';
 import mutations from './mutations';
-import { NavigationState, RootState } from '/imports/ui/typings/vuex-store';
+import { NavigationState, RootState } from '@typings/vuex-store';
 import { Module } from 'vuex';
 
 const navigation: Module<NavigationState, RootState> = {

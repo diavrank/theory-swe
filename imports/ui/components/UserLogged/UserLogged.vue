@@ -21,8 +21,8 @@
 <script lang="ts">
 import { mapMutations } from 'vuex';
 import { Meteor } from 'meteor/meteor';
-import { User } from '/imports/ui/typings/users';
-import { LogoutHook } from './../../typings/accounts';
+import { User } from '@typings/users';
+import { LogoutHook } from '@typings/accounts';
 import { defineComponent } from 'vue';
 
 declare module Accounts {

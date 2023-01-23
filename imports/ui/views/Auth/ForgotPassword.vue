@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts">
-import validateForm from './../../mixins/validateForm';
+import validateForm from '@mixins/validateForm';
 import { Field, Form, FormContext } from 'vee-validate';
 import { defineComponent } from 'vue';
 import { Meteor } from 'meteor/meteor';

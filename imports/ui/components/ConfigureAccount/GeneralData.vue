@@ -63,15 +63,15 @@
 </template>
 
 <script lang="ts">
-import profilesMixin from '../../mixins/accounts/profiles';
+import profilesMixin from '@mixins/accounts/profiles';
+import validateForm from '@mixins/validateForm';
+import uploadImage from '@mixins/users/uploadImage';
 import { mapMutations } from 'vuex';
 import { Form, Field, FormContext } from 'vee-validate';
-import validateForm from '/imports/ui/mixins/validateForm';
 import { Meteor } from 'meteor/meteor';
-import { User } from '../../typings/users';
-import uploadImage from '../../mixins/users/uploadImage';
+import { User } from '@typings/users';
 import { defineComponent } from 'vue';
-import { ResponseMessage } from '/imports/startup/server/utils/ResponseMessage';
+import { ResponseMessage } from '@server/utils/ResponseMessage';
 
 export default defineComponent({
   name: 'GeneralData',

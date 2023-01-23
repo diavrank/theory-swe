@@ -1,7 +1,7 @@
 import state from './state';
 import mutations from './mutations';
 import { Module } from 'vuex';
-import { AuthState, RootState } from '/imports/ui/typings/vuex-store';
+import { AuthState, RootState } from '@typings/vuex-store';
 
 const authentication: Module<AuthState, RootState> = {
     namespaced: true,

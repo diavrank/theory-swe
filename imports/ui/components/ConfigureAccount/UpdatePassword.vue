@@ -54,10 +54,10 @@
 </template>
 
 <script lang="ts">
-import JsonHelper from '/imports/ui/mixins/helpers/json';
+import JsonHelper from '@mixins/helpers/json';
+import validateForm from '@mixins/validateForm';
 import { Form, Field, FormContext } from 'vee-validate';
 import { defineComponent } from 'vue';
-import validateForm from '/imports/ui/mixins/validateForm';
 import { Meteor } from 'meteor/meteor';
 
 interface PasswordInput {

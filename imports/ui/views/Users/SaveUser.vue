@@ -78,12 +78,12 @@
 
 <script lang="ts">
 import { Field, Form, FormContext } from 'vee-validate';
-import { ProfileCollection } from '../../../api/Profiles/ProfileCollection';
-import validateForm from '/imports/ui/mixins/validateForm';
-import { ResponseMessage } from '/imports/startup/server/utils/ResponseMessage';
+import { ProfileCollection } from '@api/Profiles/ProfileCollection';
+import validateForm from '@mixins/validateForm';
+import { ResponseMessage } from '@server/utils/ResponseMessage';
 import { Meteor } from 'meteor/meteor';
 import { LOADER_MESSAGES } from '/imports/ui/constants/loader-messages.const';
-import uploadImage from '/imports/ui/mixins/users/uploadImage';
+import uploadImage from '@mixins/users/uploadImage';
 import { defineComponent } from 'vue';
 
 export default defineComponent({

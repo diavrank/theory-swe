@@ -9,13 +9,13 @@
 </template>
 
 <script lang="ts">
-import dateMixin from './../../mixins/helpers/date';
-import {defineComponent} from 'vue';
+import dateMixin from '@mixins/helpers/date';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
-  name: "FooterView",
+  name: 'FooterView',
   mixins: [dateMixin]
-})
+});
 </script>
 
 <style scoped lang="sass">

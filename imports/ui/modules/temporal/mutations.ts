@@ -1,5 +1,5 @@
 import { MutationTree } from 'vuex';
-import { TemporalState } from '/imports/ui/typings/vuex-store';
+import { TemporalState } from '@typings/vuex-store';
 
 const setElement = (state: any, element: any) => {
     state.element = element;

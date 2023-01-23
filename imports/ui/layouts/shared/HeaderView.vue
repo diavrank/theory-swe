@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import UserLogged from '../../components/UserLogged/UserLogged.vue';
+import UserLogged from '@components/UserLogged/UserLogged.vue';
 import Breadcrumb from './Breadcrumb.vue';
 import { mapState, mapMutations } from 'vuex';
 import { defineComponent } from 'vue';

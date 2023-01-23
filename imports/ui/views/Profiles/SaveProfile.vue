@@ -104,13 +104,13 @@
 <script lang="ts">
 import draggable from 'vuedraggable';
 import { Field, Form, FormContext } from 'vee-validate';
-import validateForm from '/imports/ui/mixins/validateForm';
+import validateForm from '@mixins/validateForm';
 import { defineComponent } from 'vue';
 import { Meteor } from 'meteor/meteor';
-import { ResponseMessage } from '/imports/startup/server/utils/ResponseMessage';
-import { RoleType } from '/imports/api/Permissions/Permission';
+import { ResponseMessage } from '@server/utils/ResponseMessage';
+import { RoleType } from '@api/Permissions/Permission';
 import { LOADER_MESSAGES } from '/imports/ui/constants/loader-messages.const';
-import { VueDraggableEvents } from '../../typings/utilities';
+import { VueDraggableEvents } from '@typings/utilities';
 
 enum PermissionGroup {
   Self = 'selfPermissions',

@@ -30,7 +30,7 @@
 
 <script lang="ts">
 import { mapState, mapMutations } from 'vuex';
-import validateForm from '/imports/ui/mixins/validateForm';
+import validateForm from '@mixins/validateForm';
 import { Form, Field, FormContext } from 'vee-validate';
 import { defineComponent } from 'vue';
 import { Meteor } from 'meteor/meteor';

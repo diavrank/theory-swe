@@ -2,7 +2,7 @@ import {
 	createRouter, createWebHistory, NavigationGuardNext,
 	RouteLocationNormalized
 } from 'vue-router';
-import routes from '/imports/ui/routes/routes';
+import routes from '@routes/routes';
 import store from './store';
 import { Meteor } from 'meteor/meteor';
 

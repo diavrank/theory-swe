@@ -59,13 +59,13 @@
 </template>
 
 <script lang="ts">
-import ModalRemove from '../../components/Utilities/Modals/ModalRemove.vue';
+import ModalRemove from '@components/Utilities/Modals/ModalRemove.vue';
 import { mapMutations } from 'vuex';
 import { defineComponent } from 'vue';
-import { DatatableHeader, ModalData } from '/imports/ui/typings/utilities';
+import { DatatableHeader, ModalData } from '@typings/utilities';
 import { Meteor } from 'meteor/meteor';
-import { ResponseMessage } from '/imports/startup/server/utils/ResponseMessage';
-import { User } from '/imports/ui/typings/users';
+import { ResponseMessage } from '@server/utils/ResponseMessage';
+import { User } from '@typings/users';
 
 export default defineComponent({
   name: 'ListUsers',

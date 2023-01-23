@@ -1,6 +1,6 @@
-import { User } from '/imports/ui/typings/users';
+import { User } from '@typings/users';
+import { AuthState } from '@typings/vuex-store';
 import { MutationTree } from 'vuex';
-import { AuthState } from '/imports/ui/typings/vuex-store';
 
 const setUser = (state: any, user: User) => {
     state.user = user;

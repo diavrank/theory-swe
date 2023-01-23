@@ -1,9 +1,9 @@
-import loginRoutes from '/imports/ui/routes/loginRoutes';
-import userRoutes from '/imports/ui/routes/usersRoutes';
-import profileRoutes from './profilesRoutes';
-import LytSPA from '../layouts/LytSPA.vue';
-import ConfigureAccount from '../views/Account/ConfigureAccount.vue';
-import Home from '../views/Home/Home.vue';
+import loginRoutes from '@routes/loginRoutes';
+import userRoutes from '@routes/usersRoutes';
+import profileRoutes from '@routes/profilesRoutes';
+import LytSPA from '@layouts/LytSPA.vue';
+import ConfigureAccount from '@views/Account/ConfigureAccount.vue';
+import Home from '@views/Home/Home.vue';
 
 export default [
 	{

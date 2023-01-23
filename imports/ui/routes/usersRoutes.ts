@@ -1,5 +1,5 @@
-import ListUsers from '../views/Users/ListUsers.vue';
-import SaveUser from '../views/Users/SaveUser.vue';
+import ListUsers from '@views/Users/ListUsers.vue';
+import SaveUser from '@views/Users/SaveUser.vue';
 import { h, resolveComponent } from 'vue';
 
 export default {

@@ -48,13 +48,13 @@
 
 <script lang="ts">
 import { mapMutations } from 'vuex';
-import ModalRemove from './../../components/Utilities/Modals/ModalRemove.vue';
-import profilesMixin from '../../mixins/accounts/profiles';
+import ModalRemove from '@components/Utilities/Modals/ModalRemove.vue';
+import profilesMixin from '@mixins/accounts/profiles';
 import  {defineComponent} from 'vue';
-import { Profile } from '../../typings/users';
-import { ModalData } from '/imports/ui/typings/utilities';
+import { Profile } from '@typings/users';
+import { ModalData } from '@typings/utilities';
 import { Meteor } from 'meteor/meteor';
-import { ResponseMessage } from '/imports/startup/server/utils/ResponseMessage';
+import { ResponseMessage } from '@server/utils/ResponseMessage';
 
 export default defineComponent({
   name: 'ListProfiles',
