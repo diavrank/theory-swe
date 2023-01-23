@@ -1,5 +1,6 @@
 <template>
-		<div id="breadcrumb" class="breadcrumb-item" v-for="(item, index) in items" :key="item.text">
+  <transition-group name="breadcrumb-slide" id="breadcrumb">
+		<div class="breadcrumb-item" v-for="(item, index) in items" :key="item.text">
 			<v-icon v-if="index > 0" color="primary">
 				mdi:mdi-chevron-right
 			</v-icon>
@@ -9,6 +10,7 @@
 				{{ item.text }}
 			</a>
 		</div>
+  </transition-group>
 </template>
 
 <script lang="ts">
@@ -87,7 +89,7 @@ div.breadcrumb-item
 .breadcrumb-slide-leave-active
   transition: all .5s ease-in
 
-.breadcrumb-slide-enter, .breadcrumb-slide-leave-to
+.breadcrumb-slide-enter-from, .breadcrumb-slide-leave-to
   transform: translateX(100vw)
 
 </style>

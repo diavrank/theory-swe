@@ -2,16 +2,16 @@
   <div class="login-wrapper">
     <div class="title secondary--text">Welcome!</div>
     <div class="display-1 mb-0 secondary--text">Login</div>
-    <Form as="div" v-slot="{handleSubmit}" ref="loginObserver">
+    <Form as="div" :initial-values="initialValues" v-slot="{handleSubmit}" ref="loginObserver">
       <v-form @submit="handleSubmit($event,login)" autocomplete="off">
-        <Field v-slot="{field, errors}" name="username" rules="required">
-          <v-text-field v-bind="field" v-model="user.userOrEmail" autocomplete="off" required color="primary"
+        <Field v-slot="{ field, errors }" name="username" rules="required">
+          <v-text-field v-bind="field" name="username" v-model="user.userOrEmail" autocomplete="off" required color="primary"
                         type="text" :error-messages="errors" label="Username"
                         prepend-icon="person">
           </v-text-field>
         </Field>
-        <Field v-slot="{field, errors}" name="password" rules="required">
-          <v-text-field v-bind="field" label="Password" type="password" prepend-icon="lock" autocomplete="current-password"
+        <Field v-slot="{ field, errors }" name="password" rules="required">
+          <v-text-field v-bind="field" name="password" label="Password" type="password" prepend-icon="lock" autocomplete="current-password"
                         :error-messages="errors" v-model="user.password" required>
           </v-text-field>
         </Field>
@@ -45,10 +45,11 @@ export default defineComponent({
   data() {
     return {
       user: {
-        userOrEmail: '',
-        password: ''
+        userOrEmail: 'admin',
+        password: 'Theory_5w3'
       },
-      error: false
+      error: false,
+      initialValues:{username:'admin',password:'Theory_5w3'}
     };
   },
   mounted() {

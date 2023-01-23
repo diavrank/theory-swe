@@ -5,8 +5,8 @@
         <v-img src="/img/vuetify.png" alt="Vuetify" height="180px"></v-img>
       </div>
       <router-view name="sectionView" v-slot="{Component}">
-        <transition name="section-view">
-          <component :is="Component"/>
+        <transition name="section-view" mode="out-in">
+          <component :is="Component"></component>
         </transition>
       </router-view>
     </v-col>
@@ -37,13 +37,10 @@ export default defineComponent({
   color: var(--body-color)
   position: relative
 
-.section-view-enter-active
-  transition: all .5s ease .5s
-
-.section-view-leave-active
+.section-view-enter-active, .section-view-leave-active
   transition: all .5s ease
 
-.section-view-enter, .section-view-leave-to
+.section-view-enter-from, .section-view-leave-to
   opacity: 0
 
 </style>

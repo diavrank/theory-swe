@@ -5,7 +5,7 @@
     <transition appear name="appear-section-spa">
       <v-main id="main_section">
         <router-view class="section-view" name="sectionView" v-slot="{Component}" v-if="loggedUser">
-          <transition name="section-view">
+          <transition name="section-view" mode="out-in">
             <component :is="Component"/>
           </transition>
         </router-view>
@@ -77,11 +77,11 @@ export default defineComponent({
   z-index: 2
 
 .section-view-enter-active, .section-view-leave-active
-  transition: all .5s ease
+  transition: all .4s ease
   position: absolute
   width: 100%
 
-.section-view-enter
+.section-view-enter-from
   opacity: 0
   transform: translateX(100vw)
 
@@ -95,14 +95,14 @@ export default defineComponent({
 .appear-header-enter-active
   transition: all .5s ease .5s
 
-.appear-header-enter
+.appear-header-enter-from
   transform: translateY(-100px)
   opacity: 0
 
 .appear-section-spa-enter-active
-  transition: all .5s ease .5s
+  transition: all .5s ease
 
-.appear-section-spa-enter
+.appear-section-spa-enter-from
   opacity: 0
   transform: translateX(100vw)
 

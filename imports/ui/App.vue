@@ -1,7 +1,7 @@
 <template>
   <v-app id="allPageView">
     <router-view name="allPageView" v-slot="{Component}">
-      <transition :name="$router.currentRoute.value.name">
+      <transition :name="$router.currentRoute.value.name" mode="out-in">
         <component :is="Component"/>
       </transition>
     </router-view>
@@ -41,7 +41,7 @@ export default defineComponent({
   transition: all .5s linear .4s;
 }
 
-.login-enter {
+.login-enter-from {
   transform: scale(2);
   opacity: 0;
 }
