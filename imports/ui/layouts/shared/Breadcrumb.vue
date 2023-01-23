@@ -1,5 +1,5 @@
 <template>
-  <transition-group name="breadcrumb-slide" id="breadcrumb">
+  <transition-group name="breadcrumb-slide">
 		<div class="breadcrumb-item" v-for="(item, index) in items" :key="item.text">
 			<v-icon v-if="index > 0" color="primary">
 				mdi:mdi-chevron-right
