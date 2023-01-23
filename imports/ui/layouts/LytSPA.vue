@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
-    <header-view></header-view>
     <navigation-drawer></navigation-drawer>
+    <header-view></header-view>
     <transition appear name="appear-section-spa">
       <v-main id="main_section">
         <router-view class="section-view" name="sectionView" v-slot="{Component}" v-if="loggedUser">

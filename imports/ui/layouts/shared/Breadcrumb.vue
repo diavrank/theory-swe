@@ -1,5 +1,5 @@
 <template>
-		<div class="breadcrumb-item" v-for="(item, index) in items" :key="item.text">
+		<div id="breadcrumb" class="breadcrumb-item" v-for="(item, index) in items" :key="item.text">
 			<v-icon v-if="index > 0" color="primary">
 				mdi:mdi-chevron-right
 			</v-icon>
@@ -67,29 +67,27 @@
   list-style: none
   display: inline-block
   padding: 5px
-
   .icon
     font-size: 14px
 
-  div.breadcrumb-item
-    float: left
+div.breadcrumb-item
+  float: left
+  a
+    color: black
+    font-weight: 300
+    cursor: pointer
+    &.active
+      color: var(--v-primary-base)
+      font-weight: 500
+      cursor: default
 
-    a
-      color: black
-      font-weight: 300
+.breadcrumb-slide-enter-active
+  transition: all .5s ease-out
 
-      &.active
-        color: var(--v-primary-base)
-        font-weight: 500
-        cursor: default
+.breadcrumb-slide-leave-active
+  transition: all .5s ease-in
 
-  .breadcrumb-slide-enter-active
-    transition: all .5s ease-out
-
-  .breadcrumb-slide-leave-active
-    transition: all .5s ease-in
-
-  .breadcrumb-slide-enter, .breadcrumb-slide-leave-to
-    transform: translateX(100vw)
+.breadcrumb-slide-enter, .breadcrumb-slide-leave-to
+  transform: translateX(100vw)
 
 </style>

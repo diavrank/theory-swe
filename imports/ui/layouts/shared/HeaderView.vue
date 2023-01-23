@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar>
+  <v-app-bar class="header" elevation="0">
     <v-btn variant="text" @click="setDrawer(!drawer)">
       <v-icon>menu</v-icon>
     </v-btn>
@@ -31,5 +31,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
+.header {
+  background-color: #f5f5f5 !important;
+}
 </style>
