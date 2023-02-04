@@ -5,3 +5,4 @@ node_modules/
 .uploads
 .binnacle
 settings/settings-development.json
+.npm/
