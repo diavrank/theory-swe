@@ -18,6 +18,7 @@ import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'App',
   components: { AlertMessage, Loader },
+
 });
 </script>
 

@@ -66,12 +66,12 @@
 import profilesMixin from '@mixins/accounts/profiles';
 import validateForm from '@mixins/validateForm';
 import uploadImage from '@mixins/users/uploadImage';
-import { mapMutations } from 'vuex';
 import { Form, Field, FormContext } from 'vee-validate';
 import { Meteor } from 'meteor/meteor';
 import { User } from '@typings/users';
 import { defineComponent } from 'vue';
 import { ResponseMessage } from '@server/utils/ResponseMessage';
+import { useAuthStore } from '/imports/ui/stores/auth';
 
 export default defineComponent({
   name: 'GeneralData',
@@ -79,6 +79,10 @@ export default defineComponent({
   components: {
     Form,
     Field
+  },
+  setup() {
+    const authStore = useAuthStore();
+    return { authStore };
   },
   data() {
     return {
@@ -95,7 +99,7 @@ export default defineComponent({
     };
   },
   created() {
-    const user = this.$store.state.auth.user;
+    const user = this.authStore.user;
     if (user) {
       this.user = {
         username: user.username,
@@ -114,7 +118,6 @@ export default defineComponent({
     }
   },
   methods: {
-    ...mapMutations('auth', ['setUser']),
     async saveUser() {
       if (await this.isFormValid(this.$refs.dataFormObserver as FormContext)) {
         this.$loader.activate('Updating data. . .');
@@ -125,7 +128,7 @@ export default defineComponent({
                 console.error('Error to save user: ', err);
                 this.$alert.showAlertSimple('error', err.reason);
               } else {
-                this.setUser(Meteor.user());
+                this.authStore.setUser(Meteor.user());
                 this.emitter.emit('setUserLogged');
                 this.$alert.showAlertSimple('success', response.message);
               }
@@ -135,7 +138,3 @@ export default defineComponent({
   }
 });
 </script>
-
-<style scoped>
-
-</style>

@@ -19,11 +19,11 @@
 </template>
 
 <script lang="ts">
-import { mapMutations } from 'vuex';
 import { Meteor } from 'meteor/meteor';
 import { User } from '@typings/users';
 import { LogoutHook } from '@typings/accounts';
 import { defineComponent } from 'vue';
+import { useAuthStore } from '/imports/ui/stores/auth';
 
 declare module Accounts {
   function onLogout(func: Function): LogoutHook;
@@ -31,6 +31,10 @@ declare module Accounts {
 
 export default defineComponent({
   name: 'UserLogged',
+  setup() {
+    const authStore = useAuthStore();
+    return { authStore };
+  },
   data() {
     return {
       user: {
@@ -41,7 +45,6 @@ export default defineComponent({
     };
   },
   created() {
-    // console.log("Loading data By vuex",this.$store.state.auth.user);
     this.setSession();
 
   },
@@ -54,25 +57,24 @@ export default defineComponent({
     });
   },
   methods: {
-    ...mapMutations('auth', ['logout']),
     closeSession() {
       if (this.onLogoutHook) {
         this.onLogoutHook.stop();
         Meteor.logout();
-        this.logout();
+        this.authStore.logout();
         this.$router.push({ name: 'login' });
       }
     },
     closeFrontSession() {
       if (this.onLogoutHook) {
         this.onLogoutHook.stop();
-        this.logout();
+        this.authStore.logout();
         this.$router.push({ name: 'login' });
       }
     },
     setSession() {
       if (Meteor.userId() !== null) {
-        this.user = this.$store.state.auth.user || {
+        this.user = this.authStore.user || {
           emails: [],
           profile: {}
         };
@@ -95,7 +97,3 @@ export default defineComponent({
   }
 });
 </script>
-
-<style>
-
-</style>
