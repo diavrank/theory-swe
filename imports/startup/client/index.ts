@@ -17,6 +17,7 @@ import vuetify from '../../ui/plugins/vuetify';
 import { loadFonts } from '/imports/ui/plugins/webfontloader';
 import '../../ui/plugins';
 import filters from '/imports/ui/filters';
+import { createPinia } from 'pinia';
 
 declare module 'vue' {
 	interface ComponentCustomProperties {
@@ -43,7 +44,9 @@ declare module '@vue/runtime-core' {
 Meteor.startup(() => {
 	loadFonts();
 	const emitter = mitt();
+	const pinia = createPinia();
 	const app = createApp(App);
+	app.use(pinia);
 	app.use(store);
 	app.use(router);
 	app.use(VueMeteor);
