@@ -36,9 +36,9 @@
 
 <script lang="ts">
 	import FooterView from './FooterView.vue';
-	import { mapMutations, mapState } from 'vuex';
   import {defineComponent} from 'vue';
 	import { Meteor } from 'meteor/meteor';
+  import { useTemporalStore } from '/imports/ui/stores/temporal';
 
 	interface SystemOption {
 		title: string;
@@ -50,6 +50,10 @@
 	export default defineComponent({
 		name: 'NavigationDrawer',
 		components: { FooterView },
+    setup() {
+      const temporalStore = useTemporalStore();
+      return { temporalStore };
+    },
 		data: () => ({
 			options: [] as SystemOption[],
 			optionSelected: 0,
@@ -64,11 +68,7 @@
 				}
 			});
 		},
-		computed: {
-			...mapState('temporal', ['drawer'])
-		},
 		methods: {
-			...mapMutations('temporal', ['setDrawer']),
 			updateSelectedOption() {
 				const optionSelected = this.options.filter(option => option.namePath === this.$route.name);
 				if (optionSelected.length > 0) {
@@ -77,15 +77,18 @@
 			},
 			toggle(isShowed: boolean) {
 				this.navigationDrawer = isShowed
-				this.setDrawer(this.navigationDrawer);
+        this.temporalStore.setDrawer(this.navigationDrawer);
 			}
 		},
 		watch: {
 			'$route'() {
 				this.updateSelectedOption();
 			},
-			drawer(newValue) {
-				this.navigationDrawer = newValue;
+			'temporalStore.drawer': {
+        immediate: true,
+        handler(newValue) {
+				  this.navigationDrawer = newValue;
+        }
 			}
 		}
 	})

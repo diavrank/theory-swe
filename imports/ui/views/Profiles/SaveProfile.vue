@@ -111,6 +111,7 @@ import { ResponseMessage } from '@server/utils/ResponseMessage';
 import { RoleType } from '@api/Permissions/Permission';
 import { LOADER_MESSAGES } from '/imports/ui/constants/loader-messages.const';
 import { VueDraggableEvents } from '@typings/utilities';
+import { useTemporalStore } from '/imports/ui/stores/temporal';
 
 enum PermissionGroup {
   Self = 'selfPermissions',
@@ -125,6 +126,10 @@ export default defineComponent({
     Field
   },
   mixins: [validateForm],
+  setup() {
+    const temporalStore = useTemporalStore();
+    return { temporalStore };
+  },
   data: () => ({
     dataView: {
       title: '',
@@ -153,8 +158,8 @@ export default defineComponent({
     } else if (this.$route.meta.type === 'edit') {
       this.dataView.title = 'Edit profile';
       this.dataView.targetButton = 'Update';
-      if (this.$store.state.temporal.element) {
-        this.profile = { ...this.$store.state.temporal.element };
+      if (this.temporalStore.element) {
+        this.profile = { ...this.temporalStore.element };
         this.initPermissionLists();
         this.initialValues = {
           name: this.profile.name,

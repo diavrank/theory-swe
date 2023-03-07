@@ -60,12 +60,13 @@
 
 <script lang="ts">
 import ModalRemove from '@components/Utilities/Modals/ModalRemove.vue';
-import { mapMutations } from 'vuex';
 import { defineComponent } from 'vue';
 import { DatatableHeader, ModalData } from '@typings/utilities';
 import { Meteor } from 'meteor/meteor';
 import { ResponseMessage } from '@server/utils/ResponseMessage';
 import { User } from '@typings/users';
+import { mapActions } from 'pinia';
+import { useTemporalStore } from '/imports/ui/stores/temporal';
 
 export default defineComponent({
   name: 'ListUsers',
@@ -143,7 +144,7 @@ export default defineComponent({
     }
   },
   methods: {
-    ...mapMutations('temporal', ['setElement']),
+    ...mapActions(useTemporalStore, ['setElement']),
     openEditUser(user: User): void {
       this.setElement(user);
       this.$router.push({ name: 'home.users.edit' });
