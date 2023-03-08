@@ -29,68 +29,76 @@
 </template>
 
 <script lang="ts">
-import validateForm from '@mixins/validateForm';
 import { Form, Field, FormContext } from 'vee-validate';
-import { defineComponent } from 'vue';
+import { defineComponent, inject, onMounted, reactive, ref } from 'vue';
 import { Meteor } from 'meteor/meteor';
 import { useAuthStore } from '/imports/ui/stores/auth';
+import { User } from '@typings/users';
+import { useRouter } from 'vue-router';
+import { useFormValidation } from '/imports/ui/composables/forms';
+import { Injections, MeteorError } from '@typings/utilities';
+import { AlertMessageType } from '@components/Utilities/Alerts/AlertMessage.vue';
+import { LoaderType } from '@components/Utilities/Loaders/Loader.vue';
 
 export default defineComponent({
   name: 'Login',
-  mixins: [validateForm],
   components: {
     Form,
     Field
   },
   setup() {
     const authStore = useAuthStore();
-    return { authStore };
-  },
-  data() {
-    return {
-      user: {
-        userOrEmail: 'admin',
-        password: 'Theory_5w3'
-      },
-      error: false,
-      initialValues:{username:'admin',password:'Theory_5w3'}
-    };
-  },
-  mounted() {
-    this.$refs.loginObserver.resetForm();
-  },
-  methods: {
-    successLogin() {
-      Meteor.logoutOtherClients((error: Meteor.Error | any) => {
+    const router = useRouter();
+    const alert: AlertMessageType = inject<AlertMessageType>(Injections.AlertMessage);
+    const loader: LoaderType = inject<LoaderType>(Injections.Loader);
+    const loginObserver = ref<FormContext | null>(null);
+    const error = ref(false);
+    const user = reactive({
+      userOrEmail: 'admin',
+      password: 'Theory_5w3'
+    });
+    const initialValues = reactive({
+      username: 'admin',
+      password: 'Theory_5w3'
+    })
+
+    const successLogin = () => {
+      Meteor.logoutOtherClients((error: MeteorError ) => {
         if (error) {
           console.error('Error to logout other clients: ', error);
         }
       });
-      this.$alert.closeAlert();
-      this.authStore.setUser(Meteor.user());
-      this.$router.push({ name: 'home' });
-    },
-    async login() {
-      if (await this.isFormValid(this.$refs.loginObserver as FormContext)) {
-        this.$loader.activate('Logging in. . .');
-        Meteor.loginWithPassword(this.user.userOrEmail, this.user.password, (err: Meteor.Error | any) => {
-          this.$loader.deactivate();
-          if (err) {
-            console.error('Error in login: ', err);
-            if (err.error === '403') {
-              this.$alert.showAlertFull('mdi:mdi-close-circle', 'warning', err.reason,
-                  '', 5000,  'bottom');
+      alert.closeAlert();
+      authStore.setUser(Meteor.user() as User);
+      router.push({ name: 'home' });
+    }
+
+    const login = async () => {
+      if (await useFormValidation(loginObserver.value, alert)){
+        loader.activate('Logging in . . .');
+        Meteor.loginWithPassword(user.userOrEmail, user.password, (errorResponse: MeteorError) => {
+          loader.deactivate();
+          if (errorResponse) {
+            console.error('Error in login: ', errorResponse);
+            if (errorResponse.error === '403') {
+              alert.showAlertFull('mdi:mdi-close-circle', 'warning', errorResponse.reason, '', 5000, 'bottom');
             } else {
-              this.$alert.showAlertFull('mdi:mdi-close-circle', 'error', 'Incorrect credentials');
+              alert.showAlertFull('mdi:mdi-close-circle', 'error', 'Incorrect credentials');
             }
-            this.authStore.authError(err.error);
-            this.error = true;
+            authStore.authError(errorResponse.error);
+            error.value = true;
           } else {
-            this.successLogin();
+            successLogin();
           }
-        });
+        })
       }
     }
+
+    onMounted(() => {
+      loginObserver.value?.resetForm();
+    });
+
+    return { authStore, loginObserver, user, initialValues, login };
   }
 });
 </script>
