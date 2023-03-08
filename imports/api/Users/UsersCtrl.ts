@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import AuthGuard from './../../middlewares/AuthGuard';
-import { ResponseMessage } from '@server/utils/ResponseMessage';
+import { ResponseMessage } from '../../startup/server/utils/ResponseMessage';
 import { check, Match } from 'meteor/check';
 import UsersServ from './UsersServ';
 import Binnacle from '../../middlewares/Binnacle';

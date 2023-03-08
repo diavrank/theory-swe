@@ -56,9 +56,12 @@
 <script lang="ts">
 import JsonHelper from '@mixins/helpers/json';
 import validateForm from '@mixins/validateForm';
-import { Form, Field, FormContext } from 'vee-validate';
-import { defineComponent } from 'vue';
-import { Meteor } from 'meteor/meteor';
+import { Form, Field } from 'vee-validate';
+import { defineComponent, inject, reactive, ref } from 'vue';
+import { AlertMessageType } from '@components/Utilities/Alerts/AlertMessage.vue';
+import { Injections, MeteorError } from '@typings/utilities';
+import { useFormValidation } from '/imports/ui/composables/forms';
+import { useNullifyObject } from '/imports/ui/composables/helpers/json';
 
 interface PasswordInput {
   old: string | null;
@@ -73,41 +76,38 @@ export default defineComponent({
     Field
   },
   mixins: [validateForm, JsonHelper],
-  data() {
-    return {
-      password: {
-        old: null,
-        new: null,
-        confirm: null
-      } as PasswordInput,
-      showPass: {
-        old: false,
-        new: false,
-        confirm: false
+  setup() {
+    const passwordFormObserver = ref(null);
+    const alert = inject<AlertMessageType>(Injections.AlertMessage);
+    const password: PasswordInput = reactive({
+      old: null,
+      new: null,
+      confirm: null
+    });
+    const showPass = reactive({
+      old: false,
+      new: false,
+      confirm: false
+    });
+
+    const updatePassword = async () => {
+      if (await useFormValidation(passwordFormObserver.value, alert)) {
+        Accounts.changePassword(password.old || '', password.new || '',
+            async (error: MeteorError) => {
+          useNullifyObject(password);
+          passwordFormObserver.value.resetForm();
+          if (error) {
+            console.error('Error changing password: ', error);
+            alert?.showAlertSimple('error', 'An error occurred while changing the password.');
+            document.getElementById('inputPassword')?.focus();
+          } else {
+            alert?.showAlertSimple('success', 'Password has been updated!');
+          }
+        })
       }
     };
-  },
-  methods: {
-    async updatePassword() {
-      if (await this.isFormValid(this.$refs.passwordFormObserver as FormContext)) {
-        Accounts.changePassword(this.password.old || '', this.password.new || '',
-            async(error: Error | Meteor.Error | Meteor.TypedError | undefined) => {
-              this.setNulls(this.password);
-              this.$refs.passwordFormObserver.resetForm();
-              if (error) {
-                console.error('Error changing password: ', error);
-                this.$alert.showAlertSimple('error', 'An error occurred while changing the password.');
-                document.getElementById('inputPassword').focus();
-              } else {
-                this.$alert.showAlertSimple('success', 'Password has been updated!');
-              }
-            });
-      }
-    }
+
+    return { password, showPass, passwordFormObserver, updatePassword };
   }
 });
 </script>
-
-<style scoped>
-
-</style>
