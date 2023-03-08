@@ -5,19 +5,31 @@
         <component :is="Component"/>
       </transition>
     </router-view>
-    <alert-message/>
-    <loader/>
+    <alert-message ref="alertMessage"/>
+    <loader ref="loader"/>
   </v-app>
 </template>
 
 <script lang="ts">
 import AlertMessage from '@components/Utilities/Alerts/AlertMessage.vue';
 import Loader from '@components/Utilities/Loaders/Loader.vue';
-import { defineComponent } from 'vue';
+import { defineComponent, onMounted, provide, ref } from 'vue';
+import { Injections } from '@typings/utilities';
 
 export default defineComponent({
   name: 'App',
   components: { AlertMessage, Loader },
+  setup() {
+    const alertMessage = ref(null);
+    const loader = ref(null);
+
+    onMounted(() => {
+      provide(Injections.AlertMessage, alertMessage.value);
+      provide(Injections.Loader, loader.value);
+    })
+
+    return { alertMessage, loader };
+  }
 });
 </script>
 

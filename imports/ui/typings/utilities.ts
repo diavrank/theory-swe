@@ -1,3 +1,6 @@
+import { Meteor } from 'meteor/meteor';
+import TypedError = Meteor.TypedError;
+
 interface ModalData {
     mainNameElement?: string,
     _id?: string,
@@ -21,8 +24,17 @@ enum VueDraggableEvents {
     Removed = 'removed'
 }
 
+enum Injections {
+    AlertMessage = 'alert',
+    Loader = 'loader'
+}
+
+type MeteorError = Meteor.Error | Error | TypedError | undefined;
+
 export {
     ModalData,
     DatatableHeader,
-    VueDraggableEvents
+    VueDraggableEvents,
+    Injections,
+    MeteorError
 }
