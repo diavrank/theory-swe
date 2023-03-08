@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import AuthGuard from './../../middlewares/AuthGuard';
-import { ResponseMessage } from '../../startup/server/utils/ResponseMessage';
+import { ResponseMessage } from '@server/utils/ResponseMessage';
 import { check, Match } from 'meteor/check';
 import UsersServ from './UsersServ';
 import Binnacle from '../../middlewares/Binnacle';
@@ -157,12 +157,14 @@ export const updatePersonalDataMethod = new ValidatedMethod({
 	validate({ user }: { user: Meteor.User }) {
 		try {
 			check(user, {
+				_id: String,
 				username: String,
 				emails: [{ address: String, verified: Boolean }],
 				profile: {
 					profile: String,
 					name: String,
-					path: Match.Maybe(String)
+					path: Match.Maybe(String),
+					updated_at: String
 				}
 			});
 		} catch (exception) {

@@ -64,77 +64,73 @@
 
 <script lang="ts">
 import profilesMixin from '@mixins/accounts/profiles';
-import validateForm from '@mixins/validateForm';
-import uploadImage from '@mixins/users/uploadImage';
-import { Form, Field, FormContext } from 'vee-validate';
+import { Form, Field } from 'vee-validate';
 import { Meteor } from 'meteor/meteor';
 import { User } from '@typings/users';
-import { defineComponent } from 'vue';
+import { defineComponent, inject, reactive, ref } from 'vue';
 import { ResponseMessage } from '@server/utils/ResponseMessage';
 import { useAuthStore } from '/imports/ui/stores/auth';
+import { useFormValidation } from '/imports/ui/composables/forms';
+import { Injections, MeteorError } from '@typings/utilities';
+import { AlertMessageType } from '@components/Utilities/Alerts/AlertMessage.vue';
+import { LoaderType } from '@components/Utilities/Loaders/Loader.vue';
+import { useUploadImage } from '/imports/ui/composables/users/uploadImage';
 
 export default defineComponent({
   name: 'GeneralData',
-  mixins: [validateForm, profilesMixin, uploadImage],
+  mixins: [profilesMixin],
   components: {
     Form,
     Field
   },
-  setup() {
+  setup(_props, context) {
     const authStore = useAuthStore();
-    return { authStore };
-  },
-  data() {
-    return {
-      user: {
-        emails: [{ verified: false }],
-        profile: {}
-      } as User,
-      photoFileUser: null,
-      initialValues: {
-        name: '',
-        username: '',
-        email: ''
+    const dataFormObserver = ref(null);
+    const alert = inject<AlertMessageType>(Injections.AlertMessage);
+    const loader = inject<LoaderType>(Injections.Loader);
+    const user: User = reactive(authStore.user ? {...authStore.user} : {
+      emails: [{ verified: false}],
+      profile: {}
+    });
+    const initialValues = reactive({
+      name: authStore.user?.profile.name || '',
+      username: authStore.user?.username || '',
+      email: authStore.user?.emails[0].address || ''
+    })
+    const photoFileUser = ref(null);
+    const {file, onClickUploadButton} = useUploadImage('fileUpload', (ev) => {
+      user.profile.path = ev.target.result;
+      photoFileUser.value = ev.target.result;
+    })
+
+    const saveUser = async () => {
+      if (await useFormValidation(dataFormObserver.value, alert)) {
+        loader?.activate('Updating data . . .');
+        Meteor.call('user.updatePersonalData', { user, photoFileUser: photoFileUser.value },
+            (error: MeteorError, response: ResponseMessage) => {
+          loader?.deactivate();
+          if (error) {
+            console.error('Error to save user: ', error);
+            alert?.showAlertSimple('error', error.reason);
+          } else {
+            authStore.setUser(Meteor.user());
+            context.emit('setUserLogged');
+            alert?.showAlertSimple('success', response.message);
+          }
+        })
       }
     };
-  },
-  created() {
-    const user = this.authStore.user;
-    if (user) {
-      this.user = {
-        username: user.username,
-        emails: user.emails,
-        profile: {
-          profile: user.profile.profile,
-          name: user.profile.name,
-          path: user.profile.path
-        }
-      };
-      this.initialValues = {
-        name: user.profile.name as string,
-        username: user.username as string,
-        email: user.emails[0].address as string
-      };
-    }
-  },
-  methods: {
-    async saveUser() {
-      if (await this.isFormValid(this.$refs.dataFormObserver as FormContext)) {
-        this.$loader.activate('Updating data. . .');
-        Meteor.call('user.updatePersonalData', { user: this.user, photoFileUser: this.photoFileUser },
-            (err: Meteor.Error, response: ResponseMessage) => {
-              this.$loader.deactivate();
-              if (err) {
-                console.error('Error to save user: ', err);
-                this.$alert.showAlertSimple('error', err.reason);
-              } else {
-                this.authStore.setUser(Meteor.user());
-                this.emitter.emit('setUserLogged');
-                this.$alert.showAlertSimple('success', response.message);
-              }
-            });
-      }
-    }
+
+    return {
+      authStore,
+      dataFormObserver,
+      saveUser,
+      initialValues,
+      photoFileUser,
+      user,
+      file,
+      onClickUploadButton
+    };
   }
 });
 </script>
