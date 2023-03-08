@@ -29,11 +29,11 @@
 </template>
 
 <script lang="ts">
-import { mapState, mapMutations } from 'vuex';
 import validateForm from '@mixins/validateForm';
 import { Form, Field, FormContext } from 'vee-validate';
 import { defineComponent } from 'vue';
 import { Meteor } from 'meteor/meteor';
+import { useAuthStore } from '/imports/ui/stores/auth';
 
 export default defineComponent({
   name: 'Login',
@@ -41,6 +41,10 @@ export default defineComponent({
   components: {
     Form,
     Field
+  },
+  setup() {
+    const authStore = useAuthStore();
+    return { authStore };
   },
   data() {
     return {
@@ -55,11 +59,7 @@ export default defineComponent({
   mounted() {
     this.$refs.loginObserver.resetForm();
   },
-  computed: {
-    ...mapState('auth', ['errorMessage'])
-  },
   methods: {
-    ...mapMutations('auth', ['setUser', 'authError']),
     successLogin() {
       Meteor.logoutOtherClients((error: Meteor.Error | any) => {
         if (error) {
@@ -67,7 +67,7 @@ export default defineComponent({
         }
       });
       this.$alert.closeAlert();
-      this.setUser(Meteor.user());
+      this.authStore.setUser(Meteor.user());
       this.$router.push({ name: 'home' });
     },
     async login() {
@@ -83,7 +83,7 @@ export default defineComponent({
             } else {
               this.$alert.showAlertFull('mdi:mdi-close-circle', 'error', 'Incorrect credentials');
             }
-            this.authError(err.error);
+            this.authStore.authError(err.error);
             this.error = true;
           } else {
             this.successLogin();

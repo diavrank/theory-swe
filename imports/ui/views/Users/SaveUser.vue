@@ -85,6 +85,7 @@ import { Meteor } from 'meteor/meteor';
 import { LOADER_MESSAGES } from '/imports/ui/constants/loader-messages.const';
 import uploadImage from '@mixins/users/uploadImage';
 import { defineComponent } from 'vue';
+import { useTemporalStore } from '/imports/ui/stores/temporal';
 
 export default defineComponent({
   name: 'SaveUser',
@@ -92,6 +93,10 @@ export default defineComponent({
   components: {
     Form,
     Field
+  },
+  setup() {
+    const temporalStore = useTemporalStore();
+    return { temporalStore };
   },
   data() {
     return {
@@ -118,7 +123,7 @@ export default defineComponent({
     } else if (this.$route.meta.type === 'edit') {
       this.dataView.title = 'Edit user';
       this.dataView.targetButton = 'Update';
-      const tempUser = this.$store.state.temporal.element;
+      const tempUser = this.temporalStore.element;
       if (tempUser) {
         this.user = {
           _id: tempUser._id,

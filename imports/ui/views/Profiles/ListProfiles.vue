@@ -47,7 +47,6 @@
 </template>
 
 <script lang="ts">
-import { mapMutations } from 'vuex';
 import ModalRemove from '@components/Utilities/Modals/ModalRemove.vue';
 import profilesMixin from '@mixins/accounts/profiles';
 import  {defineComponent} from 'vue';
@@ -55,11 +54,16 @@ import { Profile } from '@typings/users';
 import { ModalData } from '@typings/utilities';
 import { Meteor } from 'meteor/meteor';
 import { ResponseMessage } from '@server/utils/ResponseMessage';
+import { useTemporalStore } from '/imports/ui/stores/temporal';
 
 export default defineComponent({
   name: 'ListProfiles',
   components: { ModalRemove },
   mixins: [profilesMixin],
+  setup() {
+    const temporalStore = useTemporalStore();
+    return {temporalStore};
+  },
   data: () => ({
     modalData: {
       mainNameElement: '',
@@ -80,7 +84,6 @@ export default defineComponent({
       }]
   }),
   methods: {
-    ...mapMutations('temporal', ['setElement']),
     openRemoveModal(profile: Profile) {
       this.modalData.element = profile;
       this.modalData._id = profile._id;
@@ -90,7 +93,7 @@ export default defineComponent({
     },
     openEditProfile(profile: Profile) {
       console.log(profile);
-      this.setElement(profile);
+      this.temporalStore.setElement(profile);
       this.$router.push({ name: 'home.profiles.edit' });
     },
     deleteProfile(profileId: Profile) {

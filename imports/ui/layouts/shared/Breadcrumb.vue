@@ -14,7 +14,6 @@
 </template>
 
 <script lang="ts">
-	import { mapState } from 'vuex';
 	import { defineComponent } from 'vue';
 
   interface BreadcrumbItem {
@@ -56,7 +55,6 @@
 			}
 		},
 		computed: {
-			...mapState('navigation', ['_id']),
 			last(): number {
 				return this.items.length - 1;
 			}
