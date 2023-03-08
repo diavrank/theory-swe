@@ -16,6 +16,11 @@
 <script lang="ts">
 import { defineComponent, getCurrentInstance } from 'vue';
 
+export interface LoaderType {
+  activate(progressLabel: string): void;
+  deactivate(): void;
+}
+
 export default defineComponent({
   name: 'Loader',
   data() {
