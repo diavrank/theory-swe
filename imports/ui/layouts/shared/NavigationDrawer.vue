@@ -36,9 +36,11 @@
 
 <script lang="ts">
 import FooterView from './FooterView.vue';
-import { defineComponent } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 import { Meteor } from 'meteor/meteor';
 import { useTemporalStore } from '/imports/ui/stores/temporal';
+import { MeteorError } from '@typings/utilities';
+import { useRoute } from 'vue-router';
 
 interface SystemOption {
   title: string;
@@ -52,44 +54,37 @@ export default defineComponent({
   components: {FooterView},
   setup() {
     const temporalStore = useTemporalStore();
-    return {temporalStore};
-  },
-  data: () => ({
-    options: [] as SystemOption[],
-    optionSelected: 0,
-    navigationDrawer: null as boolean | null
-  }),
-  created() {
-    Meteor.call('getSystemOptions', (err: Meteor.Error, options: SystemOption[]) => {
-      if (err) {
-        console.error('Failed to get system options', err);
+    const options = ref<SystemOption[]>([]);
+    const optionSelected = ref(0);
+    const navigationDrawer = ref<null | boolean>(null);
+    const route = useRoute();
+
+    Meteor.call('getSystemOptions', (error: MeteorError, response: SystemOption[]) => {
+      if (error) {
+        console.error('Failed to get system options', error);
       } else {
-        this.options = options;
+        options.value = response;
       }
     });
-  },
-  methods: {
-    updateSelectedOption() {
-      const optionSelected = this.options.filter(option => option.namePath === this.$route.name);
-      if (optionSelected.length > 0) {
-        this.optionSelected = this.options.indexOf(optionSelected[0]);
+
+    const updateSelectedOption = () => {
+      const selected = options.value.filter(option => option.namePath === route.name);
+      if (selected.length > 0) {
+        optionSelected.value = options.value.indexOf(selected[0]);
       }
-    },
-    toggle(isShowed: boolean) {
-      this.navigationDrawer = isShowed
-      this.temporalStore.setDrawer(this.navigationDrawer);
-    }
-  },
-  watch: {
-    '$route'() {
-      this.updateSelectedOption();
-    },
-    'temporalStore.drawer': {
-      immediate: true,
-      handler(newValue) {
-        this.navigationDrawer = newValue;
-      }
-    }
+    };
+
+    const toggle = (isShowed: boolean) => {
+      navigationDrawer.value = isShowed;
+      temporalStore.setDrawer(navigationDrawer);
+    };
+
+    watch(route, updateSelectedOption);
+    watch(() => temporalStore.drawer, (newValue) => {
+      navigationDrawer.value = newValue;
+    }, { immediate: true });
+
+    return { temporalStore, toggle, navigationDrawer, options, optionSelected };
   }
 })
 </script>
