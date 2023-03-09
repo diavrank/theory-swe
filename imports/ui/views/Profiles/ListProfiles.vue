@@ -49,28 +49,32 @@
 <script lang="ts">
 import ModalRemove from '@components/Utilities/Modals/ModalRemove.vue';
 import profilesMixin from '@mixins/accounts/profiles';
-import  {defineComponent} from 'vue';
+import { defineComponent, inject, reactive, ref } from 'vue';
 import { Profile } from '@typings/users';
-import { ModalData } from '@typings/utilities';
+import { Injections, MeteorError, ModalData } from '@typings/utilities';
 import { Meteor } from 'meteor/meteor';
 import { ResponseMessage } from '@server/utils/ResponseMessage';
 import { useTemporalStore } from '/imports/ui/stores/temporal';
+import { useRouter } from 'vue-router';
+import { LoaderType } from '@components/Utilities/Loaders/Loader.vue';
+import { AlertMessageType } from '@components/Utilities/Alerts/AlertMessage.vue';
 
 export default defineComponent({
   name: 'ListProfiles',
   components: { ModalRemove },
   mixins: [profilesMixin],
   setup() {
+    const refModalRemove = ref(null);
+    const router = useRouter();
+    const loader = inject<LoaderType>(Injections.Loader);
+    const alert = inject<AlertMessageType>(Injections.AlertMessage);
     const temporalStore = useTemporalStore();
-    return {temporalStore};
-  },
-  data: () => ({
-    modalData: {
+    const modalData: ModalData = reactive({
       mainNameElement: '',
       _id: undefined,
       element: {}
-    } as ModalData,
-    headers: [
+    });
+    const headers = ref([
       {
         key: 'description',
         title: 'Profile name',
@@ -81,42 +85,40 @@ export default defineComponent({
       {
         key: 'action', title: 'Options', sortable: false, align: 'center',
         class: ['subtitle-1', 'font-weight-light']
-      }]
-  }),
-  methods: {
-    openRemoveModal(profile: Profile) {
-      this.modalData.element = profile;
-      this.modalData._id = profile._id;
-      this.modalData.element.removed = false;
-      this.modalData.mainNameElement = profile.description;
-      this.$refs.refModalRemove.dialog = true;
-    },
-    openEditProfile(profile: Profile) {
-      console.log(profile);
-      this.temporalStore.setElement(profile);
-      this.$router.push({ name: 'home.profiles.edit' });
-    },
-    deleteProfile(profileId: Profile) {
-      this.$loader.activate();
-      Meteor.call('profile.delete', { profileId },
-          (err: Meteor.Error,
-           response: ResponseMessage) => {
-        this.$loader.deactivate();
-        if (err) {
-          console.error('There was an error in deleteProfile: ', err);
-          if (err.reason === 'Profile cannot be removed') {
-            this.$alert.showAlertFull('warning', 'error',
-                err.reason, 'multi-line', 5000,  'bottom right', err.details);
+      }]);
+
+    const openRemoveModal = (profile: Profile) => {
+      modalData.element = profile;
+      modalData._id = profile._id;
+      modalData.element.removed = false;
+      modalData.mainNameElement = profile.description;
+      refModalRemove.value.dialog = true;
+    };
+
+    const openEditProfile = (profile: Profile) => {
+      temporalStore.setElement(profile);
+      router.push({ name: 'home.profiles.edit' });
+    };
+
+    const deleteProfile = (profileId: Profile) => {
+      loader?.activate();
+      Meteor.call('profile.delete',  { profileId}, (error: MeteorError, response: ResponseMessage) => {
+        loader?.deactivate();
+        if (error) {
+          console.error('There was an error in deleteProfile: ', error);
+          if (error.reason === 'Profile cannot be removed') {
+            alert?.showAlertFull('warning', 'error', error.reason, 'multi-line',
+                5000, 'bottom right', error.details);
           } else {
-            this.$alert.showAlertSimple('error', err.reason);
+            alert?.showAlertSimple('error', error.reason);
           }
-
         } else {
-          this.$alert.showAlertSimple('success', response.message);
+          alert?.showAlertSimple('success', response.message);
         }
-      });
-
+      })
     }
+
+    return { refModalRemove, modalData, headers, openRemoveModal, openEditProfile, deleteProfile };
   }
 })
 </script>
