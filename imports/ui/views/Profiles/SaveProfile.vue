@@ -103,7 +103,7 @@
 
 <script lang="ts">
 import draggable from 'vuedraggable';
-import { Field, Form } from 'vee-validate';
+import { Field, Form, FormContext } from 'vee-validate';
 import { computed, defineComponent, inject, onMounted, reactive, ref } from 'vue';
 import { Meteor } from 'meteor/meteor';
 import { ResponseMessage } from '@server/utils/ResponseMessage';
@@ -151,8 +151,8 @@ export default defineComponent({
     });
     const searchSelfPermission = ref('');
     const searchPermission = ref('');
-    const selfPermissions: RoleType[] = ref([])
-    const allPermissions: RoleType[] = ref([]);
+    const selfPermissions = ref<RoleType[]>([])
+    const allPermissions = ref<RoleType[]>([]);
 
     onMounted(() => {
       if (route.meta.type === 'create') {
@@ -206,14 +206,15 @@ export default defineComponent({
 
     const saveProfile = async () => {
       updateProfilePermissions();
-      if (await useFormValidation(profileObserver.value, alert)) {
+      const observer = profileObserver.value as FormContext | null;
+      if (observer && alert && await useFormValidation(observer, alert)) {
         loader?.activate(LOADER_MESSAGES.SAVE_PROFILE);
         Meteor.call('profile.save', profile, (error: MeteorError, response: ResponseMessage) => {
           loader?.deactivate();
-          if (error) {
-            alert?.showAlertSimple('error', error.reason);
+          if (error && error instanceof Meteor.Error) {
+            alert?.showAlertSimple('error', error.reason + '');
           } else {
-            alert?.showAlertSimple('success', response.message);
+            alert?.showAlertSimple('success', response.message + '');
             router.push({ name: 'home.profiles' });
           }
         })

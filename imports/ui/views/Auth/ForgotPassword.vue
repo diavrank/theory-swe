@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts">
-import { Field, Form } from 'vee-validate';
+import { Field, Form, FormContext } from 'vee-validate';
 import { defineComponent, inject, reactive, ref } from 'vue';
 import { useFormValidation } from '/imports/ui/composables/forms';
 import { Injections, MeteorError } from '@typings/utilities';
@@ -38,7 +38,7 @@ export default defineComponent({
     Form
   },
   setup() {
-    const forgotPasswordObserver = ref(null);
+    const forgotPasswordObserver = ref<FormContext | null>(null);
     const alert = inject<AlertMessageType>(Injections.AlertMessage);
     const router = useRouter();
     const user = reactive({
@@ -46,7 +46,8 @@ export default defineComponent({
     });
 
     const forgotPassword = async () => {
-      if (await useFormValidation(forgotPasswordObserver.value, alert)) {
+      const observer = forgotPasswordObserver.value as FormContext | null;
+      if (observer && alert && await useFormValidation(observer, alert)) {
         Accounts.forgotPassword(user, (error: MeteorError) => {
           if (error) {
             console.error('Error sending email', error);

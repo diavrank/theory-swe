@@ -56,7 +56,7 @@
 <script lang="ts">
 import JsonHelper from '@mixins/helpers/json';
 import validateForm from '@mixins/validateForm';
-import { Form, Field } from 'vee-validate';
+import { Form, Field, FormContext } from 'vee-validate';
 import { defineComponent, inject, reactive, ref } from 'vue';
 import { AlertMessageType } from '@components/Utilities/Alerts/AlertMessage.vue';
 import { Injections, MeteorError } from '@typings/utilities';
@@ -91,11 +91,12 @@ export default defineComponent({
     });
 
     const updatePassword = async () => {
-      if (await useFormValidation(passwordFormObserver.value, alert)) {
+      const observer = passwordFormObserver.value as FormContext | null;
+      if (observer && alert && await useFormValidation(observer, alert)) {
         Accounts.changePassword(password.old || '', password.new || '',
             async (error: MeteorError) => {
           useNullifyObject(password);
-          passwordFormObserver.value.resetForm();
+          observer.resetForm();
           if (error) {
             console.error('Error changing password: ', error);
             alert?.showAlertSimple('error', 'An error occurred while changing the password.');

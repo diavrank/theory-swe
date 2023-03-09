@@ -42,7 +42,7 @@ export default defineComponent({
       emails: [],
       profile: {}
     });
-    const onLogoutHook: LogoutHook | null = ref(null);
+    const onLogoutHook = ref<LogoutHook | null>(null);
 
     onMounted(() => {
       emitter?.on('setUserLogged', setSession);

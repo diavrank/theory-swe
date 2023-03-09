@@ -48,10 +48,10 @@
 </template>
 
 <script lang="ts">
-import { Form, Field } from 'vee-validate';
+import { Form, Field, FormContext } from 'vee-validate';
 import { defineComponent, inject, reactive, ref } from 'vue';
 import { useFormValidation } from '/imports/ui/composables/forms';
-import { Injections } from '@typings/utilities';
+import { Injections, MeteorError } from '@typings/utilities';
 import { AlertMessageType } from '@components/Utilities/Alerts/AlertMessage.vue';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -75,9 +75,10 @@ export default defineComponent({
       confirm: false
     });
     const resetPassword = async () => {
-      if (await useFormValidation(setPasswordFormObserver.value, alert)) {
-        const token = route.params.token;
-        Accounts.resetPassword(token, user.password || '', (error: MediaError) => {
+      const observer = setPasswordFormObserver.value as FormContext | null;
+      if (observer && alert && await useFormValidation(observer, alert)) {
+        const token = route.params.token as string;
+        Accounts.resetPassword(token, user.password || '', (error: MeteorError) => {
           if (error) {
             console.error('An error occurred while resetting the password', error);
             alert?.showAlertSimple('error', 'An error occurred while resetting the password');

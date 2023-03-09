@@ -77,7 +77,7 @@
 </template>
 
 <script lang="ts">
-import { Field, Form } from 'vee-validate';
+import { Field, Form, FormContext } from 'vee-validate';
 import { ProfileCollection } from '@api/Profiles/ProfileCollection';
 import validateForm from '@mixins/validateForm';
 import { ResponseMessage } from '@server/utils/ResponseMessage';
@@ -111,8 +111,8 @@ export default defineComponent({
       title: '',
       targetButton: ''
     });
-    const user: Meteor.User = reactive({
-      emails: [{ verified: false}],
+    const user: Partial<Meteor.User> = reactive({
+      emails: [{ verified: false, address: '' }],
       profile: {}
     });
 
@@ -152,16 +152,17 @@ export default defineComponent({
     });
 
     const saveUser = async () => {
-      if (await useFormValidation(userFormObserver.value, alert)) {
+      const observer = userFormObserver.value as FormContext | null;
+      if (observer && alert && await useFormValidation(observer, alert)) {
         loader?.activate(LOADER_MESSAGES.SAVE_PROFILE);
         Meteor.call('user.save', { user, photoFileUser: photoFileUser.value },
             (error: MeteorError, response: ResponseMessage) => {
           loader?.deactivate();
-          if (error) {
+          if (error && error instanceof Meteor.Error) {
             console.error(error);
-            alert?.showAlertSimple('error', error.reason);
+            alert?.showAlertSimple('error', error.reason + '');
           } else {
-            alert?.showAlertSimple('success', response.message);
+            alert?.showAlertSimple('success', response.message + '');
             router.push({ name: 'home.users' });
           }
         })

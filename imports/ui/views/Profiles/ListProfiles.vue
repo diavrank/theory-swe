@@ -64,7 +64,7 @@ export default defineComponent({
   components: { ModalRemove },
   mixins: [profilesMixin],
   setup() {
-    const refModalRemove = ref(null);
+    const refModalRemove = ref<InstanceType<typeof ModalRemove> | null>(null);
     const router = useRouter();
     const loader = inject<LoaderType>(Injections.Loader);
     const alert = inject<AlertMessageType>(Injections.AlertMessage);
@@ -92,7 +92,9 @@ export default defineComponent({
       modalData._id = profile._id;
       modalData.element.removed = false;
       modalData.mainNameElement = profile.description;
-      refModalRemove.value.dialog = true;
+      if (refModalRemove.value) {
+        refModalRemove.value.dialog = true;
+      }
     };
 
     const openEditProfile = (profile: Profile) => {
@@ -101,19 +103,19 @@ export default defineComponent({
     };
 
     const deleteProfile = (profileId: Profile) => {
-      loader?.activate();
+      loader?.activate('Deleting profile . . .');
       Meteor.call('profile.delete',  { profileId}, (error: MeteorError, response: ResponseMessage) => {
         loader?.deactivate();
-        if (error) {
+        if (error && error instanceof Meteor.Error) {
           console.error('There was an error in deleteProfile: ', error);
           if (error.reason === 'Profile cannot be removed') {
             alert?.showAlertFull('warning', 'error', error.reason, 'multi-line',
                 5000, 'bottom right', error.details);
           } else {
-            alert?.showAlertSimple('error', error.reason);
+            alert?.showAlertSimple('error', error.reason || '');
           }
         } else {
-          alert?.showAlertSimple('success', response.message);
+          alert?.showAlertSimple('success', response.message || '');
         }
       })
     }

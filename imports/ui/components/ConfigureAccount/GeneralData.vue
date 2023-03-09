@@ -64,7 +64,7 @@
 
 <script lang="ts">
 import profilesMixin from '@mixins/accounts/profiles';
-import { Form, Field } from 'vee-validate';
+import { Form, Field, FormContext } from 'vee-validate';
 import { Meteor } from 'meteor/meteor';
 import { User } from '@typings/users';
 import { defineComponent, inject, reactive, ref } from 'vue';
@@ -84,14 +84,14 @@ export default defineComponent({
     Form,
     Field
   },
-  setup() {
+  setup: function () {
     const authStore = useAuthStore();
-    const dataFormObserver = ref(null);
+    const dataFormObserver = ref<FormContext | null>(null);
     const alert = inject<AlertMessageType>(Injections.AlertMessage);
     const loader = inject<LoaderType>(Injections.Loader);
     const emitter = inject<Emitter<Record<EventType, unknown>>>(Injections.Emitter);
     const user: User = reactive(authStore.user ? {...authStore.user} : {
-      emails: [{ verified: false}],
+      emails: [{verified: false}],
       profile: {}
     });
     const initialValues = reactive({
@@ -106,20 +106,21 @@ export default defineComponent({
     })
 
     const saveUser = async () => {
-      if (await useFormValidation(dataFormObserver.value, alert)) {
+      const observer = dataFormObserver.value as FormContext | null;
+      if (observer && alert && await useFormValidation(observer, alert)) {
         loader?.activate('Updating data . . .');
-        Meteor.call('user.updatePersonalData', { user, photoFileUser: photoFileUser.value },
+        Meteor.call('user.updatePersonalData', {user, photoFileUser: photoFileUser.value},
             (error: MeteorError, response: ResponseMessage) => {
-          loader?.deactivate();
-          if (error) {
-            console.error('Error to save user: ', error);
-            alert?.showAlertSimple('error', error.reason);
-          } else {
-            authStore.setUser(Meteor.user());
-            emitter?.emit('setUserLogged');
-            alert?.showAlertSimple('success', response.message);
-          }
-        })
+              loader?.deactivate();
+              if (error && error instanceof Meteor.Error) {
+                console.error('Error to save user: ', error);
+                alert?.showAlertSimple('error', error.reason + '');
+              } else {
+                authStore.setUser(Meteor.user() as User);
+                emitter?.emit('setUserLogged');
+                alert?.showAlertSimple('success', response.message + '');
+              }
+            })
       }
     };
 

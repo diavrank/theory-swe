@@ -61,7 +61,7 @@
 <script lang="ts">
 import ModalRemove from '@components/Utilities/Modals/ModalRemove.vue';
 import { computed, defineComponent, inject, reactive, ref } from 'vue';
-import { DatatableHeader, Injections, MeteorError, ModalData } from '@typings/utilities';
+import { Injections, MeteorError, ModalData } from '@typings/utilities';
 import { Meteor } from 'meteor/meteor';
 import { ResponseMessage } from '@server/utils/ResponseMessage';
 import { User } from '@typings/users';
@@ -76,7 +76,7 @@ export default defineComponent({
   setup() {
     const temporalStore = useTemporalStore();
     const router = useRouter();
-    const refModalRemove = ref(null);
+    const refModalRemove = ref<InstanceType<typeof ModalRemove> | null>(null);
     const loader = inject<LoaderType>(Injections.Loader);
     const alert = inject<AlertMessageType>(Injections.AlertMessage);
     const modalData: ModalData = reactive({
@@ -92,7 +92,7 @@ export default defineComponent({
       email: ''
     });
 
-    const headers: DatatableHeader[] = computed(() => {
+    const headers = computed(() => {
       return [
         {
           key: 'profile.path',
@@ -158,18 +158,20 @@ export default defineComponent({
       modalData._id = user._id;
       modalData.element.removed = false;
       modalData.mainNameElement = user.profile.name;
-      refModalRemove.value.dialog = true;
+      if (refModalRemove.value) {
+        refModalRemove.value.dialog = true;
+      }
     };
 
     const deleteUser = (userId: string) => {
-      loader?.activate();
+      loader?.activate('Deleting user . . .');
       Meteor.call('user.delete', { userId }, (error: MeteorError, response: ResponseMessage) => {
         loader?.deactivate();
-        if (error) {
+        if (error && error instanceof Meteor.Error) {
           console.error('Error to delete user: ', error);
-          alert?.showAlertSimple('error', error.reason);
+          alert?.showAlertSimple('error', error.reason || '');
         } else {
-          alert?.showAlertSimple('success', response.message);
+          alert?.showAlertSimple('success', response.message + '');
         }
       })
     }

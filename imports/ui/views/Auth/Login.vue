@@ -49,8 +49,8 @@ export default defineComponent({
   setup() {
     const authStore = useAuthStore();
     const router = useRouter();
-    const alert: AlertMessageType = inject<AlertMessageType>(Injections.AlertMessage);
-    const loader: LoaderType = inject<LoaderType>(Injections.Loader);
+    const alert = inject<AlertMessageType>(Injections.AlertMessage);
+    const loader = inject<LoaderType>(Injections.Loader);
     const loginObserver = ref<FormContext | null>(null);
     const error = ref(false);
     const user = reactive({
@@ -63,29 +63,30 @@ export default defineComponent({
     })
 
     const successLogin = () => {
-      Meteor.logoutOtherClients((error: MeteorError ) => {
-        if (error) {
-          console.error('Error to logout other clients: ', error);
+      Meteor.logoutOtherClients((errorResponse: MeteorError ) => {
+        if (errorResponse) {
+          console.error('Error to logout other clients: ', errorResponse);
         }
       });
-      alert.closeAlert();
+      alert?.closeAlert();
       authStore.setUser(Meteor.user() as User);
       router.push({ name: 'home' });
     }
 
     const login = async () => {
-      if (await useFormValidation(loginObserver.value, alert)){
-        loader.activate('Logging in . . .');
+      const observer = loginObserver.value as FormContext | null;
+      if (observer !== null && alert && await useFormValidation(observer, alert)){
+        loader?.activate('Logging in . . .');
         Meteor.loginWithPassword(user.userOrEmail, user.password, (errorResponse: MeteorError) => {
-          loader.deactivate();
-          if (errorResponse) {
+          loader?.deactivate();
+          if (errorResponse && errorResponse instanceof Meteor.Error) {
             console.error('Error in login: ', errorResponse);
             if (errorResponse.error === '403') {
-              alert.showAlertFull('mdi:mdi-close-circle', 'warning', errorResponse.reason, '', 5000, 'bottom');
+              alert?.showAlertFull('mdi:mdi-close-circle', 'warning', errorResponse.reason || '', '', 5000, 'bottom');
             } else {
-              alert.showAlertFull('mdi:mdi-close-circle', 'error', 'Incorrect credentials');
+              alert?.showAlertFull('mdi:mdi-close-circle', 'error', 'Incorrect credentials', '', 5000, 'bottom');
             }
-            authStore.authError(errorResponse.error);
+            authStore.authError(+errorResponse.error);
             error.value = true;
           } else {
             successLogin();

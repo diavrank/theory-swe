@@ -44,7 +44,8 @@ export interface AlertMessageType {
                 mode: string,
                 timeout: number,
                 location: string,
-                text: string): void;
+                text?: string): void;
+  closeAlert(): void;
 }
 
 export default defineComponent({

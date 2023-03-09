@@ -44,7 +44,7 @@
 </template>
 
 <script lang="ts">
-import { Form, Field } from 'vee-validate';
+import { Form, Field, FormContext } from 'vee-validate';
 import { defineComponent, inject, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { Injections, MeteorError } from '@typings/utilities';
@@ -61,7 +61,7 @@ export default defineComponent({
     const setPasswordFormObserver = ref(null);
     const route = useRoute();
     const router = useRouter();
-    const alert = inject<AlertMessageType>(Injections.AlertMesssage);
+    const alert = inject<AlertMessageType>(Injections.AlertMessage);
     const user = reactive({
       password: null,
       confirmPassword: null
@@ -72,8 +72,9 @@ export default defineComponent({
     });
 
     const setPassword = async () => {
-      if (await useFormValidation(setPasswordFormObserver.value, alert)) {
-        const token = route.params.token;
+      const observer = setPasswordFormObserver.value as FormContext | null;
+      if (observer && alert && await useFormValidation(observer, alert)) {
+        const token = route.params.token as string;
         Accounts.resetPassword(token, user.password || '', (error: MeteorError) => {
           if (error) {
             console.error('An error occurred while setting the password', error);
