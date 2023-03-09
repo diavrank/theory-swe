@@ -26,7 +26,8 @@ enum VueDraggableEvents {
 
 enum Injections {
     AlertMessage = 'alert',
-    Loader = 'loader'
+    Loader = 'loader',
+    Emitter = 'emitter'
 }
 
 type MeteorError = Meteor.Error | Error | TypedError | undefined;

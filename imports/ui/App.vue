@@ -15,6 +15,7 @@ import AlertMessage from '@components/Utilities/Alerts/AlertMessage.vue';
 import Loader from '@components/Utilities/Loaders/Loader.vue';
 import { defineComponent, onMounted, provide, ref } from 'vue';
 import { Injections } from '@typings/utilities';
+import mitt from 'mitt';
 
 export default defineComponent({
   name: 'App',
@@ -26,6 +27,8 @@ export default defineComponent({
     onMounted(() => {
       provide(Injections.AlertMessage, alertMessage.value);
       provide(Injections.Loader, loader.value);
+      const emitter = mitt();
+      provide(Injections.Emitter, emitter);
     })
 
     return { alertMessage, loader };

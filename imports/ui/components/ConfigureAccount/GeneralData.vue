@@ -75,6 +75,7 @@ import { Injections, MeteorError } from '@typings/utilities';
 import { AlertMessageType } from '@components/Utilities/Alerts/AlertMessage.vue';
 import { LoaderType } from '@components/Utilities/Loaders/Loader.vue';
 import { useUploadImage } from '/imports/ui/composables/users/uploadImage';
+import { Emitter, EventType } from 'mitt';
 
 export default defineComponent({
   name: 'GeneralData',
@@ -83,11 +84,12 @@ export default defineComponent({
     Form,
     Field
   },
-  setup(_props, context) {
+  setup() {
     const authStore = useAuthStore();
     const dataFormObserver = ref(null);
     const alert = inject<AlertMessageType>(Injections.AlertMessage);
     const loader = inject<LoaderType>(Injections.Loader);
+    const emitter = inject<Emitter<Record<EventType, unknown>>>(Injections.Emitter);
     const user: User = reactive(authStore.user ? {...authStore.user} : {
       emails: [{ verified: false}],
       profile: {}
@@ -114,7 +116,7 @@ export default defineComponent({
             alert?.showAlertSimple('error', error.reason);
           } else {
             authStore.setUser(Meteor.user());
-            context.emit('setUserLogged');
+            emitter?.emit('setUserLogged');
             alert?.showAlertSimple('success', response.message);
           }
         })
