@@ -77,15 +77,21 @@
 </template>
 
 <script lang="ts">
-import { Field, Form, FormContext } from 'vee-validate';
+import { Field, Form } from 'vee-validate';
 import { ProfileCollection } from '@api/Profiles/ProfileCollection';
 import validateForm from '@mixins/validateForm';
 import { ResponseMessage } from '@server/utils/ResponseMessage';
 import { Meteor } from 'meteor/meteor';
 import { LOADER_MESSAGES } from '/imports/ui/constants/loader-messages.const';
 import uploadImage from '@mixins/users/uploadImage';
-import { defineComponent } from 'vue';
+import { defineComponent, inject, onMounted, reactive, ref } from 'vue';
 import { useTemporalStore } from '/imports/ui/stores/temporal';
+import { useRoute, useRouter } from 'vue-router';
+import { Injections, MeteorError } from '@typings/utilities';
+import { AlertMessageType } from '@components/Utilities/Alerts/AlertMessage.vue';
+import { LoaderType } from '@components/Utilities/Loaders/Loader.vue';
+import { useFormValidation } from '/imports/ui/composables/forms';
+import { useUploadImage } from '/imports/ui/composables/users/uploadImage';
 
 export default defineComponent({
   name: 'SaveUser',
@@ -96,74 +102,73 @@ export default defineComponent({
   },
   setup() {
     const temporalStore = useTemporalStore();
-    return { temporalStore };
-  },
-  data() {
-    return {
-      dataView: {
-        title: '',
-        targetButton: ''
-      },
-      user: {
-        emails: [{ verified: false }],
-        profile: {}
-      } as Meteor.User,
-      initialValues: {
-        name: '',
-        profile: '',
-        username: '',
-        email: ''
+    const userFormObserver = ref(null);
+    const router = useRouter();
+    const route = useRoute();
+    const alert = inject<AlertMessageType>(Injections.AlertMessage);
+    const loader = inject<LoaderType>(Injections.Loader);
+    const dataView = reactive({
+      title: '',
+      targetButton: ''
+    });
+    const user: Meteor.User = reactive({
+      emails: [{ verified: false}],
+      profile: {}
+    });
+
+    const initialValues = reactive({
+      name: '',
+      profile: '',
+      username: '',
+      email: ''
+    });
+    const photoFileUser = ref(null);
+    const {file, onClickUploadButton} = useUploadImage('fileUpload', (ev) => {
+      user.profile.path = ev.target.result;
+      photoFileUser.value = ev.target.result;
+    })
+
+    onMounted(() => {
+      if (route.meta.type === 'create') {
+        dataView.title = 'Create user';
+        dataView.targetButton = 'Create';
+      } else if (route.meta.type === 'edit'){
+        dataView.title = 'Edit user';
+        dataView.targetButton = 'Update';
+        const tempUser = temporalStore.element;
+        if (tempUser) {
+          user._id = tempUser._id;
+          user.profile = tempUser.profile;
+          user.username = tempUser.username;
+          user.emails = tempUser.emails;
+          initialValues.name = tempUser.profile.name;
+          initialValues.profile = tempUser.profile.profile;
+          initialValues.username = tempUser.username;
+          initialValues.email = tempUser.emails[0].address;
+        } else {
+          router.push({ name: 'home.users'});
+        }
       }
-    };
-  },
-  mounted() {
-    if (this.$route.meta.type === 'create') {
-      this.dataView.title = 'Create user';
-      this.dataView.targetButton = 'Create';
-    } else if (this.$route.meta.type === 'edit') {
-      this.dataView.title = 'Edit user';
-      this.dataView.targetButton = 'Update';
-      const tempUser = this.temporalStore.element;
-      if (tempUser) {
-        this.user = {
-          _id: tempUser._id,
-          username: tempUser.username,
-          emails: tempUser.emails,
-          profile: {
-            profile: tempUser.profile.profile,
-            name: tempUser.profile.name,
-            path: tempUser.profile.path
+    });
+
+    const saveUser = async () => {
+      if (await useFormValidation(userFormObserver.value, alert)) {
+        loader?.activate(LOADER_MESSAGES.SAVE_PROFILE);
+        Meteor.call('user.save', { user, photoFileUser: photoFileUser.value },
+            (error: MeteorError, response: ResponseMessage) => {
+          loader?.deactivate();
+          if (error) {
+            console.error(error);
+            alert?.showAlertSimple('error', error.reason);
+          } else {
+            alert?.showAlertSimple('success', response.message);
+            router.push({ name: 'home.users' });
           }
-        };
-        this.initialValues = {
-          name: tempUser.profile.name,
-          profile: tempUser.profile.profile,
-          username: tempUser.username,
-          email: tempUser.emails[0].address
-        };
-      } else {
-        this.$router.push({ name: 'home.users' });
+        })
       }
     }
-  },
-  methods: {
-    async saveUser() {
-      if (await this.isFormValid(this.$refs.userFormObserver as FormContext)) {
-        this.$loader.activate(LOADER_MESSAGES.SAVE_PROFILE);
-        //TODO: Refresh this.user with values from
-        Meteor.call('user.save', { user: this.user, photoFileUser: this.photoFileUser },
-            (error: Meteor.Error, response: ResponseMessage) => {
-              this.$loader.deactivate();
-              if (error) {
-                console.error(error);
-                this.$alert.showAlertSimple('error', error.reason);
-              } else {
-                this.$alert.showAlertSimple('success', response.message);
-                this.$router.push({ name: 'home.users' });
-              }
-            });
-      }
-    }
+
+    return { temporalStore, userFormObserver, file, onClickUploadButton, user, initialValues, saveUser, dataView };
   },
   meteor: {
     $subscribe: {
