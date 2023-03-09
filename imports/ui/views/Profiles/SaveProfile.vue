@@ -103,15 +103,18 @@
 
 <script lang="ts">
 import draggable from 'vuedraggable';
-import { Field, Form, FormContext } from 'vee-validate';
-import validateForm from '@mixins/validateForm';
-import { defineComponent } from 'vue';
+import { Field, Form } from 'vee-validate';
+import { computed, defineComponent, inject, onMounted, reactive, ref } from 'vue';
 import { Meteor } from 'meteor/meteor';
 import { ResponseMessage } from '@server/utils/ResponseMessage';
 import { RoleType } from '@api/Permissions/Permission';
 import { LOADER_MESSAGES } from '/imports/ui/constants/loader-messages.const';
-import { VueDraggableEvents } from '@typings/utilities';
+import { Injections, MeteorError, VueDraggableEvents } from '@typings/utilities';
 import { useTemporalStore } from '/imports/ui/stores/temporal';
+import { useRoute, useRouter } from 'vue-router';
+import { useFormValidation } from '/imports/ui/composables/forms';
+import { LoaderType } from '@components/Utilities/Loaders/Loader.vue';
+import { AlertMessageType } from '@components/Utilities/Alerts/AlertMessage.vue';
 
 enum PermissionGroup {
   Self = 'selfPermissions',
@@ -125,126 +128,136 @@ export default defineComponent({
     Form,
     Field
   },
-  mixins: [validateForm],
   setup() {
     const temporalStore = useTemporalStore();
-    return { temporalStore };
-  },
-  data: () => ({
-    dataView: {
+    const route = useRoute();
+    const router = useRouter();
+    const alert = inject<AlertMessageType>(Injections.AlertMessage);
+    const loader = inject<LoaderType>(Injections.Loader);
+    const profileObserver = ref(null);
+    const dataView = reactive({
       title: '',
       targetButton: ''
-    },
-    profile: {
+    });
+    const profile = reactive({
       _id: undefined,
       name: null,
       description: null,
       permissions: [] as string[]
-    },
-    initialValues: {
+    });
+    const initialValues = reactive({
       name: null,
       description: null
-    },
-    searchSelfPermission: '',
-    searchPermission: '',
-    selfPermissions: [] as RoleType[],
-    allPermissions: [] as RoleType[]
-  }),
-  mounted() {
-    if (this.$route.meta.type === 'create') {
-      this.dataView.title = 'Create profile';
-      this.dataView.targetButton = 'Create';
-      this.listAllPermissions();
-    } else if (this.$route.meta.type === 'edit') {
-      this.dataView.title = 'Edit profile';
-      this.dataView.targetButton = 'Update';
-      if (this.temporalStore.element) {
-        this.profile = { ...this.temporalStore.element };
-        this.initPermissionLists();
-        this.initialValues = {
-          name: this.profile.name,
-          description: this.profile.description
-        };
-      } else {
-        this.$router.push({ name: 'home.profiles' });
+    });
+    const searchSelfPermission = ref('');
+    const searchPermission = ref('');
+    const selfPermissions: RoleType[] = ref([])
+    const allPermissions: RoleType[] = ref([]);
+
+    onMounted(() => {
+      if (route.meta.type === 'create') {
+        dataView.title = 'Create profile';
+        dataView.targetButton = 'Create';
+        listAllPermissions();
+      } else if (route.meta.type === 'edit') {
+        dataView.title = 'Edit profile';
+        dataView.targetButton = 'Update';
+        if (temporalStore.element) {
+          profile._id = temporalStore.element._id;
+          profile.name = temporalStore.element.name;
+          profile.description = temporalStore.element.description;
+          profile.permissions = temporalStore.element.permissions;
+          initPermissionsList();
+          initialValues.name = profile.name;
+          initialValues.description = profile.description;
+        } else {
+          router.push({ name: 'home.profiles' });
+        }
       }
-    }
-  },
-  computed: {
-    filteredSelfPermissions() {
-      return this.selfPermissions.filter(permission => {
-        return permission.publicName.toLowerCase().includes(this.searchSelfPermission.toLowerCase());
-      });
-    },
-    filteredPermissions() {
-      return this.allPermissions.filter(permission => {
-        return permission['publicName'].toLowerCase().includes(this.searchPermission.toLowerCase());
-      });
-    }
-  },
-  methods: {
-    onChangeDragList(ev: any, propData: string) {
+    });
+
+    const filteredSelfPermissions = computed(() => {
+      return selfPermissions.value.filter(permission => {
+        return permission.publicName.toLowerCase().includes(searchSelfPermission.value.toLowerCase());
+      })
+    });
+
+    const filteredPermissions = computed(() => {
+      return allPermissions.value.filter(permission => {
+        return permission['publicName'].toLowerCase().includes(searchPermission.value.toLowerCase());
+      })
+    });
+
+    const onChangeDragList= (ev: any, propData: string) => {
       if (ev.hasOwnProperty(VueDraggableEvents.Removed)) {
         if (propData === PermissionGroup.All) {
-          this.allPermissions = this.allPermissions.filter((permission: RoleType) => permission._id !== ev.removed.element._id);
+          allPermissions.value = allPermissions.value.filter((permission: RoleType) => permission._id !== ev.removed.element._id);
         } else if (propData === PermissionGroup.Self) {
-          this.selfPermissions = this.selfPermissions.filter((permission: RoleType) => permission._id !== ev.removed.element._id);
+          selfPermissions.value = selfPermissions.value.filter((permission: RoleType) => permission._id !== ev.removed.element._id);
         }
       } else if (ev.hasOwnProperty(VueDraggableEvents.Added)) {
         if (propData === PermissionGroup.All) {
-          this.allPermissions.splice(ev.added.newIndex, 0, ev.added.element);
+          allPermissions.value.splice(ev.added.newIndex, 0, ev.added.element);
         } else if (propData === PermissionGroup.Self) {
-          this.selfPermissions.splice(ev.added.newIndex, 0, ev.added.element);
+          selfPermissions.value.splice(ev.added.newIndex, 0, ev.added.element);
         }
       }
-    },
-    async saveProfile() {
-      this.updateProfilePermissions();
-      if (await this.isFormValid(this.$refs.profileObserver as FormContext)) {
-        this.$loader.activate(LOADER_MESSAGES.SAVE_PROFILE);
-        Meteor.call('profile.save', this.profile,
-            (error: Meteor.Error, response: ResponseMessage) => {
-              this.$loader.deactivate();
-              if (error) {
-                this.$alert.showAlertSimple('error', error.reason);
-              } else {
-                this.$alert.showAlertSimple('success', response.message);
-                this.$router.push({ name: 'home.profiles' });
-              }
-            });
+    };
+
+    const saveProfile = async () => {
+      updateProfilePermissions();
+      if (await useFormValidation(profileObserver.value, alert)) {
+        loader?.activate(LOADER_MESSAGES.SAVE_PROFILE);
+        Meteor.call('profile.save', profile, (error: MeteorError, response: ResponseMessage) => {
+          loader?.deactivate();
+          if (error) {
+            alert?.showAlertSimple('error', error.reason);
+          } else {
+            alert?.showAlertSimple('success', response.message);
+            router.push({ name: 'home.profiles' });
+          }
+        })
       }
-    },
-    updateProfilePermissions() {
-      this.profile.permissions = this.selfPermissions.map((roleType: RoleType) => roleType._id);
-    },
-    initPermissionLists() {
-      Meteor.call('permissions.listOthersForIdProfile', { profileId: this.profile._id },
+    };
+
+    const updateProfilePermissions = () => {
+      profile.permissions = selfPermissions.value.map((roleType: RoleType) => roleType._id);
+    };
+
+    const initPermissionsList = () => {
+      Meteor.call('permissions.listOthersForIdProfile', { profileId: profile._id },
           (err: Meteor.Error, response: RoleType[]) => {
             if (err) {
               console.error('Error listing permissions: ', err);
               return;
             }
-            this.allPermissions = response;
+            allPermissions.value = response;
           });
 
-      Meteor.call('permissions.listByIdProfile', { profileId: this.profile._id },
+      Meteor.call('permissions.listByIdProfile', { profileId: profile._id },
           (err: Meteor.Error, response: RoleType[]) => {
             if (err) {
               console.error('Error listing profile permissions: ', err);
               return;
             }
-            this.selfPermissions = response;
+            selfPermissions.value = response;
           });
-    },
-    listAllPermissions() {
-      Meteor.call('permissions.list', (err: Meteor.Error, response: RoleType[]) => {
+    };
+
+    const listAllPermissions = () => {
+      Meteor.call('permissions.list', (err: MeteorError, response: RoleType[]) => {
         if (err) {
           console.error('Error listing all permissions: ', err);
           return;
         }
-        this.allPermissions = response;
+        allPermissions.value = response;
       });
-    }
+    };
+
+    return { profileObserver, dataView, profile, initialValues,
+      searchSelfPermission, searchPermission, selfPermissions, allPermissions,
+      filteredSelfPermissions, filteredPermissions, onChangeDragList, saveProfile
+    };
   }
 });
 </script>
