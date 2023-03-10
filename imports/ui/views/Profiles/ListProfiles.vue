@@ -76,7 +76,7 @@ export default defineComponent({
     });
     const headers = ref([
       {
-        key: 'description',
+        key: 'name',
         title: 'Profile name',
         sortable: true,
         divider: true,

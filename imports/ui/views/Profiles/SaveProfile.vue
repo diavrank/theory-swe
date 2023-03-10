@@ -50,7 +50,7 @@
                       <v-list style="height: 400px;">
                         <draggable :list="filteredSelfPermissions"
                                    class="list-group"
-                                   @change="(ev) => onChangeDragList(ev, 'selfPermissions')"
+                                   @change="(ev) => onDraggedSelfPermissions(ev)"
                                    item-key="_id"
                                    group="permissions">
                           <template #item="{element: permission}">
@@ -78,7 +78,7 @@
                         max-height="500">
                       <v-list style="height: 400px;">
                         <draggable class="list-group" :list="filteredPermissions"
-                                   @change="(ev) => onChangeDragList(ev, 'allPermissions')"
+                                   @change="(ev) => onDraggedAllPermissions(ev)"
                                    item-key="_id"
                                    group="permissions">
                           <template #item="{element: permission}">
@@ -116,11 +116,6 @@ import { useFormValidation } from '/imports/ui/composables/forms';
 import { LoaderType } from '@components/Utilities/Loaders/Loader.vue';
 import { AlertMessageType } from '@components/Utilities/Alerts/AlertMessage.vue';
 
-enum PermissionGroup {
-  Self = 'selfPermissions',
-  All = 'allPermissions'
-}
-
 export default defineComponent({
   name: 'SaveProfile',
   components: {
@@ -141,71 +136,38 @@ export default defineComponent({
     });
     const profile = reactive({
       _id: undefined,
-      name: null,
-      description: null,
+      name: null as string | null,
+      description: null as string | null,
       permissions: [] as string[]
     });
     const initialValues = reactive({
-      name: null,
-      description: null
+      name: null as string | null,
+      description: null as string | null
     });
-    const searchSelfPermission = ref('');
-    const searchPermission = ref('');
-    const selfPermissions = ref<RoleType[]>([])
-    const allPermissions = ref<RoleType[]>([]);
+    const { onChangeDragList: onDraggedAllPermissions, ...allPermissionsStates } = useAllPermissions();
+    const { onChangeDragList: onDraggedSelfPermissions, ...selfPermissionsStates } = useSelfPermissions();
 
     onMounted(() => {
       if (route.meta.type === 'create') {
         dataView.title = 'Create profile';
         dataView.targetButton = 'Create';
-        listAllPermissions();
+        allPermissionsStates.listAllPermissions();
       } else if (route.meta.type === 'edit') {
         dataView.title = 'Edit profile';
         dataView.targetButton = 'Update';
         if (temporalStore.element) {
-          profile._id = temporalStore.element._id;
-          profile.name = temporalStore.element.name;
-          profile.description = temporalStore.element.description;
-          profile.permissions = temporalStore.element.permissions;
-          initPermissionsList();
-          initialValues.name = profile.name;
-          initialValues.description = profile.description;
+          Object.assign(profile, temporalStore.element);
+          selfPermissionsStates.initPermissionsList(profile);
+          allPermissionsStates.initPermissionsList(profile);
+          Object.assign(initialValues, profile);
         } else {
           router.push({ name: 'home.profiles' });
         }
       }
     });
 
-    const filteredSelfPermissions = computed(() => {
-      return selfPermissions.value.filter(permission => {
-        return permission.publicName.toLowerCase().includes(searchSelfPermission.value.toLowerCase());
-      })
-    });
-
-    const filteredPermissions = computed(() => {
-      return allPermissions.value.filter(permission => {
-        return permission['publicName'].toLowerCase().includes(searchPermission.value.toLowerCase());
-      })
-    });
-
-    const onChangeDragList= (ev: any, propData: string) => {
-      if (ev.hasOwnProperty(VueDraggableEvents.Removed)) {
-        if (propData === PermissionGroup.All) {
-          allPermissions.value = allPermissions.value.filter((permission: RoleType) => permission._id !== ev.removed.element._id);
-        } else if (propData === PermissionGroup.Self) {
-          selfPermissions.value = selfPermissions.value.filter((permission: RoleType) => permission._id !== ev.removed.element._id);
-        }
-      } else if (ev.hasOwnProperty(VueDraggableEvents.Added)) {
-        if (propData === PermissionGroup.All) {
-          allPermissions.value.splice(ev.added.newIndex, 0, ev.added.element);
-        } else if (propData === PermissionGroup.Self) {
-          selfPermissions.value.splice(ev.added.newIndex, 0, ev.added.element);
-        }
-      }
-    };
-
     const saveProfile = async () => {
-      updateProfilePermissions();
+      profile.permissions = selfPermissionsStates.getProfilePermissions();
       const observer = profileObserver.value as FormContext | null;
       if (observer && alert && await useFormValidation(observer, alert)) {
         loader?.activate(LOADER_MESSAGES.SAVE_PROFILE);
@@ -221,46 +183,93 @@ export default defineComponent({
       }
     };
 
-    const updateProfilePermissions = () => {
-      profile.permissions = selfPermissions.value.map((roleType: RoleType) => roleType._id);
-    };
-
-    const initPermissionsList = () => {
-      Meteor.call('permissions.listOthersForIdProfile', { profileId: profile._id },
-          (err: Meteor.Error, response: RoleType[]) => {
-            if (err) {
-              console.error('Error listing permissions: ', err);
-              return;
-            }
-            allPermissions.value = response;
-          });
-
-      Meteor.call('permissions.listByIdProfile', { profileId: profile._id },
-          (err: Meteor.Error, response: RoleType[]) => {
-            if (err) {
-              console.error('Error listing profile permissions: ', err);
-              return;
-            }
-            selfPermissions.value = response;
-          });
-    };
-
-    const listAllPermissions = () => {
-      Meteor.call('permissions.list', (err: MeteorError, response: RoleType[]) => {
-        if (err) {
-          console.error('Error listing all permissions: ', err);
-          return;
-        }
-        allPermissions.value = response;
-      });
-    };
-
-    return { profileObserver, dataView, profile, initialValues,
-      searchSelfPermission, searchPermission, selfPermissions, allPermissions,
-      filteredSelfPermissions, filteredPermissions, onChangeDragList, saveProfile
+    return {
+      profileObserver, dataView, profile, initialValues, saveProfile,
+      onDraggedAllPermissions, ...allPermissionsStates,
+      onDraggedSelfPermissions, ...selfPermissionsStates
     };
   }
 });
+
+const useSelfPermissions = () => {
+  const selfPermissions = ref<RoleType[]>([]);
+  const searchSelfPermission = ref('');
+
+  const filteredSelfPermissions = computed(() => {
+    return selfPermissions.value.filter(permission => {
+      return permission.publicName.toLowerCase().includes(searchSelfPermission.value.toLowerCase());
+    })
+  });
+
+  const getProfilePermissions = () => {
+    return selfPermissions.value.map((roleType: RoleType) => roleType._id);
+  };
+
+  const initPermissionsList = (profile: any) => {
+    Meteor.call('permissions.listByIdProfile', { profileId: profile._id },
+        (err: Meteor.Error, response: RoleType[]) => {
+          if (err) {
+            console.error('Error listing profile permissions: ', err);
+            return;
+          }
+          selfPermissions.value = response;
+        });
+  };
+
+  const onChangeDragList = (ev: any) => {
+    if (ev.hasOwnProperty(VueDraggableEvents.Removed)) {
+      selfPermissions.value = selfPermissions.value.filter((permission: RoleType) => permission._id !== ev.removed.element._id);
+    } else if (ev.hasOwnProperty(VueDraggableEvents.Added)) {
+      selfPermissions.value.splice(ev.added.newIndex, 0, ev.added.element);
+    }
+  };
+
+  return { selfPermissions, searchSelfPermission, filteredSelfPermissions,
+    getProfilePermissions, initPermissionsList, onChangeDragList,  };
+};
+
+const useAllPermissions = () => {
+  const allPermissions = ref<RoleType[]>([]);
+  const searchPermission = ref('');
+
+  const filteredPermissions = computed(() => {
+    return allPermissions.value.filter(permission => {
+      return permission['publicName'].toLowerCase().includes(searchPermission.value.toLowerCase());
+    })
+  });
+
+  const initPermissionsList = (profile: any) => {
+    Meteor.call('permissions.listOthersForIdProfile', { profileId: profile._id },
+        (err: Meteor.Error, response: RoleType[]) => {
+          if (err) {
+            console.error('Error listing permissions: ', err);
+            return;
+          }
+          allPermissions.value = response;
+        });
+  };
+
+  const listAllPermissions = () => {
+    Meteor.call('permissions.list', (err: MeteorError, response: RoleType[]) => {
+      if (err) {
+        console.error('Error listing all permissions: ', err);
+        return;
+      }
+      allPermissions.value = response;
+    });
+  };
+
+  const onChangeDragList = (ev: any) => {
+    if (ev.hasOwnProperty(VueDraggableEvents.Removed)) {
+      allPermissions.value = allPermissions.value.filter((permission: RoleType) => permission._id !== ev.removed.element._id);
+    } else if (ev.hasOwnProperty(VueDraggableEvents.Added)) {
+      allPermissions.value.splice(ev.added.newIndex, 0, ev.added.element);
+    }
+  };
+
+  return { allPermissions, searchPermission, filteredPermissions,
+    initPermissionsList, listAllPermissions, onChangeDragList }
+};
 </script>
 
 <style scoped lang="sass">
