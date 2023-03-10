@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="title">Set initial password</div>
-    <Form as="div" v-slot="{handleSubmit}" ref="setPasswordFormObserver">
-      <v-form @submit="handleSubmit($event,setPassword)">
+    <Form as="div" ref="setPasswordFormObserver">
+      <v-form @submit="setPassword">
         <Field v-slot="{ field, errors }" name="password" rules="required|strength_password" type="password">
           <v-text-field v-bind="field" v-model="user.password" id="inputNewPassword"
                         :type="showPass.new ? 'text' : 'password'"
@@ -50,6 +50,8 @@ import { useRoute, useRouter } from 'vue-router';
 import { Injections, MeteorError } from '@typings/utilities';
 import { AlertMessageType } from '@components/Utilities/Alerts/AlertMessage.vue';
 import { useFormValidation } from '/imports/ui/composables/forms';
+import { LoaderType } from '@components/Utilities/Loaders/Loader.vue';
+import { Accounts } from 'meteor/accounts-base';
 
 export default defineComponent({
   name: 'SetInitialPassword',
@@ -61,6 +63,7 @@ export default defineComponent({
     const setPasswordFormObserver = ref(null);
     const route = useRoute();
     const router = useRouter();
+    const loader = inject<LoaderType>(Injections.Loader);
     const alert = inject<AlertMessageType>(Injections.AlertMessage);
     const user = reactive({
       password: null,
@@ -75,7 +78,9 @@ export default defineComponent({
       const observer = setPasswordFormObserver.value as FormContext | null;
       if (observer && alert && await useFormValidation(observer, alert)) {
         const token = route.params.token as string;
+        loader?.activate('Setting password . . .');
         Accounts.resetPassword(token, user.password || '', (error: MeteorError) => {
+          loader?.deactivate();
           if (error) {
             console.error('An error occurred while setting the password', error);
             alert?.showAlertSimple('error', 'An error occurred while resetting the password');
