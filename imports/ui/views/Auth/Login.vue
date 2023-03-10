@@ -2,17 +2,18 @@
   <div class="login-wrapper">
     <div class="title secondary--text">Welcome!</div>
     <div class="display-1 mb-0 secondary--text">Login</div>
-    <Form as="div" :initial-values="initialValues" v-slot="{handleSubmit}" ref="loginObserver">
-      <v-form @submit="handleSubmit($event,login)" autocomplete="off">
+    <Form as="div" :initial-values="initialValues" ref="loginObserver">
+      <v-form @submit.prevent="login" autocomplete="off">
         <Field v-slot="{ field, errors }" name="username" rules="required">
           <v-text-field v-bind="field" name="username" v-model="user.userOrEmail" autocomplete="off" required color="primary"
                         type="text" :error-messages="errors" label="Username"
+                        data-test-id="input-user"
                         prepend-icon="person">
           </v-text-field>
         </Field>
         <Field v-slot="{ field, errors }" name="password" rules="required">
           <v-text-field v-bind="field" name="password" label="Password" type="password" prepend-icon="lock" autocomplete="current-password"
-                        :error-messages="errors" v-model="user.password" required>
+                        :error-messages="errors" v-model="user.password" required data-test-id="input-password">
           </v-text-field>
         </Field>
         <div class="d-flex justify-end">
@@ -21,7 +22,7 @@
           </v-btn>
         </div>
         <div class="d-flex justify-start">
-          <v-btn type="submit" rounded color="primary" transition="fade">Enter</v-btn>
+          <v-btn type="submit" rounded color="primary" transition="fade" data-test-id="login-button">Enter</v-btn>
         </div>
       </v-form>
     </Form>
