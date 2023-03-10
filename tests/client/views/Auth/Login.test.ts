@@ -6,15 +6,9 @@ import { flushPromises, mount, VueWrapper } from '@vue/test-utils';
 import { describe, it, expect, vi } from 'vitest';
 import Login from '@views/Auth/Login.vue';
 import { createPinia, setActivePinia } from 'pinia';
-import { createVuetify } from 'vuetify';
-import { useRouter, Router } from 'vue-router'
 import { Meteor } from 'meteor/meteor';
-
-// Vee validate rules
-import { defineRule } from 'vee-validate';
-import { required } from '@vee-validate/rules';
 import { MockHelper } from '/tests/mocks/meteor';
-defineRule('required', required);
+import { mountOptions, alertMock, setVVRules, setRouterResponse, loaderMock } from '/tests/mocks/vue-ecosystem';
 
 vi.mock('vue-router', () => ({
     useRoute: vi.fn(),
@@ -23,16 +17,6 @@ vi.mock('vue-router', () => ({
     }))
 }));
 
-const alertMock = {
-    closeAlert: vi.fn(),
-    showAlertFull: vi.fn()
-};
-
-const loaderMock = {
-    activate: vi.fn(),
-    deactivate: vi.fn()
-};
-
 interface LoginInstance {
     user: any;
 }
@@ -40,29 +24,20 @@ interface LoginInstance {
 describe('Login.vue', () => {
 
     let wrapper: VueWrapper;
-    const vuetify = createVuetify();
     const push = vi.fn();
 
     beforeEach(() => {
-        vi.mocked(useRouter).mockImplementationOnce((): Partial<Router> => ({
-            // @ts-ignore
-            push
-        }));
+        setRouterResponse({ push });
         setActivePinia(createPinia());
-        wrapper = mount(Login, {
-            global: {
-                plugins: [vuetify],
-                provide: {
-                    alert: alertMock,
-                    loader: loaderMock
-                }
-            }
-        });
+        setVVRules(['required']);
+        wrapper = mount(Login, mountOptions);
     });
 
     it('should redirects to home route if login successfully', async function () {
         vi.spyOn(Meteor, 'loginWithPassword');
         vi.spyOn(Meteor, 'logoutOtherClients');
+        vi.spyOn(loaderMock, 'activate');
+        vi.spyOn(loaderMock, 'deactivate');
         const instance = wrapper.vm as unknown as LoginInstance;
 
         const inputUser = wrapper.find('[data-test-id="input-user"] input');
@@ -78,6 +53,8 @@ describe('Login.vue', () => {
         await loginButton.trigger('submit');
         await flushPromises();
 
+        expect(loaderMock.activate).toHaveBeenCalled();
+        expect(loaderMock.deactivate).toHaveBeenCalled();
         expect(Meteor.loginWithPassword).toHaveBeenCalledTimes(1);
         expect(Meteor.logoutOtherClients).toHaveBeenCalledTimes(1);
         expect(push).toHaveBeenCalledWith({ name: 'home'});
