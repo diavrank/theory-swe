@@ -29,6 +29,7 @@ export default defineConfig({
         alias: {
             '@views': path.resolve(__dirname, 'imports/ui/views'),
             'meteor/meteor': path.resolve(__dirname, 'tests/mocks/meteor'),
+            'meteor/accounts-base': path.resolve(__dirname, 'tests/mocks/meteor'),
             '@typings': path.resolve(__dirname, 'imports/ui/typings'),
             '@mixins': path.resolve(__dirname, 'imports/ui/mixins'),
             '@routes': path.resolve(__dirname, 'imports/ui/routes'),

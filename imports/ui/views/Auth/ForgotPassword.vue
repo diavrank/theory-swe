@@ -6,8 +6,8 @@
       </v-btn>
       <div class="title ml-3">Forgot my password</div>
     </div>
-    <Form as="div" v-slot="{handleSubmit}" ref="forgotPasswordObserver" class="mt-3">
-      <v-form @submit="handleSubmit($event,forgotPassword)">
+    <Form as="div" ref="forgotPasswordObserver" class="mt-3">
+      <v-form @submit.prevent="forgotPassword">
         <Field v-slot="{field,errors}" name="email" rules="email|required">
           <v-text-field v-model="user.email" v-bind="field"
                         id="inputEmail" name="email"
@@ -30,6 +30,7 @@ import { useFormValidation } from '/imports/ui/composables/forms';
 import { Injections, MeteorError } from '@typings/utilities';
 import { AlertMessageType } from '@components/Utilities/Alerts/AlertMessage.vue';
 import { useRouter } from 'vue-router';
+import { Accounts } from 'meteor/accounts-base'
 
 export default defineComponent({
   name: 'ForgotPassword',

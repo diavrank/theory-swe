@@ -19,7 +19,8 @@ export const setVVRules = (rules: string[]) => {
 
 export const alertMock = {
     closeAlert: vi.fn(),
-    showAlertFull: vi.fn()
+    showAlertFull: vi.fn(),
+    showAlertSimple: vi.fn()
 };
 
 export const loaderMock = {
