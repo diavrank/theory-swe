@@ -1,7 +1,7 @@
 // Vee validate rules
 import { vi} from 'vitest';
 import { createVuetify } from 'vuetify';
-import { Router, useRouter } from 'vue-router';
+import { Router, useRoute, useRouter } from 'vue-router';
 import { defineRule } from 'vee-validate';
 import { required } from '@vee-validate/rules';
 
@@ -9,6 +9,10 @@ export const setRouterResponse= (options: Partial<Router>) => {
     // @ts-ignore
     vi.mocked(useRouter).mockImplementationOnce((): Partial<Router> => options);
 };
+
+export const setRouteResponse = (options: any) => {
+    vi.mocked(useRoute).mockImplementationOnce(() => options);
+}
 
 export const setVVRules = (rules: string[]) => {
     rules.forEach((rule) => {
