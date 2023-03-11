@@ -40,6 +40,10 @@ export const mountOptions = {
         provide: {
             alert: alertMock,
             loader: loaderMock
+        },
+        mocks: {
+            $route: {},
+            $router: {}
         }
     }
 };
