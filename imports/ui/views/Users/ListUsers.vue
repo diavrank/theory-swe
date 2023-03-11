@@ -60,34 +60,39 @@
 
 <script lang="ts">
 import ModalRemove from '@components/Utilities/Modals/ModalRemove.vue';
-import { defineComponent } from 'vue';
-import { DatatableHeader, ModalData } from '@typings/utilities';
+import { computed, defineComponent, inject, reactive, ref } from 'vue';
+import { Injections, MeteorError, ModalData } from '@typings/utilities';
 import { Meteor } from 'meteor/meteor';
 import { ResponseMessage } from '@server/utils/ResponseMessage';
 import { User } from '@typings/users';
-import { mapActions } from 'pinia';
 import { useTemporalStore } from '/imports/ui/stores/temporal';
+import { useRouter } from 'vue-router';
+import { LoaderType } from '@components/Utilities/Loaders/Loader.vue';
+import { AlertMessageType } from '@components/Utilities/Alerts/AlertMessage.vue';
 
 export default defineComponent({
   name: 'ListUsers',
   components: { ModalRemove },
-  data: () => ({
-    modalData: {
+  setup() {
+    const temporalStore = useTemporalStore();
+    const router = useRouter();
+    const refModalRemove = ref<InstanceType<typeof ModalRemove> | null>(null);
+    const loader = inject<LoaderType>(Injections.Loader);
+    const alert = inject<AlertMessageType>(Injections.AlertMessage);
+    const modalData: ModalData = reactive({
       mainNameElement: '',
       _id: undefined,
       element: {}
-    } as ModalData,
-    headersData: {
+    });
+    const headersData = reactive({
       path: '',
       status: {},
       fullname: '',
       username: '',
       email: ''
-    }
-  }),
-  computed: {
-    headers(): DatatableHeader[] {
-      const self = this;
+    });
+
+    const headers = computed(() => {
       return [
         {
           key: 'profile.path',
@@ -110,7 +115,7 @@ export default defineComponent({
             return value != null &&
                 typeof value === 'string' &&
                 value.toString().toLocaleLowerCase()
-                    .indexOf(self.headersData.fullname.toLocaleLowerCase()) !== -1;
+                    .indexOf(headersData.fullname.toLocaleLowerCase()) !== -1;
           }
         },
         {
@@ -122,7 +127,7 @@ export default defineComponent({
             return value != null &&
                 typeof value === 'string' &&
                 value.toString().toLocaleLowerCase()
-                    .indexOf(self.headersData.username.toLocaleLowerCase()) !== -1;
+                    .indexOf(headersData.username.toLocaleLowerCase()) !== -1;
           }
         },
         {
@@ -134,41 +139,45 @@ export default defineComponent({
           filter(value: any): boolean {
             return value != null &&
                 typeof value === 'string' &&
-                value.toString().indexOf(self.headersData.email) !== -1;
+                value.toString().indexOf(headersData.email) !== -1;
           }
         },
         {
           key: 'action', title: 'Options', sortable: false, align: 'center',
           class: ['subtitle-1', 'font-weight-light']
         }];
+    })
+
+    const openEditUser = (user: User) => {
+      temporalStore.setElement(user);
+      router.push({ name: 'home.users.edit' });
+    };
+
+    const openRemoveModal = (user: User) => {
+      modalData.element = user;
+      modalData._id = user._id;
+      modalData.element.removed = false;
+      modalData.mainNameElement = user.profile.name;
+      if (refModalRemove.value) {
+        refModalRemove.value.dialog = true;
+      }
+    };
+
+    const deleteUser = (userId: string) => {
+      loader?.activate('Deleting user . . .');
+      Meteor.call('user.delete', { userId }, (error: MeteorError, response: ResponseMessage) => {
+        loader?.deactivate();
+        if (error && error instanceof Meteor.Error) {
+          console.error('Error to delete user: ', error);
+          alert?.showAlertSimple('error', error.reason || '');
+        } else {
+          alert?.showAlertSimple('success', response.message + '');
+        }
+      })
     }
-  },
-  methods: {
-    ...mapActions(useTemporalStore, ['setElement']),
-    openEditUser(user: User): void {
-      this.setElement(user);
-      this.$router.push({ name: 'home.users.edit' });
-    },
-    openRemoveModal(user: User): void {
-      this.modalData.element = user;
-      this.modalData._id = user._id;
-      this.modalData.element.removed = false;
-      this.modalData.mainNameElement = user.profile.name;
-      this.$refs.refModalRemove.dialog = true;
-    },
-    deleteUser(userId: string): void {
-      this.$loader.activate();
-      Meteor.call('user.delete', { userId },
-          (err: Meteor.Error, response: ResponseMessage) => {
-            this.$loader.deactivate();
-            if (err) {
-              console.error('Error to delete user: ', err);
-              this.$alert.showAlertSimple('error', err.reason);
-            } else {
-              this.$alert.showAlertSimple('success', response.message);
-            }
-          });
-    }
+
+    return { refModalRemove, modalData, headers, openEditUser, openRemoveModal, deleteUser }
+
   },
   meteor: {
     $subscribe: {

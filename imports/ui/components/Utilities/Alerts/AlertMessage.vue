@@ -36,6 +36,18 @@
 <script lang="ts">
 import { defineComponent, getCurrentInstance } from 'vue';
 
+export interface AlertMessageType {
+  showAlertSimple(color: string, title:  string): void;
+  showAlertFull(icon: string,
+                color: string,
+                title: string,
+                mode: string,
+                timeout: number,
+                location: string,
+                text?: string): void;
+  closeAlert(): void;
+}
+
 export default defineComponent({
   name: 'AlertMessage',
   data() {

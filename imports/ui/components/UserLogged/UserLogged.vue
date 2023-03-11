@@ -22,8 +22,11 @@
 import { Meteor } from 'meteor/meteor';
 import { User } from '@typings/users';
 import { LogoutHook } from '@typings/accounts';
-import { defineComponent } from 'vue';
+import { computed, defineComponent, inject, onMounted, reactive, ref } from 'vue';
 import { useAuthStore } from '/imports/ui/stores/auth';
+import { useRouter } from 'vue-router';
+import { Injections } from '@typings/utilities';
+import { Emitter, EventType } from 'mitt';
 
 declare module Accounts {
   function onLogout(func: Function): LogoutHook;
@@ -33,67 +36,61 @@ export default defineComponent({
   name: 'UserLogged',
   setup() {
     const authStore = useAuthStore();
-    return { authStore };
-  },
-  data() {
-    return {
-      user: {
-        emails: [],
-        profile: {}
-      } as User,
-      onLogoutHook: null as LogoutHook | null
-    };
-  },
-  created() {
-    this.setSession();
+    const router = useRouter();
+    const emitter = inject<Emitter<Record<EventType, unknown>>>(Injections.Emitter);
+    const user: User = reactive({
+      emails: [],
+      profile: {}
+    });
+    const onLogoutHook = ref<LogoutHook | null>(null);
 
-  },
-  mounted() {
-    this.emitter.on('setUserLogged', () => {
-      this.setSession();
+    onMounted(() => {
+      emitter?.on('setUserLogged', setSession);
+      onLogoutHook.value = Accounts.onLogout(closeFrontSession);
     });
-    this.onLogoutHook = Accounts.onLogout(() => {
-      this.closeFrontSession();
-    });
-  },
-  methods: {
-    closeSession() {
-      if (this.onLogoutHook) {
-        this.onLogoutHook.stop();
+
+    const closeSession = () => {
+      if (onLogoutHook.value) {
+        onLogoutHook.value?.stop();
         Meteor.logout();
-        this.authStore.logout();
-        this.$router.push({ name: 'login' });
+        authStore.logout();
+        router.push({ name: 'login' });
       }
-    },
-    closeFrontSession() {
-      if (this.onLogoutHook) {
-        this.onLogoutHook.stop();
-        this.authStore.logout();
-        this.$router.push({ name: 'login' });
+    };
+
+    const closeFrontSession = () => {
+      if (onLogoutHook.value) {
+        onLogoutHook.value?.stop();
+        authStore.logout();
+        router.push({ name: 'login'});
       }
-    },
-    setSession() {
+    };
+
+    const setSession = () => {
       if (Meteor.userId() !== null) {
-        this.user = this.authStore.user || {
+        Object.assign(user, authStore.user || {
           emails: [],
           profile: {}
-        };
+        });
       } else {
-        this.closeSession();
+        closeSession();
       }
     }
-  },
-  computed: {
-    usernameInitials() {
+
+    const usernameInitials = computed(() => {
       let initials = '';
-      if (this.user?.username) {
-        const words = this.user.username.split(' ');
+      if (user.username) {
+        const words = user.username.split(' ');
         initials = words.reduce((acc, word) => {
           return acc + word[0];
         }, '');
       }
       return initials.toUpperCase();
-    }
+    });
+
+    setSession();
+
+    return { user, usernameInitials, closeSession };
   }
 });
 </script>

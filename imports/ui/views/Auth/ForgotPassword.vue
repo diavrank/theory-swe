@@ -24,47 +24,46 @@
 </template>
 
 <script lang="ts">
-import validateForm from '@mixins/validateForm';
 import { Field, Form, FormContext } from 'vee-validate';
-import { defineComponent } from 'vue';
-import { Meteor } from 'meteor/meteor';
+import { defineComponent, inject, reactive, ref } from 'vue';
+import { useFormValidation } from '/imports/ui/composables/forms';
+import { Injections, MeteorError } from '@typings/utilities';
+import { AlertMessageType } from '@components/Utilities/Alerts/AlertMessage.vue';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'ForgotPassword',
-  mixins: [validateForm],
   components: {
     Field,
     Form
   },
-  data() {
-    return {
-      user: {
-        email: undefined
-      }
-    };
-  },
-  methods: {
-    async forgotPassword() {
-      if (await this.isFormValid(this.$refs.forgotPasswordObserver as FormContext)) {
-        Accounts.forgotPassword(this.user, (err: Meteor.Error | any) => {
-          if (err) {
-            console.error('Error sending email', err);
-            this.$alert.showAlertSimple('error', 'An error occurred while sending email.');
+  setup() {
+    const forgotPasswordObserver = ref<FormContext | null>(null);
+    const alert = inject<AlertMessageType>(Injections.AlertMessage);
+    const router = useRouter();
+    const user = reactive({
+      email: undefined
+    });
+
+    const forgotPassword = async () => {
+      const observer = forgotPasswordObserver.value as FormContext | null;
+      if (observer && alert && await useFormValidation(observer, alert)) {
+        Accounts.forgotPassword(user, (error: MeteorError) => {
+          if (error) {
+            console.error('Error sending email', error);
+            alert?.showAlertSimple('error', 'An error occurred while sending email');
           } else {
-            this.$alert.showAlertSimple('success',
-                'Email sent! Please open your email and click on the message link that we sent.');
+            alert?.showAlertSimple('success', 'Email sent! Please open your email and click on the message link that we sent');
             setTimeout(() => {
-              this.$router.push({ name: 'login' });
+              router.push({ name: 'login' });
             }, 5000);
           }
-        });
-
+        })
       }
-    }
+    };
+
+    return { user, forgotPassword, forgotPasswordObserver };
   }
 });
 </script>
 
-<style scoped>
-
-</style>

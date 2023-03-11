@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import { defineComponent, PropType, ref } from 'vue';
 import { ModalData } from '@typings/utilities';
 
 export default defineComponent({
@@ -35,24 +35,21 @@ export default defineComponent({
       required: true
     }
   },
-  data() {
-    return {
-      dialog: false
+  setup(props, context) {
+    const dialog = ref(false);
+
+    const removeElement = () => {
+      props.modalData.element.removed = true;
+      context.emit('id_element', props.modalData._id);
+      dialog.value = false;
     };
-  },
-  methods: {
-    removeElement() {
-      this.modalData.element.removed = true;
-      this.$emit('id_element', this.modalData._id);
-      this.dialog = false;
-    },
-    cancel() {
-      this.dialog = false;
+
+    const cancel = () => {
+      dialog.value = false;
     }
+
+    return { cancel, removeElement, modalData: props.modalData, dialog };
   }
 });
 </script>
 
-<style scoped>
-
-</style>

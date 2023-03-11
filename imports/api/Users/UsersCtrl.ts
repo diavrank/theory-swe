@@ -157,12 +157,14 @@ export const updatePersonalDataMethod = new ValidatedMethod({
 	validate({ user }: { user: Meteor.User }) {
 		try {
 			check(user, {
+				_id: String,
 				username: String,
 				emails: [{ address: String, verified: Boolean }],
 				profile: {
 					profile: String,
 					name: String,
-					path: Match.Maybe(String)
+					path: Match.Maybe(String),
+					updated_at: String
 				}
 			});
 		} catch (exception) {
