@@ -31,7 +31,7 @@ Applies concepts like:
   - [ ] Error handling tools
 - [X] TDD
 
-**Tech stack:** Meteor (Node.js), MongoDB, Vue 2, Vuetify, TypeScript, Mocha.
+**Tech stack:** Meteor (Node.js), MongoDB, Vue 3, Vuetify 3, Pinia, Vitest, TypeScript, Mocha.
 
 Supported Platforms
 -------------------
