@@ -104,6 +104,16 @@ yarn run:windows
 **Note:**
 You can configure your Jetbrains IDE to run the project from the IDE execution button.
 
+**Run Tests**
+In watch mode
+```shell
+vitest
+```
+
+Just once
+```shell
+vitest run
+```
 
 Usage
 ---------------
