@@ -30,7 +30,6 @@ import { useFormValidation } from '/imports/ui/composables/forms';
 import { Injections, MeteorError } from '@typings/utilities';
 import { AlertMessageType } from '@components/Utilities/Alerts/AlertMessage.vue';
 import { useRouter } from 'vue-router';
-import { Accounts } from 'meteor/accounts-base'
 
 export default defineComponent({
   name: 'ForgotPassword',

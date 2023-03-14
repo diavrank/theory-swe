@@ -2,7 +2,12 @@ import { flushPromises, mount, VueWrapper } from '@vue/test-utils';
 import VerifyAccount from '@views/Auth/VerifyAccount.vue';
 import { mountOptions } from '/tests/mocks/vue-ecosystem';
 import { expect, vi } from 'vitest';
-import { MockHelper } from '/tests/mocks/meteor';
+import { Accounts, MockHelper } from '/tests/mocks/meteor';
+
+Object.defineProperty(global, 'Accounts', {
+    value: Accounts,
+    writable: false,
+});
 
 /**
  * Options API

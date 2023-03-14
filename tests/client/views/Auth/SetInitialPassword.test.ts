@@ -9,7 +9,7 @@ import {
     setRouterResponse,
     setVVRules
 } from '/tests/mocks/vue-ecosystem';
-import { MockHelper } from '/tests/mocks/meteor';
+import { Accounts, MockHelper } from '/tests/mocks/meteor';
 
 vi.mock('vue-router', () => ({
     useRoute: vi.fn(),
@@ -17,6 +17,12 @@ vi.mock('vue-router', () => ({
         push: () => {}
     }))
 }));
+
+Object.defineProperty(global, 'Accounts', {
+    value: Accounts,
+    writable: false,
+});
+
 describe('SetInitialPassword.vue', function () {
 
     let wrapper: VueWrapper;

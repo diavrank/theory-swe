@@ -51,7 +51,6 @@ import { Injections, MeteorError } from '@typings/utilities';
 import { AlertMessageType } from '@components/Utilities/Alerts/AlertMessage.vue';
 import { useFormValidation } from '/imports/ui/composables/forms';
 import { LoaderType } from '@components/Utilities/Loaders/Loader.vue';
-import { Accounts } from 'meteor/accounts-base';
 
 export default defineComponent({
   name: 'SetInitialPassword',

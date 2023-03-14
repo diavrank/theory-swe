@@ -2,8 +2,7 @@ import { flushPromises, mount, VueWrapper } from '@vue/test-utils';
 import ForgotPassword from '@views/Auth/ForgotPassword.vue';
 import { alertMock, mountOptions, setRouterResponse, setVVRules } from '/tests/mocks/vue-ecosystem';
 import { vi, expect } from 'vitest';
-import { Accounts } from 'meteor/accounts-base';
-import { MockHelper } from '/tests/mocks/meteor';
+import { MockHelper, Accounts } from '/tests/mocks/meteor';
 
 vi.mock('vue-router', () => ({
     useRoute: vi.fn(),
@@ -11,6 +10,12 @@ vi.mock('vue-router', () => ({
         push: () => {}
     }))
 }));
+
+Object.defineProperty(global, 'Accounts', {
+    value: Accounts,
+    writable: false,
+});
+
 describe('ForgotPassword.vue', function () {
 
     let wrapper: VueWrapper;
