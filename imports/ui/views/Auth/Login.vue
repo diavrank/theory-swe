@@ -2,8 +2,8 @@
   <div class="login-wrapper">
     <div class="title secondary--text">Welcome!</div>
     <div class="display-1 mb-0 secondary--text">Login</div>
-    <v-form @submit.prevent="login" autocomplete="off">
-      <Form as="div" :initial-values="initialValues" ref="loginObserver">
+    <Form as="div" v-slot="{handleSubmit}" @invalid-submit="login" :initial-values="initialValues" ref="loginObserver">
+      <v-form @submit.prevent="handleSubmit($event, login)" autocomplete="off">
         <Field v-slot="{ field, errors }" name="username" rules="required">
           <v-text-field v-bind="field" name="username" v-model="user.userOrEmail" autocomplete="off" required
                         color="primary"
@@ -26,8 +26,8 @@
         <div class="d-flex justify-start">
           <v-btn type="submit" rounded color="primary" transition="fade" data-test-id="login-button">Enter</v-btn>
         </div>
-      </Form>
-    </v-form>
+      </v-form>
+    </Form>
   </div>
 </template>
 

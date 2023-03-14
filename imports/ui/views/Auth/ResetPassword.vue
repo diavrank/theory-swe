@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="title">Reset password</div>
-    <Form as="v-form" ref="setPasswordFormObserver">
-      <v-form @submit.prevent="resetPassword" autocomplete="off">
+    <Form as="v-form" v-slot="{handleSubmit}" @invalid-submit="resetPassword" ref="setPasswordFormObserver">
+      <v-form @submit="handleSubmit($event, resetPassword)" autocomplete="off">
         <Field v-slot="{field, errors}" name="password" rules="strength_password|required">
           <v-text-field v-bind="field"
                         v-model="user.password" id="inputNewPassword"

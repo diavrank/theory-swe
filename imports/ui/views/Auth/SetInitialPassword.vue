@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="title">Set initial password</div>
-    <Form as="div" ref="setPasswordFormObserver">
-      <v-form @submit="setPassword">
+    <Form as="div" v-slot="{handleSubmit}" @invalid-submit="setPassword" ref="setPasswordFormObserver">
+      <v-form @submit="handleSubmit($event, setPassword)">
         <Field v-slot="{ field, errors }" name="password" rules="required|strength_password" type="password">
           <v-text-field v-bind="field" v-model="user.password" id="inputNewPassword"
                         :type="showPass.new ? 'text' : 'password'"

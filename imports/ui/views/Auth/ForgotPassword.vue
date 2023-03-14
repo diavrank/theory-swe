@@ -6,8 +6,8 @@
       </v-btn>
       <div class="title ml-3">Forgot my password</div>
     </div>
-    <Form as="div" ref="forgotPasswordObserver" class="mt-3">
-      <v-form @submit.prevent="forgotPassword">
+    <Form as="div" v-slot="{handleSubmit}" @invalid-submit="forgotPassword" ref="forgotPasswordObserver" class="mt-3">
+      <v-form @submit="handleSubmit($event, forgotPassword)">
         <Field v-slot="{field,errors}" name="email" rules="email|required">
           <v-text-field v-model="user.email" v-bind="field"
                         id="inputEmail" name="email"
