@@ -78,6 +78,28 @@ mongodump --db theory-swe --out ./database/
 yarn
 ```
 
+**For Mac OS X with ARM architecture**
+- Run the following commands:
+```shell
+arch # Verify you are using Rosetta
+-> i386 
+
+# Install node
+nvm install lts/fermium
+
+# Verify node installation
+nvm use lts/fermium
+node -e 'console.log(process.arch)'
+-> x64
+```
+Then install dependencies using yarn:
+
+```shell
+yarn
+```
+
+Reference: https://gist.github.com/LeZuse/bf838718ff2689c5fc035c5a6825a11c
+
 **Configure environment variables file**
 
 Go to `./settings/` and copy `settings-development-example.json` to `settings-development.json` and modify the following:
