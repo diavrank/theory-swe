@@ -1,5 +1,5 @@
 <template>
-  <div align="center">
+  <div>
     <div v-if="loading">
       <h3>Loading. . .</h3>
     </div>
@@ -11,7 +11,7 @@
         {{ message }}
         <small v-text="description"></small>
       </h3>
-      <v-btn :to="{name:'login'}" color="primary">Return to login</v-btn>
+      <v-btn @click="$router.push({ name: 'login'})" color="primary" data-test-id="redirect-button">Return to login</v-btn>
     </div>
   </div>
 </template>

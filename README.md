@@ -31,7 +31,7 @@ Applies concepts like:
   - [ ] Error handling tools
 - [X] TDD
 
-**Tech stack:** Meteor (Node.js), MongoDB, Vue 2, Vuetify, TypeScript, Mocha.
+**Tech stack:** Meteor (Node.js), MongoDB, Vue 3, Vuetify 3, Pinia, Vitest, TypeScript, Mocha.
 
 Supported Platforms
 -------------------
@@ -78,11 +78,34 @@ mongodump --db theory-swe --out ./database/
 yarn
 ```
 
+**For Mac OS X with ARM architecture**
+- Run the following commands:
+```shell
+arch # Verify you are using Rosetta
+-> i386 
+
+# Install node
+nvm install lts/fermium
+
+# Verify node installation
+nvm use lts/fermium
+node -e 'console.log(process.arch)'
+-> x64
+```
+Then install dependencies using yarn:
+
+```shell
+yarn
+```
+
+Reference: https://gist.github.com/LeZuse/bf838718ff2689c5fc035c5a6825a11c
+
 **Configure environment variables file**
 
 Go to `./settings/` and copy `settings-development-example.json` to `settings-development.json` and modify the following:
 
 - **MAIL_URL:** Update the connection string according to your smtp credentials.
+- **STORAGE_PATH:** Update the storage path according to your pwd output.
 
 Running project
 ---------------
@@ -104,6 +127,16 @@ yarn run:windows
 **Note:**
 You can configure your Jetbrains IDE to run the project from the IDE execution button.
 
+**Run Tests**
+In watch mode
+```shell
+vitest
+```
+
+Just once
+```shell
+vitest run
+```
 
 Usage
 ---------------
