@@ -83,6 +83,7 @@ yarn
 Go to `./settings/` and copy `settings-development-example.json` to `settings-development.json` and modify the following:
 
 - **MAIL_URL:** Update the connection string according to your smtp credentials.
+- **STORAGE_PATH:** Update the storage path according to your pwd output.
 
 Running project
 ---------------
