@@ -4,13 +4,9 @@ import { createVuetify } from 'vuetify';
 import { mdi } from 'vuetify/iconsets/mdi';
 import { aliases, md } from 'vuetify/iconsets/md';
 // @ts-ignore
-import { es } from 'vuetify/locale';
-import { VDataTable } from 'vuetify/labs/VDataTable';
+import {en, es} from 'vuetify/locale';
 
 export default createVuetify({
-	components: {
-		VDataTable,
-	},
 	theme: {
 		defaultTheme: 'myCustomLightTheme',
 		themes: {
@@ -42,7 +38,7 @@ export default createVuetify({
 		}
 	},
 	locale: {
-		locale: 'es',
-		messages: { es }
+		locale: 'en',
+		messages: { en }
 	}
 });

@@ -149,7 +149,7 @@ export default defineComponent({
   methods: {
     async saveUser() {
       if (await this.isFormValid(this.$refs.userFormObserver as FormContext)) {
-        this.$loader.activate(LOADER_MESSAGES.SAVE_PROFILE);
+        this.$loader.activate(LOADER_MESSAGES.SAVE_USER);
         //TODO: Refresh this.user with values from
         Meteor.call('user.save', { user: this.user, photoFileUser: this.photoFileUser },
             (error: Meteor.Error, response: ResponseMessage) => {

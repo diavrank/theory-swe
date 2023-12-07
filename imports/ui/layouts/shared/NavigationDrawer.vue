@@ -22,7 +22,7 @@
     <v-divider></v-divider>
     <v-list :lines="false" density="compact" nav v-model="optionSelected" class="py-0">
       <v-list-item v-for="(option,i) in options" :key="i" :to="{ name: option.namePath }"
-                   :value="option" active-color="primary">
+                   :value="option" color="primary">
         <template v-slot:prepend>
           <v-icon :icon="option.icon"></v-icon>
         </template>

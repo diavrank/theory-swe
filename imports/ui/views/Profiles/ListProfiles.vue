@@ -20,7 +20,7 @@
               <v-tooltip location="bottom" transition="fab-transition">
                 <template v-slot:activator="{props}">
                   <v-btn v-can:edit.hide="'profiles'" icon="edit" color="success" v-bind="props" size="x-small" class="mr-2"
-                         @click="openEditProfile(item.raw)">
+                         @click="openEditProfile(item)">
                   </v-btn>
                 </template>
                 <span>Edit</span>
@@ -28,7 +28,7 @@
               <v-tooltip location="bottom" transition="fab-transition">
                 <template v-slot:activator="{props}">
                   <v-btn v-can:delete.hide="'profiles'" icon="close" color="error" v-bind="props" size="x-small" class="mr-2"
-                         @click="openRemoveModal(item.raw)">
+                         @click="openRemoveModal(item)">
                   </v-btn>
                 </template>
                 <span>Remove</span>
