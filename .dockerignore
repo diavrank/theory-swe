@@ -1,0 +1,10 @@
+.git
+.meteor/local
+.binnacle
+.idea
+.uploads
+.run
+.github
+node_modules
+backups
+data

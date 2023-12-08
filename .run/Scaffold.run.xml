@@ -1,0 +1,17 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Scaffold" type="meteor-app-runner" factoryName="Meteor" programParameters="--settings ./settings/settings-development.json">
+    <option name="envs">
+      <entry key="MONGO_URL" value="mongodb://localhost:27017/theory-swe" />
+    </option>
+    <option name="exePath" value="/usr/local/bin/meteor" />
+    <option name="startBrowserSettings">
+      <browser url="http://localhost:3000" />
+    </option>
+    <meteor-runner-state>
+      <startBrowserSettings>
+        <browser url="http://localhost:3000" />
+      </startBrowserSettings>
+    </meteor-runner-state>
+    <method v="2" />
+  </configuration>
+</component>
