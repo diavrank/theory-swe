@@ -22,7 +22,7 @@
     "fs-extra": "^10.0.0",
     "helmet": "^4.6.0",
     "iso-datestring-validator": "^2.2.0",
-    "meteor-node-stubs": "^1.2.5",
+    "meteor-node-stubs": "^1.2.7",
     "mimetypes": "^0.1.1",
     "mitt": "^3.0.0",
     "pinia": "^2.0.33",
