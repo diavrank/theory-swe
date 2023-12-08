@@ -7,8 +7,6 @@ import vue from '@vitejs/plugin-vue'
 import vuetify from 'vite-plugin-vuetify'
 import path from 'path';
 
-console.log('dirname: ',path.resolve(__dirname, 'middlewares'));
-
 export default defineConfig({
   resolve:{
     extensions: [".ts", ".json", ".vue"],
