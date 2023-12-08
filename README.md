@@ -1,44 +1,37 @@
-# Theoretical concepts about software engineering
+# Scaffold
 
 ## Description
 
-Web app which includes:
+Real-time web app which includes:
 - Authentication
 - Users management
+- Email sendings
+- TLS configuration for production
+- HTTP Security Headers (Helmet)
+- Endpoint tests
+- CI Pipeline for GitHub Actions
 
 Applies concepts like:
 
-- [X] Code reviews
-- [ ] Access modifiers
-- [X] Architecture patterns (N Layers, Server-Client)
+- [X] Architecture patterns (N-Layers, Server-Client)
 - [X] Design patterns
-  - Creationals
+  - Creational
     - Factory
     - Singleton
   - Structural
     - Facade
-  - Behavorial
+  - Behavioral
     - Observer (Publish/Subscribe)
-- [ ] SOLID principles (theory)
-- Object-oriented programming
-  - [ ] What is a class?
-  - [ ] What is inheritance?
-  - [ ] What is an interface?
-  - [ ] What is polymorphism?
-- Web APIs
-  - [ ] What is a Web API?
-  - [ ] Which tools can be used to test Web APIs?
-  - [ ] Error handling tools
-- [X] TDD
+- [X] Role Based Access Control (RBAC)
 
 **Tech stack:** Meteor (Node.js), MongoDB, Vue 3, Vuetify, TypeScript, Mocha.
 
 Supported Platforms
 -------------------
 
-- macOS 10.12+
+- macOS 12+
 - Linux
-- Windows 10
+- Windows 10+
 
 System Requirements
 -------------------
@@ -46,12 +39,12 @@ System Requirements
 - Node 14+ [download here](https://nodejs.org/es/download/)
 - Yarn 1.22.0+
 - Meteor 2.13.3 [Installation](https://www.meteor.com/install)
-- Mongo [4.4.9](https://www.mongodb.com/download-center/community) and [Mongo Booster](https://nosqlbooster.com/downloads) 
+- Mongo [6.0.4](https://www.mongodb.com/download-center/community) and [Mongo Booster](https://nosqlbooster.com/downloads) 
 - **Note:** In some cases it is necesary to disable antivrus in order to works SMTP Server
 
 ## Installation
 
-- Clone the last version of repository [here](https://github.com/diavrank/theory-swe.git)
+- Clone the last version of the repository [here](https://github.com/diavrank/theory-swe.git)
 - Verify you are on **dev** branch
 
 **Database configuration with terminal**
