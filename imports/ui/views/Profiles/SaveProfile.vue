@@ -150,7 +150,7 @@ export default defineComponent({
     selfPermissions: [] as RoleType[],
     allPermissions: [] as RoleType[]
   }),
-  mounted() {
+  created() {
     if (this.$route.meta.type === 'create') {
       this.dataView.title = 'Create profile';
       this.dataView.targetButton = 'Create';
