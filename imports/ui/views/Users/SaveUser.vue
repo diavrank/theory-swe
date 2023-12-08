@@ -116,7 +116,7 @@ export default defineComponent({
       }
     };
   },
-  mounted() {
+  created() {
     if (this.$route.meta.type === 'create') {
       this.dataView.title = 'Create user';
       this.dataView.targetButton = 'Create';

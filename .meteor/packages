@@ -16,7 +16,6 @@ typescript@4.9.4              # Enable TypeScript syntax in .ts and .tsx modules
 shell-server@0.5.0            # Server-side component of the `meteor shell` command
 
 static-html@1.3.2             # Define static page content in .html files
-vite:bundler
 accounts-base@2.2.8
 accounts-password@2.3.4
 check@1.3.2
@@ -33,3 +32,4 @@ jagi:astronomy
 xolvio:cleaner
 dburles:factory
 meteortesting:mocha
+jorgenvatle:vite-bundler
