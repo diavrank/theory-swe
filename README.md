@@ -31,7 +31,7 @@ Applies concepts like:
   - [ ] Error handling tools
 - [X] TDD
 
-**Tech stack:** Meteor (Node.js), MongoDB, Vue 2, Vuetify, TypeScript, Mocha.
+**Tech stack:** Meteor (Node.js), MongoDB, Vue 3, Vuetify, TypeScript, Mocha.
 
 Supported Platforms
 -------------------
@@ -45,7 +45,7 @@ System Requirements
 
 - Node 14+ [download here](https://nodejs.org/es/download/)
 - Yarn 1.22.0+
-- Meteor 2.4 [Installation](https://www.meteor.com/install)
+- Meteor 2.13.3 [Installation](https://www.meteor.com/install)
 - Mongo [4.4.9](https://www.mongodb.com/download-center/community) and [Mongo Booster](https://nosqlbooster.com/downloads) 
 - **Note:** In some cases it is necesary to disable antivrus in order to works SMTP Server
 
