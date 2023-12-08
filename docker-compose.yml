@@ -28,6 +28,23 @@ services:
       - $PWD/.uploads:/opt/app-files
     networks:
       - scaffold-net
+  ssl-proxy:
+    container_name: ssl-proxy
+    image: justsml/ssl-proxy:latest
+    environment:
+      - HTTPS_PORT=443
+      - SERVER_NAME=antware.dev
+      - UPSTREAM_TARGET=app:3000
+      - CERT_PUBLIC_PATH=/certs/fullchain.pem
+      - CERT_PRIVATE_PATH=/certs/privkey.pem
+    volumes:
+      - /certs:/certs:ro
+    depends_on:
+      - app
+    ports:
+      - 443:443
+    networks:
+      - scaffold-net
   mongo-primary:
     container_name: mongo-primary
     image: bitnami/mongodb:6.0.4
