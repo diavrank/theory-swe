@@ -1,5 +1,5 @@
 import { Factory } from 'meteor/dburles:factory';
-import { ProfileCollection } from '/imports/api/Profiles/Profile';
+import { ProfileCollection } from '/imports/api/Profiles/ProfileCollection';
 import * as faker from 'faker';
 import { permissionsArray } from '/imports/startup/server/Permissions';
 

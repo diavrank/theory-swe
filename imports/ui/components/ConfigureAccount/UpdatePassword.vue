@@ -1,6 +1,6 @@
 <template>
-  <ValidationObserver ref="passwordFormObserver">
-    <form @submit.prevent="updatePassword" ref="updatePasswordForm" data-vv-scope="update-password-form">
+  <Form as="div" v-slot="{handleSubmit}" ref="passwordFormObserver">
+    <v-form @submit="handleSubmit($event,updatePassword)" id="updatePassword" autocomplete="off">
       <v-card>
         <v-card-title>
           <div class="text-subtitle-2">
@@ -9,9 +9,9 @@
         </v-card-title>
 
         <v-card-text>
-          <ValidationProvider v-slot="{errors}" name="current password" rules="required">
-            <v-text-field v-model="password.old" id="inputPassword"
-                          :append-icon="showPass.old ? 'mdi-eye' : 'mdi-eye-off'"
+          <Field v-slot="{ field, errors }" name="current password" rules="required">
+            <v-text-field v-bind="field" v-model="password.old" id="inputPassword"
+                          :append-icon="showPass.old ? 'mdi:mdi-eye' : 'mdi:mdi-eye-off'"
                           :type="showPass.old ? 'text' : 'password'"
                           name="current_password"
                           label="Current password"
@@ -19,12 +19,11 @@
                           autocomplete="off"
                           :error-messages="errors">
             </v-text-field>
-          </ValidationProvider>
-          <ValidationProvider v-slot="{errors}" name="new password"
-                              rules="required|min:8|strength_password"
-                              vid="password">
-            <v-text-field v-model="password.new" id="inputNewPassword"
-                          :append-icon="showPass.new ? 'mdi-eye' : 'mdi-eye-off'"
+          </Field>
+          <Field v-slot="{ field, errors }" name="password" type="password"
+                 rules="required|min:8|strength_password">
+            <v-text-field v-bind="field" v-model="password.new" id="inputNewPassword"
+                          :append-icon="showPass.new ? 'mdi:mdi-eye' : 'mdi:mdi-eye-off'"
                           :type="showPass.new ? 'text' : 'password'"
                           name="password"
                           label="New password"
@@ -32,38 +31,34 @@
                           autocomplete="new-password"
                           :error-messages="errors">
             </v-text-field>
-          </ValidationProvider>
-          <ValidationProvider v-slot="{errors}" name="confirm password"
-                              rules="required|confirmed:password">
-            <v-text-field v-model="password.confirm" id="inputConfirmPassword"
-                          :append-icon="showPass.confirm ? 'mdi-eye' : 'mdi-eye-off'"
+          </Field>
+          <Field v-slot="{ field, errors }" name="password confirmation"
+                 rules="required|confirmed:@password">
+            <v-text-field v-bind="field" v-model="password.confirm" id="inputConfirmPassword"
+                          :append-icon="showPass.confirm ? 'mdi:mdi-eye' : 'mdi:mdi-eye-off'"
                           :type="showPass.confirm ? 'text' : 'password'"
                           name="password_confirmation"
                           label="Confirm password"
                           @click:append="showPass.confirm = !showPass.confirm"
                           :error-messages="errors">
             </v-text-field>
-          </ValidationProvider>
+          </Field>
+        <div class="d-flex justify-center">
+          <v-btn type="submit" color="primary" rounded depressed>Change</v-btn>
+        </div>
         </v-card-text>
-
-        <v-card-actions>
-          <v-row justify="center">
-            <v-btn type="submit" color="primary" rounded depressed>Change</v-btn>
-          </v-row>
-        </v-card-actions>
       </v-card>
-    </form>
-  </ValidationObserver>
+    </v-form>
+  </Form>
+
 </template>
 
 <script lang="ts">
-import JsonHelper from '/imports/ui/mixins/helpers/json';
-import { ValidationProvider, ValidationObserver } from 'vee-validate';
-import Vue, { VueConstructor } from 'vue';
-import validateForm from '/imports/ui/mixins/validateForm';
-import AlertMessage from './../../components/Utilities/Alerts/AlertMessage.vue';
+import JsonHelper from '@mixins/helpers/json';
+import validateForm from '@mixins/validateForm';
+import { Form, Field, FormContext } from 'vee-validate';
+import { defineComponent } from 'vue';
 import { Meteor } from 'meteor/meteor';
-import { Accounts } from 'meteor/accounts-base'
 
 interface PasswordInput {
   old: string | null;
@@ -71,20 +66,11 @@ interface PasswordInput {
   confirm: string | null;
 }
 
-export default (Vue as VueConstructor<Vue &
-    InstanceType<typeof validateForm> &
-    InstanceType<typeof JsonHelper> &
-    {
-      $refs: {
-        passwordFormObserver: InstanceType<typeof ValidationObserver>
-      },
-      $alert: InstanceType<typeof AlertMessage>
-    }
-    >).extend({
+export default defineComponent({
   name: 'UpdatePassword',
   components: {
-    ValidationProvider,
-    ValidationObserver
+    Form,
+    Field
   },
   mixins: [validateForm, JsonHelper],
   data() {
@@ -103,23 +89,23 @@ export default (Vue as VueConstructor<Vue &
   },
   methods: {
     async updatePassword() {
-      if (await this.isFormValid(this.$refs.passwordFormObserver)) {
-        Accounts.changePassword(this.password.old || '', this.password.new || '', async (error:  Error | Meteor.Error | Meteor.TypedError | undefined) => {
-          this.setNulls(this.password);
-          await this.$refs.passwordFormObserver.reset();
-          if (error) {
-            console.error('Error changing password: ', error);
-            this.$alert.showAlertSimple('error', 'An error occurred while changing the password.');
-            $('#inputPassword').focus();
-          } else {
-            this.$alert.showAlertSimple('success', 'Password has been updated!');
-          }
-        });
+      if (await this.isFormValid(this.$refs.passwordFormObserver as FormContext)) {
+        Accounts.changePassword(this.password.old || '', this.password.new || '',
+            async(error: Error | Meteor.Error | Meteor.TypedError | undefined) => {
+              this.setNulls(this.password);
+              this.$refs.passwordFormObserver.resetForm();
+              if (error) {
+                console.error('Error changing password: ', error);
+                this.$alert.showAlertSimple('error', 'An error occurred while changing the password.');
+                document.getElementById('inputPassword').focus();
+              } else {
+                this.$alert.showAlertSimple('success', 'Password has been updated!');
+              }
+            });
       }
     }
   }
-
-})
+});
 </script>
 
 <style scoped>

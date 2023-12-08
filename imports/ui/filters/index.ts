@@ -1,2 +1,5 @@
-import './initials.filter';
-import './currency.filter';
+import { initials } from './initials.filter';
+
+export default {
+	initials
+};

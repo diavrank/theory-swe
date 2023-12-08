@@ -1,13 +1,13 @@
 <template>
   <v-menu offset-y>
-    <template v-slot:activator="{on}">
-      <v-btn text v-on="on">
+    <template v-slot:activator="{props}">
+      <v-btn variant="text" v-bind="props">
         <v-avatar color="indigo" size="36">
-                    <span v-if="user.profile.path==null" class="white--text text-h5">
+                    <span v-if="user.profile.path==null" class="text-white text-h5">
                         {{ usernameInitials }}
                     </span>
-          <img v-else id="face-preview" :src="user.profile.path"
-               :alt="user.username">
+          <v-img v-else id="face-preview" :src="user.profile.path"
+               :alt="user.username" />
         </v-avatar>
       </v-btn>
     </template>
@@ -19,34 +19,37 @@
 </template>
 
 <script lang="ts">
-import { mapMutations } from 'vuex';
-import Vue from 'vue';
 import { Meteor } from 'meteor/meteor';
-import { User } from '/imports/ui/typings/users';
-import { LogoutHook } from './../../typings/accounts'
+import { User } from '@typings/users';
+import { LogoutHook } from '@typings/accounts';
+import { defineComponent } from 'vue';
+import { useAuthStore } from '/imports/ui/stores/auth';
 
 declare module Accounts {
   function onLogout(func: Function): LogoutHook;
 }
 
-export default Vue.extend({
+export default defineComponent({
   name: 'UserLogged',
+  setup() {
+    const authStore = useAuthStore();
+    return { authStore };
+  },
   data() {
     return {
       user: {
         emails: [],
-        profile: {},
+        profile: {}
       } as User,
       onLogoutHook: null as LogoutHook | null
     };
   },
   created() {
-    // console.log("Loading data By vuex",this.$store.state.auth.user);
     this.setSession();
 
   },
   mounted() {
-    this.$root.$on('setUserLogged', () => {
+    this.emitter.on('setUserLogged', () => {
       this.setSession();
     });
     this.onLogoutHook = Accounts.onLogout(() => {
@@ -54,25 +57,27 @@ export default Vue.extend({
     });
   },
   methods: {
-    ...mapMutations('auth', ['logout']),
     closeSession() {
       if (this.onLogoutHook) {
         this.onLogoutHook.stop();
         Meteor.logout();
-        this.logout();
+        this.authStore.logout();
         this.$router.push({ name: 'login' });
       }
     },
-    closeFrontSession(){
+    closeFrontSession() {
       if (this.onLogoutHook) {
         this.onLogoutHook.stop();
-        this.logout();
+        this.authStore.logout();
         this.$router.push({ name: 'login' });
       }
     },
     setSession() {
       if (Meteor.userId() !== null) {
-        this.user = this.$store.state.auth.user;
+        this.user = this.authStore.user || {
+          emails: [],
+          profile: {}
+        };
       } else {
         this.closeSession();
       }
@@ -81,7 +86,7 @@ export default Vue.extend({
   computed: {
     usernameInitials() {
       let initials = '';
-      if (this.user.username) {
+      if (this.user?.username) {
         const words = this.user.username.split(' ');
         initials = words.reduce((acc, word) => {
           return acc + word[0];
@@ -90,9 +95,5 @@ export default Vue.extend({
       return initials.toUpperCase();
     }
   }
-})
+});
 </script>
-
-<style>
-
-</style>

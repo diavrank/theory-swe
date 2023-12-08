@@ -7,13 +7,13 @@ interface ModalData {
 }
 
 interface DatatableHeader {
-    value: string;
-    text: string;
-    sortable: boolean;
-    class: string[];
-    filter?: Function;
-    divider?: boolean;
-    align?: string;
+    readonly key: string;
+    readonly title: string;
+    readonly sortable: boolean;
+    readonly class: string[];
+    readonly filter?: Function;
+    readonly divider?: boolean;
+    readonly align?: string;
 }
 
 enum VueDraggableEvents {

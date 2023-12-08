@@ -1,31 +1,27 @@
 <template>
   <v-container fluid>
-    <transition appear name="appear-header">
-      <header-view></header-view>
-    </transition>
     <navigation-drawer></navigation-drawer>
+    <header-view></header-view>
     <transition appear name="appear-section-spa">
       <v-main id="main_section">
-        <transition name="section-view">
-          <router-view class="section-view" name="sectionView" v-if="loggedUser"></router-view>
-        </transition>
+        <router-view class="section-view" name="sectionView" v-slot="{Component}" v-if="loggedUser">
+          <transition name="section-view" mode="out-in">
+            <component :is="Component"/>
+          </transition>
+        </router-view>
       </v-main>
     </transition>
   </v-container>
 </template>
 
 <script lang="ts">
-import HeaderView from "./shared/HeaderView.vue";
-import FooterView from "./shared/FooterView.vue";
+import HeaderView from './shared/HeaderView.vue';
+import FooterView from './shared/FooterView.vue';
 import NavigationDrawer from './shared/NavigationDrawer.vue';
-import Vue, { VueConstructor } from 'vue';
+import { defineComponent } from 'vue';
 
-export default (Vue as VueConstructor<Vue &
-    {
-      $subscribe: Function
-    }
-    >).extend({
-  name: "LytSPA",
+export default defineComponent({
+  name: 'LytSPA',
   components: {
     NavigationDrawer,
     HeaderView,
@@ -41,10 +37,12 @@ export default (Vue as VueConstructor<Vue &
       }
     }
   },
-  mounted() {
-    this.$subscribe('roles', []);
+  meteor: {
+    $subscribe: {
+      roles: []
+    }
   }
-})
+});
 </script>
 
 <style scoped lang="sass">
@@ -79,11 +77,11 @@ export default (Vue as VueConstructor<Vue &
   z-index: 2
 
 .section-view-enter-active, .section-view-leave-active
-  transition: all .5s ease
+  transition: all .4s ease
   position: absolute
   width: 100%
 
-.section-view-enter
+.section-view-enter-from
   opacity: 0
   transform: translateX(100vw)
 
@@ -97,14 +95,14 @@ export default (Vue as VueConstructor<Vue &
 .appear-header-enter-active
   transition: all .5s ease .5s
 
-.appear-header-enter
+.appear-header-enter-from
   transform: translateY(-100px)
   opacity: 0
 
 .appear-section-spa-enter-active
-  transition: all .5s ease .5s
+  transition: all .5s ease
 
-.appear-section-spa-enter
+.appear-section-spa-enter-from
   opacity: 0
   transform: translateX(100vw)
 

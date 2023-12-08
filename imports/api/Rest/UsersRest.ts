@@ -26,9 +26,9 @@ Api.addRoute('users/:userId/:filename', {}, {
 			responseEntity.headers['Content-Type'] = file.meta.mime;
 		} catch (exception) {
 			console.error('Error during get the file: ', exception);
-			responseEntity.statusCode = 500;
+			responseEntity.statusCode = 404;
 			responseEntity.body = {
-				message: 'Error during get the file'
+				message: 'Not found'
 			};
 		}
 		return responseEntity;

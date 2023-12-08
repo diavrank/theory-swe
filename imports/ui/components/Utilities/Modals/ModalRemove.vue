@@ -12,7 +12,7 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="default" text v-on:click="cancel">
+        <v-btn color="default" variant="text" v-on:click="cancel">
           Cancel
         </v-btn>
         <v-btn color="error" depressed v-on:click="removeElement">
@@ -24,10 +24,10 @@
 </template>
 
 <script lang="ts">
-import Vue, {PropType} from 'vue';
-import { ModalData } from '/imports/ui/typings/utilities.ts';
+import { defineComponent, PropType } from 'vue';
+import { ModalData } from '@typings/utilities';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'ModalRemove',
   props: {
     modalData: {

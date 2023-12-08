@@ -1,7 +1,7 @@
 import { permissionsArray } from '../../startup/server/Permissions';
-import { ProfileCollection } from './Profile';
 import { Meteor } from 'meteor/meteor';
 import { Roles } from 'meteor/alanning:roles';
+import { ProfileCollection } from '/imports/api/Profiles/ProfileCollection';
 
 export interface StaticProfileType {
 	name: string;

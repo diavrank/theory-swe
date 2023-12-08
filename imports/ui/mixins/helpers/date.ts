@@ -1,9 +1,6 @@
-import Vue, { VueConstructor } from 'vue';
+import { defineComponent } from 'vue';
 
-export default (Vue as VueConstructor<Vue &
-	{
-		$_: any
-	}>).extend({
+export default defineComponent({
 	data() {
 		return {};
 	},

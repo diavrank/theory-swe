@@ -1,8 +1,8 @@
 <template>
-	<transition-group name="breadcrumb-slide" id="breadcrumb">
+  <transition-group name="breadcrumb-slide">
 		<div class="breadcrumb-item" v-for="(item, index) in items" :key="item.text">
 			<v-icon v-if="index > 0" color="primary">
-				mdi-chevron-right
+				mdi:mdi-chevron-right
 			</v-icon>
 			<a @click="routeTo(item)"
 			   :class="{active: index === last}"
@@ -10,12 +10,11 @@
 				{{ item.text }}
 			</a>
 		</div>
-	</transition-group>
+  </transition-group>
 </template>
 
 <script lang="ts">
-	import { mapState } from 'vuex';
-	import Vue from 'vue';
+	import { defineComponent } from 'vue';
 
   interface BreadcrumbItem {
     text: string;
@@ -23,7 +22,7 @@
     disabled: boolean;
   }
 
-	export default Vue.extend({
+	export default defineComponent({
 		name: 'Breadcrumb',
 		data: () => ({
 			items: [] as BreadcrumbItem[]
@@ -49,14 +48,13 @@
 				this.items = matched
 					.filter(routeItem => routeItem.meta.breadcrumb)
 					.map(routeItem => ({
-						text: routeItem.meta.breadcrumb,
+						text: routeItem.meta.breadcrumb as string,
 						to: { name: routeItem.meta.name },
 						disabled: !routeItem.meta.name
 					}));
 			}
 		},
 		computed: {
-			...mapState('navigation', ['_id']),
 			last(): number {
 				return this.items.length - 1;
 			}
@@ -69,29 +67,27 @@
   list-style: none
   display: inline-block
   padding: 5px
-
   .icon
     font-size: 14px
 
-  div.breadcrumb-item
-    float: left
+div.breadcrumb-item
+  float: left
+  a
+    color: black
+    font-weight: 300
+    cursor: pointer
+    &.active
+      color: var(--v-primary-base)
+      font-weight: 500
+      cursor: default
 
-    a
-      color: black
-      font-weight: 300
+.breadcrumb-slide-enter-active
+  transition: all .5s ease-out
 
-      &.active
-        color: var(--v-primary-base)
-        font-weight: 500
-        cursor: default
+.breadcrumb-slide-leave-active
+  transition: all .5s ease-in
 
-  .breadcrumb-slide-enter-active
-    transition: all .5s ease-out
-
-  .breadcrumb-slide-leave-active
-    transition: all .5s ease-in
-
-  .breadcrumb-slide-enter, .breadcrumb-slide-leave-to
-    transform: translateX(100vw)
+.breadcrumb-slide-enter-from, .breadcrumb-slide-leave-to
+  transform: translateX(100vw)
 
 </style>

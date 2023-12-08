@@ -1,7 +1,7 @@
 <template>
   <v-footer padless>
     <div class="d-flex flex-column align-center justify-center">
-      <p class="white--text text-caption">
+      <p class="text-white text-caption">
         ©{{ currentLocalDate().getFullYear() }} By Diavrank.
       </p>
     </div>
@@ -9,15 +9,13 @@
 </template>
 
 <script lang="ts">
-import dateMixin from './../../mixins/helpers/date';
-import Vue, { VueConstructor } from 'vue';
+import dateMixin from '@mixins/helpers/date';
+import { defineComponent } from 'vue';
 
-export default (Vue as VueConstructor<Vue &
-    InstanceType<typeof dateMixin>
-    >).extend({
-  name: "FooterView",
+export default defineComponent({
+  name: 'FooterView',
   mixins: [dateMixin]
-})
+});
 </script>
 
 <style scoped lang="sass">

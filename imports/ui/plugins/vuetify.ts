@@ -1,35 +1,44 @@
-import Vue from 'vue';
-import Vuetify from 'vuetify';
-import 'vuetify/dist/vuetify.min.css';
+import '@mdi/font/css/materialdesignicons.css';
+import 'vuetify/styles';
+import { createVuetify } from 'vuetify';
+import { mdi } from 'vuetify/iconsets/mdi';
+import { aliases, md } from 'vuetify/iconsets/md';
 // @ts-ignore
-import es from 'vuetify/es5/locale/es';
+import {en, es} from 'vuetify/locale';
 
-Vue.use(Vuetify);
-
-export default new Vuetify({
+export default createVuetify({
 	theme: {
-		options: {
-			customProperties: true
-		},
+		defaultTheme: 'myCustomLightTheme',
 		themes: {
-			light: {
-				primary: '#01697d',
-				secondary: '#002744',
-				accent: '#8c191d',
-				error: '#d64143',
-				info: '#5bc0de',
-				success: '#5cb85c',
-				warning: '#f0ad4e'
+			myCustomLightTheme: {
+				dark: false,
+				colors: {
+					primary: '#01697d',
+					secondary: '#002744',
+					accent: '#8c191d',
+					error: '#d64143',
+					info: '#5bc0de',
+					success: '#5cb85c',
+					warning: '#f0ad4e'
+				}
 			}
 		}
 	},
 	icons: {
-		iconfont: 'md'
+		defaultSet: 'md',
+		aliases,
+		sets: {
+			mdi,
+			md
+		}
 	},
-	lang: {
-		locales: {
-			es
-		},
-		current: 'es'
+	defaults: {
+		VTextField: {
+			variant: 'underlined'
+		}
+	},
+	locale: {
+		locale: 'en',
+		messages: { en }
 	}
 });

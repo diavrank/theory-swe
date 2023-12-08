@@ -1,18 +1,5 @@
-import { Mongo } from 'meteor/mongo';
 import { AstronomyEvent, Class } from 'meteor/jagi:astronomy';
-import { RoleType } from '/imports/api/Permissions/Permission';
-
-export interface ProfileType {
-	_id: string;
-	name: string;
-	description: string;
-	permissions: string[];
-
-	getPermissions(): Mongo.Cursor<MeteorAstronomy.Model<RoleType>>;
-	getPermissionsComplement(): Mongo.Cursor<MeteorAstronomy.Model<RoleType>>;
-}
-
-export const ProfileCollection = new Mongo.Collection<ProfileType>('profiles');
+import { ProfileCollection, ProfileType } from '/imports/api/Profiles/ProfileCollection';
 
 export const Profile = Class.create<ProfileType>({
 	name: 'Profile',

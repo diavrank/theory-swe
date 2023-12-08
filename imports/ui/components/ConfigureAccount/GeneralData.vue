@@ -1,6 +1,6 @@
 <template>
-  <ValidationObserver ref="dataFormObserver">
-    <v-form @submit.prevent="saveUser">
+  <Form as="div" :initial-values="initialValues" v-slot="{handleSubmit}" ref="dataFormObserver">
+    <v-form @submit="handleSubmit($event,saveUser)" id="saveUser" autocomplete="off">
       <v-card>
         <v-card-title>
           <div class="text-subtitle-2">
@@ -9,14 +9,14 @@
         </v-card-title>
         <v-row>
           <v-col cols="12" sm="12" md="3" lg="3" class="pl-10">
-            <img :src="user.profile.path || '/img/user.png'" :alt="user.profile.name" width="100px">
+            <v-img :src="user.profile.path || '/img/user.png'" :alt="user.profile.name" width="100"/>
             <v-file-input
+                id="fileUpload"
                 v-show="false"
-                ref="imageFile"
                 v-model="file"
                 accept="image/png, image/jpeg, image/bmp"
                 placeholder="Load ..."
-                prepend-icon="mdi-camera"
+                prepend-icon="mdi:mdi-camera"
             ></v-file-input>
             <v-btn color="primary" class="mb-5"
                    rounded depressed @click="onClickUploadButton">
@@ -26,28 +26,28 @@
           </v-col>
           <v-col cols="12" sm="12" md="9" lg="9">
             <v-card-text>
-              <ValidationProvider v-slot="{ errors }" name="name" rules="required|alpha_spaces">
-                <v-text-field v-model="user.profile.name" id="inputName" name="name"
+              <Field v-slot="{ field, errors }" name="name" rules="required|alpha_spaces">
+                <v-text-field v-bind="field" v-model="user.profile.name" id="inputName" name="name"
                               :error-messages="errors"
                               label="Full name*" required>
                 </v-text-field>
-              </ValidationProvider>
-              <ValidationProvider v-slot="{ errors }" name="username" rules="required|alpha_dash">
-                <v-text-field v-model="user.username"
+              </Field>
+              <Field v-slot="{ field, errors }" name="username" rules="required|alpha_dash">
+                <v-text-field v-bind="field" v-model="user.username"
                               id="inputUsername"
                               :error-messages="errors"
                               name="username"
                               label="Username*" required>
                 </v-text-field>
-              </ValidationProvider>
-              <ValidationProvider v-slot="{errors}" name="email" rules="required|email">
-                <v-text-field v-model="user.emails[0].address"
+              </Field>
+              <Field v-slot="{ field, errors }" name="email" rules="required|email">
+                <v-text-field v-bind="field" v-model="user.emails[0].address"
                               id="inputEmail" name="email"
                               :error-messages="errors"
                               label="Email*"
                               required>
                 </v-text-field>
-              </ValidationProvider>
+              </Field>
 
               <div class="d-flex justify-center">
                 <v-btn type="submit" color="primary" rounded depressed>
@@ -59,37 +59,30 @@
         </v-row>
       </v-card>
     </v-form>
-  </ValidationObserver>
+  </Form>
 </template>
 
 <script lang="ts">
-import profilesMixin from '../../mixins/accounts/profiles';
-import { mapMutations } from 'vuex';
-import { ValidationProvider, ValidationObserver } from 'vee-validate';
-import Vue, { VueConstructor } from 'vue';
-import validateForm from '/imports/ui/mixins/validateForm';
-import AlertMessage from './../../components/Utilities/Alerts/AlertMessage.vue';
-import Loader from './../../components/Utilities/Loaders/Loader.vue';
+import profilesMixin from '@mixins/accounts/profiles';
+import validateForm from '@mixins/validateForm';
+import uploadImage from '@mixins/users/uploadImage';
+import { Form, Field, FormContext } from 'vee-validate';
 import { Meteor } from 'meteor/meteor';
-import { User } from '../../typings/users'
-import uploadImage from '../../mixins/users/uploadImage';
+import { User } from '@typings/users';
+import { defineComponent } from 'vue';
+import { ResponseMessage } from '@server/utils/ResponseMessage';
+import { useAuthStore } from '/imports/ui/stores/auth';
 
-export default (Vue as VueConstructor<Vue &
-    InstanceType<typeof validateForm> &
-    {
-      $refs: {
-        dataFormObserver: InstanceType<typeof ValidationObserver>
-      },
-      $alert: InstanceType<typeof AlertMessage>,
-      $loader: InstanceType<typeof Loader>,
-      photoFileUser: any
-    }
-    >).extend({
+export default defineComponent({
   name: 'GeneralData',
-  mixins: [validateForm, profilesMixin,uploadImage],
+  mixins: [validateForm, profilesMixin, uploadImage],
   components: {
-    ValidationProvider,
-    ValidationObserver
+    Form,
+    Field
+  },
+  setup() {
+    const authStore = useAuthStore();
+    return { authStore };
   },
   data() {
     return {
@@ -97,44 +90,51 @@ export default (Vue as VueConstructor<Vue &
         emails: [{ verified: false }],
         profile: {}
       } as User,
-      photoFileUser: null
-    };
-  },
-  created() {
-    const user: User = this.$store.state.auth.user;
-    this.user = {
-      username: user.username,
-      emails: user.emails,
-      profile:{
-        profile: user.profile.profile,
-        name: user.profile.name,
-        path: user.profile.path,
+      photoFileUser: null,
+      initialValues: {
+        name: '',
+        username: '',
+        email: ''
       }
     };
   },
+  created() {
+    const user = this.authStore.user;
+    if (user) {
+      this.user = {
+        username: user.username,
+        emails: user.emails,
+        profile: {
+          profile: user.profile.profile,
+          name: user.profile.name,
+          path: user.profile.path
+        }
+      };
+      this.initialValues = {
+        name: user.profile.name as string,
+        username: user.username as string,
+        email: user.emails[0].address as string
+      };
+    }
+  },
   methods: {
-    ...mapMutations('auth', ['setUser']),
     async saveUser() {
-      if (await this.isFormValid(this.$refs.dataFormObserver)) {
+      if (await this.isFormValid(this.$refs.dataFormObserver as FormContext)) {
         this.$loader.activate('Updating data. . .');
         Meteor.call('user.updatePersonalData', { user: this.user, photoFileUser: this.photoFileUser },
-            (err: Meteor.Error,response) => {
+            (err: Meteor.Error, response: ResponseMessage) => {
               this.$loader.deactivate();
               if (err) {
                 console.error('Error to save user: ', err);
                 this.$alert.showAlertSimple('error', err.reason);
               } else {
-                this.setUser(Meteor.user());
-                this.$root.$emit('setUserLogged');
+                this.authStore.setUser(Meteor.user());
+                this.emitter.emit('setUserLogged');
                 this.$alert.showAlertSimple('success', response.message);
               }
             });
       }
     }
   }
-})
+});
 </script>
-
-<style scoped>
-
-</style>

@@ -1,6 +1,6 @@
 <template>
-  <v-app-bar app elevate-on-scroll light>
-    <v-btn text @click="setDrawer(!drawer)">
+  <v-app-bar class="header" elevation="0">
+    <v-btn variant="text" @click="temporalStore.setDrawer(!temporalStore.drawer)">
       <v-icon>menu</v-icon>
     </v-btn>
     <breadcrumb></breadcrumb>
@@ -10,26 +10,26 @@
 </template>
 
 <script lang="ts">
-import UserLogged from '../../components/UserLogged/UserLogged.vue';
+import UserLogged from '@components/UserLogged/UserLogged.vue';
 import Breadcrumb from './Breadcrumb.vue';
-import { mapState, mapMutations } from 'vuex';
-import Vue from 'vue';
+import { defineComponent } from 'vue';
+import { useTemporalStore } from '/imports/ui/stores/temporal';
 
-export default Vue.extend({
+export default defineComponent({
   name: 'HeaderView',
+  setup() {
+    const temporalStore = useTemporalStore();
+    return { temporalStore };
+  },
   components: {
     Breadcrumb,
     UserLogged
-  },
-  computed: {
-    ...mapState('temporal', ['drawer'])
-  },
-  methods: {
-    ...mapMutations('temporal', ['setDrawer'])
   }
-})
+});
 </script>
 
 <style scoped>
-
+.header {
+  background-color: #f5f5f5 !important;
+}
 </style>

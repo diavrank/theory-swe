@@ -28,8 +28,9 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-export default Vue.extend({
+import { defineComponent } from 'vue';
+
+export default defineComponent({
   name: 'ModalImport',
   props: ['modalData'],
   data() {
@@ -75,7 +76,7 @@ export default Vue.extend({
       this.dialog = false;
     }
   }
-})
+});
 </script>
 
 <style scoped>

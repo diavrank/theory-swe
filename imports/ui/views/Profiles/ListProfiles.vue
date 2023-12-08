@@ -4,34 +4,31 @@
       <v-col xs="12" sm="12" offset-sm="0" md="6" offset-md="3">
         <div class="d-flex justify-space-between align-baseline mb-5">
           <div class="text-h4 font-weight-light">Profiles</div>
-          <v-tooltip bottom transition="fab-transition">
-            <template v-slot:activator="{on}">
-              <v-btn v-can:create.hide="'profiles'" color="success" v-on="on" fab dark
+          <v-tooltip location="bottom" transition="fab-transition">
+            <template v-slot:activator="{props}">
+              <v-btn v-can:create.hide="'profiles'" color="success" v-bind="props" icon="add" theme="dark"
                      :to="{name: 'home.profiles.create'}">
-                <v-icon>add</v-icon>
               </v-btn>
             </template>
             <span>Add profile</span>
           </v-tooltip>
         </div>
         <div class="section elevation-1">
-          <v-data-table :headers="headers" :items="profiles" sort-by="description"
+          <v-data-table :headers="headers" :items="profiles" :sort-by="[{ key: 'description', order: 'asc' }]"
                         @dblclick:row="(event,{item})=>openEditProfile(item)">
             <template v-slot:item.action="{ item }">
-              <v-tooltip bottom transition="fab-transition">
-                <template v-slot:activator="{on}">
-                  <v-btn v-can:edit.hide="'profiles'" fab color="success" v-on="on" x-small class="mr-2"
+              <v-tooltip location="bottom" transition="fab-transition">
+                <template v-slot:activator="{props}">
+                  <v-btn v-can:edit.hide="'profiles'" icon="edit" color="success" v-bind="props" size="x-small" class="mr-2"
                          @click="openEditProfile(item)">
-                    <v-icon>edit</v-icon>
                   </v-btn>
                 </template>
                 <span>Edit</span>
               </v-tooltip>
-              <v-tooltip bottom transition="fab-transition">
-                <template v-slot:activator="{on}">
-                  <v-btn v-can:delete.hide="'profiles'" fab color="error" v-on="on" x-small class="mr-2"
+              <v-tooltip location="bottom" transition="fab-transition">
+                <template v-slot:activator="{props}">
+                  <v-btn v-can:delete.hide="'profiles'" icon="close" color="error" v-bind="props" size="x-small" class="mr-2"
                          @click="openRemoveModal(item)">
-                    <v-icon>close</v-icon>
                   </v-btn>
                 </template>
                 <span>Remove</span>
@@ -50,30 +47,23 @@
 </template>
 
 <script lang="ts">
-import { mapMutations } from 'vuex';
-import ModalRemove from './../../components/Utilities/Modals/ModalRemove.vue';
-import profilesMixin from '../../mixins/accounts/profiles';
-import Vue, { VueConstructor } from 'vue';
-import { Profile } from '../../typings/users';
-import { ModalData } from '/imports/ui/typings/utilities';
+import ModalRemove from '@components/Utilities/Modals/ModalRemove.vue';
+import profilesMixin from '@mixins/accounts/profiles';
+import  {defineComponent} from 'vue';
+import { Profile } from '@typings/users';
+import { ModalData } from '@typings/utilities';
 import { Meteor } from 'meteor/meteor';
-import Loader from './../../components/Utilities/Loaders/Loader.vue';
-import AlertMessage from './../../components/Utilities/Alerts/AlertMessage.vue';
-import { ResponseMessage } from '/imports/startup/server/utils/ResponseMessage';
+import { ResponseMessage } from '@server/utils/ResponseMessage';
+import { useTemporalStore } from '/imports/ui/stores/temporal';
 
-export default (Vue as VueConstructor<Vue &
-    InstanceType<typeof profilesMixin> &
-    {
-      $refs: {
-        refModalRemove: InstanceType<typeof ModalRemove>
-      },
-      $alert: InstanceType<typeof AlertMessage>
-      $loader: InstanceType<typeof Loader>
-    }
-    >).extend({
+export default defineComponent({
   name: 'ListProfiles',
   components: { ModalRemove },
   mixins: [profilesMixin],
+  setup() {
+    const temporalStore = useTemporalStore();
+    return {temporalStore};
+  },
   data: () => ({
     modalData: {
       mainNameElement: '',
@@ -82,19 +72,18 @@ export default (Vue as VueConstructor<Vue &
     } as ModalData,
     headers: [
       {
-        value: 'description',
-        text: 'Profile name',
+        key: 'description',
+        title: 'Profile name',
         sortable: true,
         divider: true,
         class: ['subtitle-1', 'font-weight-light']
       },
       {
-        value: 'action', text: 'Options', sortable: false, align: 'center',
+        key: 'action', title: 'Options', sortable: false, align: 'center',
         class: ['subtitle-1', 'font-weight-light']
       }]
   }),
   methods: {
-    ...mapMutations('temporal', ['setElement']),
     openRemoveModal(profile: Profile) {
       this.modalData.element = profile;
       this.modalData._id = profile._id;
@@ -103,7 +92,8 @@ export default (Vue as VueConstructor<Vue &
       this.$refs.refModalRemove.dialog = true;
     },
     openEditProfile(profile: Profile) {
-      this.setElement(profile);
+      console.log(profile);
+      this.temporalStore.setElement(profile);
       this.$router.push({ name: 'home.profiles.edit' });
     },
     deleteProfile(profileId: Profile) {
@@ -116,7 +106,7 @@ export default (Vue as VueConstructor<Vue &
           console.error('There was an error in deleteProfile: ', err);
           if (err.reason === 'Profile cannot be removed') {
             this.$alert.showAlertFull('warning', 'error',
-                err.reason, 'multi-line', 5000, 'right', 'bottom', err.details);
+                err.reason, 'multi-line', 5000,  'bottom right', err.details);
           } else {
             this.$alert.showAlertSimple('error', err.reason);
           }

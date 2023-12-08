@@ -1,5 +1,4 @@
 import { Meteor } from 'meteor/meteor';
-import { Accounts } from 'meteor/accounts-base';
 import { ResponseMessage } from '../../startup/server/utils/ResponseMessage';
 import fileHelper from '../../startup/server/utils/FileOperations';
 import ProfilesServ from '../Profiles/ProfilesServ';

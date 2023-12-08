@@ -1,9 +1,9 @@
-import Login from '../views/Auth/Login.vue';
-import ForgotPassword from '../views/Auth/ForgotPassword.vue';
-import ResetPassword from '../views/Auth/ResetPassword.vue';
-import LytAuth from '../layouts/LytAuth.vue';
-import SetInitialPassword from '../views/Auth/SetInitialPassword.vue';
-import VerifyAccount from '../views/Auth/VerifyAccount.vue';
+import Login from '@views/Auth/Login.vue';
+import ForgotPassword from '@views/Auth/ForgotPassword.vue';
+import ResetPassword from '@views/Auth/ResetPassword.vue';
+import LytAuth from '@layouts/LytAuth.vue';
+import SetInitialPassword from '@views/Auth/SetInitialPassword.vue';
+import VerifyAccount from '@views/Auth/VerifyAccount.vue';
 
 export default {
 	path: '/login',

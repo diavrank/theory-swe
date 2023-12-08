@@ -2,11 +2,10 @@
   <v-container>
     <div class="d-flex justify-space-between align-baseline mb-5">
       <div class="text-h4 font-weight-light">Users</div>
-      <v-tooltip bottom transition="fab-transition">
-        <template v-slot:activator="{on}">
-          <v-btn v-can:create.hide="'users'" color="success" v-on="on" fab dark
+      <v-tooltip location="bottom" transition="fab-transition">
+        <template v-slot:activator="{props}">
+          <v-btn v-bind="props" v-can:create.hide="'users'" color="success" icon="add" theme="dark"
                  :to="{name:'home.users.create'}">
-            <v-icon>add</v-icon>
           </v-btn>
         </template>
         <span>Add user</span>
@@ -14,38 +13,36 @@
     </div>
     <div class="section elevation-1">
       <v-data-table :headers="headers" :items="users" @dblclick:row="(event,{item})=>openEditUser(item)">
-        <template v-slot:item.profile.path="{item}">
+        <template v-slot:item.avatar="{ item }">
           <div class="d-flex align-center pt-5 pb-5">
             <v-avatar>
-                    <span v-if="item.profile.path == null" class="white--text text-h5">
-                        {{ item.username | initials(2) }}
+                    <span v-if="item.profile.path == null" class="text-dark text-h5">
+                        {{ $filters.initials(item.username, 2) }}
                     </span>
-              <img v-else :src="item.profile.path || '/img/user.png'" alt="Avatar">
+              <v-img v-else :src="item.profile.path || '/img/user.png'" alt="Avatar"></v-img>
             </v-avatar>
           </div>
         </template>
-        <template v-slot:item.status.online="{item}">
+        <template v-slot:item.status="{ item }">
           <div class="d-flex align-center pt-5 pb-5">
             <v-icon :color="item.status.online?'green':'red'">
-              mdi-checkbox-blank-circle
+              mdi:mdi-checkbox-blank-circle
             </v-icon>
           </div>
         </template>
         <template v-slot:item.action="{ item }">
-          <v-tooltip bottom transition="fab-transition">
-            <template v-slot:activator="{on}">
-              <v-btn v-can:edit.hide="'users'" fab color="success" v-on="on" x-small class="mr-2"
+          <v-tooltip location="bottom" transition="fab-transition">
+            <template v-slot:activator="{props}">
+              <v-btn v-can:edit.hide="'users'" icon="edit" color="success" v-bind="props" size="x-small" class="mr-2"
                      @click="openEditUser(item)">
-                <v-icon>edit</v-icon>
               </v-btn>
             </template>
             <span>Edit</span>
           </v-tooltip>
-          <v-tooltip bottom transition="fab-transition">
-            <template v-slot:activator="{on}">
-              <v-btn v-can:delete.hide="'users'" fab color="error" v-on="on" x-small class="mr-2"
+          <v-tooltip location="bottom" transition="fab-transition">
+            <template v-slot:activator="{props}">
+              <v-btn v-can:delete.hide="'users'" icon="close" color="error" v-bind="props" size="x-small" class="mr-2"
                      @click="openRemoveModal(item)">
-                <v-icon>close</v-icon>
               </v-btn>
             </template>
             <span>Remove</span>
@@ -62,25 +59,16 @@
 </template>
 
 <script lang="ts">
-import ModalRemove from '../../components/Utilities/Modals/ModalRemove.vue';
-import { mapMutations } from 'vuex';
-import Vue, { VueConstructor } from 'vue';
-import { ModalData, DatatableHeader } from '/imports/ui/typings/utilities';
-import AlertMessage from './../../components/Utilities/Alerts/AlertMessage.vue';
+import ModalRemove from '@components/Utilities/Modals/ModalRemove.vue';
+import { defineComponent } from 'vue';
+import { ModalData } from '@typings/utilities';
 import { Meteor } from 'meteor/meteor';
-import Loader from './../../components/Utilities/Loaders/Loader.vue';
-import { ResponseMessage } from '/imports/startup/server/utils/ResponseMessage';
-import { User } from '/imports/ui/typings/users';
+import { ResponseMessage } from '@server/utils/ResponseMessage';
+import { User } from '@typings/users';
+import { mapActions } from 'pinia';
+import { useTemporalStore } from '/imports/ui/stores/temporal';
 
-export default (Vue as VueConstructor<Vue &
-    {
-      $refs: {
-        refModalRemove: InstanceType<typeof ModalRemove>
-      },
-      $alert: InstanceType<typeof AlertMessage>,
-      $loader: InstanceType<typeof Loader>
-    }
-    >).extend({
+export default defineComponent({
   name: 'ListUsers',
   components: { ModalRemove },
   data: () => ({
@@ -98,24 +86,24 @@ export default (Vue as VueConstructor<Vue &
     }
   }),
   computed: {
-    headers(): DatatableHeader[] {
+    headers() {
       const self = this;
       return [
         {
-          value: 'profile.path',
-          text: 'Image',
+          key: 'avatar',
+          title: 'Image',
           sortable: false,
           class: ['subtitle-1', 'font-weight-light']
         },
         {
-          value: 'status.online',
-          text: 'Online',
+          key: 'status',
+          title: 'Online',
           sortable: true,
           class: ['subtitle-1', 'font-weight-light']
         },
         {
-          value: 'profile.name',
-          text: 'Full name',
+          key: 'profile.name',
+          title: 'Full name',
           sortable: true,
           class: ['subtitle-1', 'font-weight-light'],
           filter(value: any): boolean {
@@ -126,8 +114,8 @@ export default (Vue as VueConstructor<Vue &
           }
         },
         {
-          value: 'username',
-          text: 'Username',
+          key: 'username',
+          title: 'Username',
           sortable: true,
           class: ['subtitle-1', 'font-weight-light'],
           filter(value: any): boolean {
@@ -138,8 +126,8 @@ export default (Vue as VueConstructor<Vue &
           }
         },
         {
-          value: 'emails[0].address',
-          text: 'Email',
+          key: 'emails[0].address',
+          title: 'Email',
           sortable: true,
           class: ['subtitle-1', 'font-weight-light'],
           divider: true,
@@ -150,14 +138,14 @@ export default (Vue as VueConstructor<Vue &
           }
         },
         {
-          value: 'action', text: 'Options', sortable: false, align: 'center',
+          key: 'action', title: 'Options', sortable: false, align: 'center',
           class: ['subtitle-1', 'font-weight-light']
         }];
     }
   },
   methods: {
-    ...mapMutations('temporal', ['setElement']),
-    openEditUser(user: User): void{
+    ...mapActions(useTemporalStore, ['setElement']),
+    openEditUser(user: User): void {
       this.setElement(user);
       this.$router.push({ name: 'home.users.edit' });
     },
@@ -172,14 +160,14 @@ export default (Vue as VueConstructor<Vue &
       this.$loader.activate();
       Meteor.call('user.delete', { userId },
           (err: Meteor.Error, response: ResponseMessage) => {
-        this.$loader.deactivate();
-        if (err) {
-          console.error('Error to delete user: ', err);
-          this.$alert.showAlertSimple('error', err.reason);
-        } else {
-          this.$alert.showAlertSimple('success', response.message);
-        }
-      });
+            this.$loader.deactivate();
+            if (err) {
+              console.error('Error to delete user: ', err);
+              this.$alert.showAlertSimple('error', err.reason);
+            } else {
+              this.$alert.showAlertSimple('success', response.message);
+            }
+          });
     }
   },
   meteor: {
@@ -190,7 +178,7 @@ export default (Vue as VueConstructor<Vue &
       return Meteor.users.find({ _id: { $ne: Meteor.userId() || undefined } }).fetch();
     }
   }
-})
+});
 </script>
 
 <style scoped lang="sass">

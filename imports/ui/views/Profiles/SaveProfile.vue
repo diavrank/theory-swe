@@ -2,10 +2,10 @@
   <v-container>
     <v-row justify="center">
       <v-col class="d-flex" xs="12" sm="9" md="8" lg="6" xl="4">
-        <v-btn text exact @click="$router.back()">
-          <v-icon>mdi-chevron-left</v-icon>
+        <v-btn variant="text" exact @click="$router.back()">
+          <v-icon>mdi:mdi-chevron-left</v-icon>
         </v-btn>
-        <div class="display-1 font-weight-light">{{ dataView.title }}</div>
+        <div class="text-h5 font-weight-light">{{ dataView.title }}</div>
       </v-col>
       <v-col xs="12" sm="2" md="2" lg="2" xl="1">
         <v-btn block type="submit" form="saveProfile" color="primary"
@@ -16,25 +16,22 @@
     <v-row justify="center">
       <v-col xs="12" sm="12" md="10" lg="8" xl="5">
         <div class="section elevation-1">
-          <ValidationObserver ref="profileObserver">
-            <v-form @submit.prevent="saveProfile" id="saveProfile" autocomplete="off">
+          <Form as="div" v-slot="{handleSubmit}" :initial-values="initialValues" ref="profileObserver">
+            <v-form @submit="handleSubmit($event,saveProfile)" id="saveProfile" autocomplete="off">
               <v-row>
                 <v-col md="6">
-                  <ValidationProvider v-slot="{errors}" name="name" rules="required">
-                    <v-text-field v-model="profile.name" id="inputName" name="name"
-                                  :error-messages="errors"
-                                  label="Profile's name" required>
+                  <Field v-slot="{ field, errors }" name="name" rules="required">
+                    <v-text-field v-bind="field" v-model="profile.name"
+                                  :error-messages="errors" label="Profile's name" required>
                     </v-text-field>
-                  </ValidationProvider>
+                  </Field>
                 </v-col>
                 <v-col md="6">
-                  <ValidationProvider v-slot="{errors}" name="description" rules="required">
-                    <v-text-field v-model="profile.description"
-                                  :error-messages="errors"
-                                  id="inputDescriptionProfile" name="descriptionProfile"
+                  <Field v-slot="{ field, errors }" name="description" rules="required">
+                    <v-text-field v-bind="field" v-model="profile.description" :error-messages="errors"
                                   label="Profile's description" required>
                     </v-text-field>
-                  </ValidationProvider>
+                  </Field>
                 </v-col>
               </v-row>
               <v-row>
@@ -43,7 +40,7 @@
                     <p class="title font-weight-regular">Permissions of this profile</p>
                     <v-card-text>
                       <v-text-field v-model="searchSelfPermission" placeholder="Buscar. . ."
-                                    id="inputSearchSelfPermission" name="descriptionProfile">
+                                    id="inputSearchSelfPermission" name="inputSelfPermission">
                       </v-text-field>
                     </v-card-text>
                     <v-sheet
@@ -51,15 +48,18 @@
                         class="overflow-y-auto"
                         max-height="500">
                       <v-list style="height: 400px;">
-                        <v-list-item-group>
-                          <draggable :list="filteredSelfPermissions"
-                                     @change="(ev) => onChangeDragList(ev, 'selfPermissions')"
-                                     group="permissions">
-                            <v-list-item v-for="permission in filteredSelfPermissions"
-                                         v-text="permission.publicName" :key="permission._id">
-                            </v-list-item>
-                          </draggable>
-                        </v-list-item-group>
+                        <draggable :list="filteredSelfPermissions"
+                                   class="list-group"
+                                   @change="(ev) => onChangeDragList(ev, 'selfPermissions')"
+                                   item-key="_id"
+                                   group="permissions">
+                          <template #item="{element: permission}">
+                            <div>
+                              <v-list-item class="list-group-item" v-text="permission.publicName"></v-list-item>
+                              <v-divider></v-divider>
+                            </div>
+                          </template>
+                        </draggable>
                       </v-list>
                     </v-sheet>
                   </div>
@@ -77,22 +77,24 @@
                         class="overflow-y-auto"
                         max-height="500">
                       <v-list style="height: 400px;">
-                        <v-list-item-group>
-                          <draggable class="list-item-group" :list="filteredPermissions"
-                                     @change="(ev) => onChangeDragList(ev, 'allPermissions')"
-                                     group="permissions">
-                            <v-list-item v-for="permission in filteredPermissions"
-                                         v-text="permission.publicName" :key="permission._id">
-                            </v-list-item>
-                          </draggable>
-                        </v-list-item-group>
+                        <draggable class="list-group" :list="filteredPermissions"
+                                   @change="(ev) => onChangeDragList(ev, 'allPermissions')"
+                                   item-key="_id"
+                                   group="permissions">
+                          <template #item="{element: permission}">
+                            <div>
+                              <v-list-item class="list-group-item" v-text="permission.publicName"></v-list-item>
+                              <v-divider></v-divider>
+                            </div>
+                          </template>
+                        </draggable>
                       </v-list>
                     </v-sheet>
                   </div>
                 </v-col>
               </v-row>
             </v-form>
-          </ValidationObserver>
+          </Form>
         </div>
       </v-col>
     </v-row>
@@ -101,39 +103,33 @@
 
 <script lang="ts">
 import draggable from 'vuedraggable';
-import { ValidationObserver, ValidationProvider } from 'vee-validate';
-import validateForm from '/imports/ui/mixins/validateForm';
-import Vue, {VueConstructor} from 'vue';
-import AlertMessage from './../../components/Utilities/Alerts/AlertMessage.vue';
-import Loader from './../../components/Utilities/Loaders/Loader.vue';
+import { Field, Form, FormContext } from 'vee-validate';
+import validateForm from '@mixins/validateForm';
+import { defineComponent } from 'vue';
 import { Meteor } from 'meteor/meteor';
-import {ResponseMessage} from '/imports/startup/server/utils/ResponseMessage';
-import {RoleType} from '/imports/api/Permissions/Permission';
+import { ResponseMessage } from '@server/utils/ResponseMessage';
+import { RoleType } from '@api/Permissions/Permission';
 import { LOADER_MESSAGES } from '/imports/ui/constants/loader-messages.const';
-import {VueDraggableEvents} from '../../typings/utilities';
+import { VueDraggableEvents } from '@typings/utilities';
+import { useTemporalStore } from '/imports/ui/stores/temporal';
 
 enum PermissionGroup {
   Self = 'selfPermissions',
   All = 'allPermissions'
 }
 
-export default (Vue as VueConstructor<Vue &
-    InstanceType<typeof validateForm> &
-    {
-      $refs: {
-        profileObserver: InstanceType<typeof ValidationObserver>
-      },
-      $alert: InstanceType<typeof AlertMessage>
-      $loader: InstanceType<typeof Loader>
-    }
-    >).extend({
+export default defineComponent({
   name: 'SaveProfile',
   components: {
     draggable,
-    ValidationProvider,
-    ValidationObserver
+    Form,
+    Field
   },
   mixins: [validateForm],
+  setup() {
+    const temporalStore = useTemporalStore();
+    return { temporalStore };
+  },
   data: () => ({
     dataView: {
       title: '',
@@ -144,6 +140,10 @@ export default (Vue as VueConstructor<Vue &
       name: null,
       description: null,
       permissions: [] as string[]
+    },
+    initialValues: {
+      name: null,
+      description: null
     },
     searchSelfPermission: '',
     searchPermission: '',
@@ -158,9 +158,13 @@ export default (Vue as VueConstructor<Vue &
     } else if (this.$route.meta.type === 'edit') {
       this.dataView.title = 'Edit profile';
       this.dataView.targetButton = 'Update';
-      if (this.$store.state.temporal.element) {
-        this.profile = { ...this.$store.state.temporal.element };
+      if (this.temporalStore.element) {
+        this.profile = { ...this.temporalStore.element };
         this.initPermissionLists();
+        this.initialValues = {
+          name: this.profile.name,
+          description: this.profile.description
+        };
       } else {
         this.$router.push({ name: 'home.profiles' });
       }
@@ -196,18 +200,18 @@ export default (Vue as VueConstructor<Vue &
     },
     async saveProfile() {
       this.updateProfilePermissions();
-      if (await this.isFormValid(this.$refs.profileObserver)) {
+      if (await this.isFormValid(this.$refs.profileObserver as FormContext)) {
         this.$loader.activate(LOADER_MESSAGES.SAVE_PROFILE);
         Meteor.call('profile.save', this.profile,
             (error: Meteor.Error, response: ResponseMessage) => {
-          this.$loader.deactivate();
-          if (error) {
-            this.$alert.showAlertSimple('error', error.reason);
-          } else {
-            this.$alert.showAlertSimple('success', response.message);
-            this.$router.push({ name: 'home.profiles' });
-          }
-        });
+              this.$loader.deactivate();
+              if (error) {
+                this.$alert.showAlertSimple('error', error.reason);
+              } else {
+                this.$alert.showAlertSimple('success', response.message);
+                this.$router.push({ name: 'home.profiles' });
+              }
+            });
       }
     },
     updateProfilePermissions() {
@@ -216,21 +220,21 @@ export default (Vue as VueConstructor<Vue &
     initPermissionLists() {
       Meteor.call('permissions.listOthersForIdProfile', { profileId: this.profile._id },
           (err: Meteor.Error, response: RoleType[]) => {
-        if (err) {
-          console.error('Error listing permissions: ', err);
-          return;
-        }
-        this.allPermissions = response;
-      });
+            if (err) {
+              console.error('Error listing permissions: ', err);
+              return;
+            }
+            this.allPermissions = response;
+          });
 
       Meteor.call('permissions.listByIdProfile', { profileId: this.profile._id },
           (err: Meteor.Error, response: RoleType[]) => {
-        if (err) {
-          console.error('Error listing profile permissions: ', err);
-          return;
-        }
-        this.selfPermissions = response;
-      });
+            if (err) {
+              console.error('Error listing profile permissions: ', err);
+              return;
+            }
+            this.selfPermissions = response;
+          });
     },
     listAllPermissions() {
       Meteor.call('permissions.list', (err: Meteor.Error, response: RoleType[]) => {
@@ -242,7 +246,7 @@ export default (Vue as VueConstructor<Vue &
       });
     }
   }
-})
+});
 </script>
 
 <style scoped lang="sass">
@@ -250,4 +254,7 @@ export default (Vue as VueConstructor<Vue &
   padding: 25px
   background-color: white
   border-radius: 10px
+
+.list-group-item
+  cursor: move
 </style>

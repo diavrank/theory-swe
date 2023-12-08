@@ -1,6 +1,6 @@
-import ListUsers from '../views/Users/ListUsers.vue';
-import SaveUser from '../views/Users/SaveUser.vue';
-import { CreateElement } from 'vue';
+import ListUsers from '@views/Users/ListUsers.vue';
+import SaveUser from '@views/Users/SaveUser.vue';
+import { h, resolveComponent } from 'vue';
 
 export default {
     path: 'users',
@@ -11,7 +11,7 @@ export default {
     },
     components: {
         sectionView: {
-            render: (c: CreateElement) => c('router-view')
+            render: () => h(resolveComponent('router-view'))
         }
     },
     children: [

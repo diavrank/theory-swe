@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
-import { ProfileCollection, ProfileType } from './Profile';
 import { StaticProfiles } from './ProfileSeeder';
 import { Roles } from 'meteor/alanning:roles';
+import { ProfileCollection, ProfileType } from '/imports/api/Profiles/ProfileCollection';
 
 export default {
 	validateName(name: string, profileId: string) {
