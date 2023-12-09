@@ -3,16 +3,16 @@ import { Meteor } from 'meteor/meteor';
 import { Roles } from 'meteor/alanning:roles';
 
 export interface PermissionType {
-	VALUE: string,
-	TEXT: string
+    VALUE: string;
+    TEXT: string;
 }
 
 export interface PermissionsType {
-	[key: string]: PermissionType;
+    [key: string]: PermissionType;
 }
 
 export interface SystemModulesType {
-	[key: string]: PermissionsType;
+    [key: string]: PermissionsType;
 }
 
 /**
@@ -20,50 +20,61 @@ export interface SystemModulesType {
  * @type {string[]}
  */
 const Permissions: SystemModulesType = {
-	PERMISSIONS: {
-		LIST: { VALUE: 'permissions-view', TEXT: 'List permissions' }
-	},
-	USERS: {
-		LIST: { VALUE: 'users-view', TEXT: 'List users' },
-		CREATE: { VALUE: 'users-create', TEXT: 'Create user' },
-		UPDATE: { VALUE: 'users-edit', TEXT: 'Update user' },
-		DELETE: { VALUE: 'users-delete', TEXT: 'Remove user' }
-	},
-	PROFILES: {
-		LIST: { VALUE: 'profiles-view', TEXT: 'List profiles' },
-		CREATE: { VALUE: 'profiles-create', TEXT: 'Create profile' },
-		UPDATE: { VALUE: 'profiles-edit', TEXT: 'Update profile' },
-		DELETE: { VALUE: 'profiles-delete', TEXT: 'Remove profile' }
-	},
-	DIGITAL_SIGNATURE:{
-		VIEW: { VALUE: 'digitalSignature-view', TEXT: 'Digital signature view'},
-		SIGN: { VALUE: 'digitalSignature-sign', TEXT: 'Sign document with e-sign'},
-		VERIFY: { VALUE: 'digitalSignature-verify', TEXT: 'Verify signature'},
-	}
+    PERMISSIONS: {
+        LIST: { VALUE: 'permissions-view', TEXT: 'List permissions' },
+    },
+    USERS: {
+        LIST: { VALUE: 'users-view', TEXT: 'List users' },
+        CREATE: { VALUE: 'users-create', TEXT: 'Create user' },
+        UPDATE: { VALUE: 'users-edit', TEXT: 'Update user' },
+        DELETE: { VALUE: 'users-delete', TEXT: 'Remove user' },
+    },
+    PROFILES: {
+        LIST: { VALUE: 'profiles-view', TEXT: 'List profiles' },
+        CREATE: { VALUE: 'profiles-create', TEXT: 'Create profile' },
+        UPDATE: { VALUE: 'profiles-edit', TEXT: 'Update profile' },
+        DELETE: { VALUE: 'profiles-delete', TEXT: 'Remove profile' },
+    },
+    DIGITAL_SIGNATURE: {
+        VIEW: {
+            VALUE: 'digitalSignature-view',
+            TEXT: 'Digital signature view',
+        },
+        SIGN: {
+            VALUE: 'digitalSignature-sign',
+            TEXT: 'Sign document with e-sign',
+        },
+        VERIFY: { VALUE: 'digitalSignature-verify', TEXT: 'Verify signature' },
+    },
 };
 
-export const permissionsArray = Object.keys(Permissions).reduce((accumulator: PermissionType[], systemModuleName: string) => {
-	const systemModuleObject: PermissionsType = Permissions[systemModuleName];
-	const modulePermissions: PermissionType[] = Object.keys(systemModuleObject).map(permissionName => systemModuleObject[permissionName]);
-	return accumulator.concat(modulePermissions);
-}, []);
+export const permissionsArray = Object.keys(Permissions).reduce(
+    (accumulator: PermissionType[], systemModuleName: string) => {
+        const systemModuleObject: PermissionsType =
+            Permissions[systemModuleName];
+        const modulePermissions: PermissionType[] = Object.keys(
+            systemModuleObject,
+        ).map((permissionName) => systemModuleObject[permissionName]);
+        return accumulator.concat(modulePermissions);
+    },
+    [],
+);
 
-if (Meteor.isDevelopment) {
-	if (Meteor.settings.private?.REFRESH_PERMISSIONS || Meteor.isAppTest) {
-		console.info('Updating permissions.');
-		const currentRoles = Roles.getAllRoles().fetch();
-		for (let permission of permissionsArray) {
-			// @ts-ignore
-			if (!currentRoles.find(_role => _role._id === permission.VALUE)) {
-				Roles.createRole(permission.VALUE);
-			}
-			// @ts-ignore
-			Meteor.roles.update(permission.VALUE, {
-				$set: {
-					publicName: permission.TEXT
-				}
-			});
-		}
-	}
+if (process.env.REFRESH_PERMISSIONS === 'true' || Meteor.isAppTest) {
+    console.info('Updating permissions.');
+    const currentRoles = Roles.getAllRoles().fetch();
+    for (let permission of permissionsArray) {
+        // @ts-ignore
+        if (!currentRoles.find((_role) => _role._id === permission.VALUE)) {
+            Roles.createRole(permission.VALUE);
+        }
+        // @ts-ignore
+        Meteor.roles.update(permission.VALUE, {
+            $set: {
+                publicName: permission.TEXT,
+            },
+        });
+    }
 }
+
 export default Permissions;
