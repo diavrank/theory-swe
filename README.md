@@ -11,6 +11,10 @@ Real-time web app which includes:
 - Endpoint tests
 - CI Pipeline for GitHub Actions
 
+Additional apps:
+
+- Digital Signature
+
 Applies concepts like:
 
 - [X] Architecture patterns (N-Layers, Server-Client)
