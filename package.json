@@ -50,6 +50,7 @@
     "@types/sinon": "^10.0.4",
     "@types/webfontloader": "^1.6.35",
     "@vitejs/plugin-vue": "^4.0.0",
+    "babel-plugin-module-resolver": "^5.0.0",
     "chai": "^4.3.4",
     "faker": "^5.5.3",
     "husky": "^7.0.2",

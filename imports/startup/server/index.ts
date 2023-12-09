@@ -21,4 +21,6 @@ import '../../api/Profiles/ProfilesPubs';
 import '../../api/SystemOptions/SystemOption';
 import '../../api/SystemOptions/SystemOptionsCtrl';
 
+import '../../api/DigitalSignature/DigitalSignatureCtrl';
+
 import '../../api/Binnacle/BinnacleCtrl';

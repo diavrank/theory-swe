@@ -55,11 +55,18 @@
                         </template>
                     </v-file-input>
 
-                  <div class="d-flex justify-center">
-                    <v-btn type="submit" color="primary" variant="outlined" rounded depressed>
-                      Sign
-                    </v-btn>
-                  </div>
+                    <div class="d-flex justify-center">
+                        <v-btn
+                            type="button"
+                            @click="signDocument"
+                            color="primary"
+                            variant="outlined"
+                            rounded
+                            depressed
+                        >
+                            Sign
+                        </v-btn>
+                    </div>
                 </v-card-text>
             </v-card>
         </v-col>
@@ -68,13 +75,68 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { ResponseMessage } from '@server/utils/ResponseMessage';
 
 export default defineComponent({
     name: 'SignFile',
     data: () => ({
         privateKey: [],
+        privateKeyBase64: null,
         documentToSign: [],
+        documentToSignBase64: null,
     }),
+    watch: {
+        privateKey(newFiles: Array<File>) {
+            if (newFiles && typeof FileReader != 'undefined') {
+                const newFile = newFiles[0];
+                const reader = new FileReader();
+                reader.onload = function (ev: any) {
+                    // @ts-ignore
+                    this.privateKeyBase64 = ev.target.result;
+                }.bind(this);
+                reader.readAsDataURL(newFile);
+            }
+        },
+        documentToSign(newFiles: Array<File>) {
+            if (newFiles && typeof FileReader != 'undefined') {
+                const newFile = newFiles[0];
+                const reader = new FileReader();
+                reader.onload = function (ev: any) {
+                    // @ts-ignore
+                    this.documentToSignBase64 = ev.target.result;
+                }.bind(this);
+                reader.readAsDataURL(newFile);
+            }
+        },
+    },
+    methods: {
+        signDocument() {
+            this.$loader.activate('Signing. . .');
+            Meteor.call(
+                'digitalSignature.sign',
+                {
+                    privateKeyBase64: this.privateKeyBase64,
+                    documentBase64: this.documentToSignBase64,
+                },
+                (error: Meteor.Error, response: ResponseMessage) => {
+                    this.$loader.deactivate();
+                    if (error) {
+                        console.error('Error to sign document: ', error);
+                        this.$alert.showAlertSimple('error', error.reason!);
+                    } else {
+                        this.emitter.emit(
+                            'setSignatureToVerify',
+                            response.data,
+                        );
+                        this.$alert.showAlertSimple(
+                            'success',
+                            response.message!,
+                        );
+                    }
+                },
+            );
+        },
+    },
 });
 </script>
 

@@ -1,8 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import MethodInvocation = DDPCommon.MethodInvocation;
 
-export class RequestDto {
-    constructor(requestDto: RequestDto) {
+export abstract class RequestDto {
+    build(requestDto: RequestDto){
         for (const [field, value] of Object.entries(requestDto)) {
             // @ts-ignore
             this[field] = value;
@@ -20,4 +20,6 @@ export class RequestDto {
             );
         }
     }
+
+    abstract validate(methodInvocation: MethodInvocation):void;
 }
