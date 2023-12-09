@@ -34,6 +34,11 @@ const Permissions: SystemModulesType = {
 		CREATE: { VALUE: 'profiles-create', TEXT: 'Create profile' },
 		UPDATE: { VALUE: 'profiles-edit', TEXT: 'Update profile' },
 		DELETE: { VALUE: 'profiles-delete', TEXT: 'Remove profile' }
+	},
+	DIGITAL_SIGNATURE:{
+		VIEW: { VALUE: 'digitalSignature-view', TEXT: 'Digital signature view'},
+		SIGN: { VALUE: 'digitalSignature-sign', TEXT: 'Sign document with e-sign'},
+		VERIFY: { VALUE: 'digitalSignature-verify', TEXT: 'Verify signature'},
 	}
 };
 
