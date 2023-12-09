@@ -75,7 +75,7 @@ mongodump --db theory-swe --out ./database/
 yarn
 ```
 
-**Configure environment variables file**
+**Configure environment variables file (Optional)**
 
 Go to `./settings/` and copy `settings-development-example.json` to `settings-development.json` and modify the following:
 
