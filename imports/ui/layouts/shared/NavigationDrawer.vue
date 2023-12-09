@@ -12,11 +12,11 @@
       <div class="overlay"></div>
     </template>
     <v-list dense
-            nav
+            :nav="true"
             class="py-0">
       <v-list-item class="pa-5 text-center"
                    prepend-avatar="/img/meteor-vue.png"
-                   title="TheorySwe">
+                   title="Scaffold">
       </v-list-item>
     </v-list>
     <v-divider></v-divider>

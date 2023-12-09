@@ -1,0 +1,20 @@
+{
+  "plugins": [
+    [
+      "module-resolver",
+      {
+        "root": [
+          "./src"
+        ],
+        "extensions": [".ts"],
+        "alias": {
+          "*": ".",
+          "@root": "./",
+          "@api": "./imports/api",
+          "@middlewares": "./imports/middlewares",
+          "@server": "./imports/startup/server"
+        }
+      }
+    ]
+  ]
+}

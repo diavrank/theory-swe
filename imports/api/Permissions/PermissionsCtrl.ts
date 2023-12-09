@@ -10,7 +10,7 @@ import Binnacle from '../../middlewares/Binnacle';
 /**
  * @summary List all permissions of the system
  * @method permissions.list
- * @return Array of {@link RoleType}
+ * @return
  */
 export const listPermissionsMethod = new ValidatedMethod({
 	name: 'permissions.list',

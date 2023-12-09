@@ -2,7 +2,7 @@
   <v-row>
     <v-col xs="12" sm="8" md="4" class="d-flex flex-column justify-center pa-12">
       <div class="text-center">
-        <v-img src="/img/vuetify.png" alt="Vuetify" height="180px"></v-img>
+        <v-img src="/img/vue-meteor.png" alt="Vuetify" height="180px"></v-img>
       </div>
       <router-view name="sectionView" v-slot="{Component}">
         <transition name="section-view" mode="out-in">
@@ -12,7 +12,7 @@
     </v-col>
     <v-col xs="12" sm="4" md="8" class="right-side d-flex flex-column justify-center">
       <div class="text-h2 font-weight-medium mr-10 text-right text-white">
-        Theory SwE
+        Scaffold
       </div>
     </v-col>
   </v-row>
