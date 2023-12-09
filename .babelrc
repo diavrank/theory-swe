@@ -1,0 +1,24 @@
+{
+  "plugins": [
+    [
+      "module-resolver",
+      {
+        "root": [
+          "./src"
+        ],
+        "extensions": [".js", ".ts", ".tsx", ".json", ".vue"],
+        "alias": {
+          "*": ".",
+          "@root": "./",
+          "@api": "./imports/api",
+          "@middlewares": "./imports/middlewares",
+          "@both": "./imports/startup/both",
+          "@client": "./imports/startup/client",
+          "@server": "./imports/startup/server",
+          "@components": "./imports/ui/components",
+          "@mixins": "./imports/ui/mixins"
+        }
+      }
+    ]
+  ]
+}
