@@ -7,8 +7,8 @@ export interface ProfileType {
 	description: string;
 	permissions: string[];
 
-	getPermissions(): Mongo.Cursor<MeteorAstronomy.Model<RoleType>>;
-	getPermissionsComplement(): Mongo.Cursor<MeteorAstronomy.Model<RoleType>>;
+	getPermissions(): Function;
+	getPermissionsComplement(): Function;
 }
 
 export const ProfileCollection = new Mongo.Collection<ProfileType>('profiles');

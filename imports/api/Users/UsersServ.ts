@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { ResponseMessage } from '../../startup/server/utils/ResponseMessage';
 import fileHelper from '../../startup/server/utils/FileOperations';
 import ProfilesServ from '../Profiles/ProfilesServ';
-import { User, UserType } from '/imports/api/Users/User';
+import { UserType } from '/imports/api/Users/User';
 import { Profile } from '/imports/api/Profiles/Profile';
 
 export const PATH_USER_FILES = 'users/';
@@ -37,14 +37,14 @@ export default {
 			throw new Meteor.Error('403', 'Invalid profile name');
 		}
 	},
-	async createUser(user: MeteorAstronomy.Model<UserType>, photoFileUser: any) {
+	async createUser(user: Meteor.User, photoFileUser: any) {
 		const userId = Accounts.createUser({
 			username: user.username,
 			// @ts-ignore
 			email: user.emails[0].address,
 			profile: user.profile
 		});
-		user = User.findOne(userId);
+		user = Meteor.users.findOne(userId);
 		let avatarSrc = null;
 		if (userId && user.emails) {
 			ProfilesServ.setUserRoles(userId, user.profile.profile);
@@ -59,13 +59,16 @@ export default {
 			}
 		}
 		if (avatarSrc) {
-			user.profile.path = avatarSrc;
-			user.save({ fields: ['profile'] });
+			Meteor.users.upsert(user._id,{
+				$set:{
+					'profile.path':user.profile.path,
+				}
+			})
 		}
 	},
-	async updateUser(newUser: MeteorAstronomy.Model<UserType>, photoFileUser: any): Promise<ResponseMessage> {
+	async updateUser(newUser: UserType, photoFileUser: any): Promise<ResponseMessage> {
 		const responseMessage = new ResponseMessage();
-		const currentUser = User.findOne(newUser._id);
+		const currentUser = Meteor.users.findOne(newUser._id);
 		if (currentUser?.emails && newUser.emails) {
 			if (currentUser.emails[0].address !== newUser.emails[0].address) {
 				Accounts.removeEmail(newUser._id, currentUser.emails[0].address);
@@ -76,7 +79,12 @@ export default {
 		if (currentUser?.username !== newUser.username && newUser.username) {
 			Accounts.setUsername(newUser._id, newUser.username);
 		}
-		newUser.save({ fields: ['profile'] });
+
+		Meteor.users.upsert(newUser._id,{
+			$set:{
+				'profile':newUser.profile,
+			}
+		});
 		if (photoFileUser) {
 			if (currentUser?.profile.path) {
 				fileHelper.remove(currentUser.profile.path.substring(currentUser.profile.path.indexOf(PATH_USER_FILES)));
@@ -86,10 +94,30 @@ export default {
 				throw new Meteor.Error('500', 'Error saving user photo.');
 			} else {
 				newUser.profile.path = response.data.fileUrl;
-				newUser.save({ fields: ['profile'] });
+				Meteor.users.upsert(newUser._id,{
+					$set:{
+						'profile.path':newUser.profile.path,
+					}
+				});
 			}
 		}
 		responseMessage.message = 'User updated successful';
 		return responseMessage;
+	},
+	/**
+	 * TODO: Migrate to mongoose schema
+	 * @param event
+	 */
+	afterSave(event: any) {
+		if (event.doc.profile.profile !== event.oldDoc?.profile.profile) {
+			ProfilesServ.setUserRoles(event.currentTarget._id, event.currentTarget.profile.profile);
+		}
+	},
+	beforeRemove(event: any) {
+		fileHelper.remove(PATH_USER_FILES + event.currentTarget._id);
+	},
+	afterRemove(event: any) {
+		// @ts-ignore
+		Meteor.roleAssignment.remove({ 'user._id': event.currentTarget._id });
 	}
 };

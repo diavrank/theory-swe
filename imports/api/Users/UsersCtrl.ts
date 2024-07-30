@@ -5,8 +5,6 @@ import { ResponseMessage } from '../../startup/server/utils/ResponseMessage';
 import { check, Match } from 'meteor/check';
 import UsersServ from './UsersServ';
 import Binnacle from '../../middlewares/Binnacle';
-import './UserPresenceConfig';
-import { User, UserType } from '/imports/api/Users/User';
 import Permissions from '../../startup/server/Permissions';
 
 Accounts.onCreateUser((options: any, user: Meteor.User) => {
@@ -82,12 +80,15 @@ export const saveUserMethod = new ValidatedMethod({
 		UsersServ.validateUsername(user.username, user._id);
 		UsersServ.validateProfile(user.profile.profile);
 	},
-	async run({ user, photoFileUser }: { user: MeteorAstronomy.Model<UserType>, photoFileUser: any }) {
+	async run({ user, photoFileUser }: { user: Meteor.User, photoFileUser: any }) {
 		const responseMessage = new ResponseMessage();
 		if (user._id) {//if exists then update it
 			try {
-				const userToBeUpdated = User.findOne(user._id);
-				userToBeUpdated.set({ username: user.username, profile: user.profile, emails: user.emails });
+				const userToBeUpdated = Meteor.users.findOne(user._id);
+				userToBeUpdated.username=user.username;
+				userToBeUpdated.profile=user.profile;
+				userToBeUpdated.emails=user.emails;
+
 				await UsersServ.updateUser(userToBeUpdated, photoFileUser);
 				responseMessage.create('User updated!');
 			} catch (exception) {
@@ -125,15 +126,14 @@ export const deleteUserMethod = new ValidatedMethod({
 			console.error('user.delete: ', exception);
 			throw new Meteor.Error('403', 'The information entered is not valid');
 		}
-		if (!User.findOne(userId)) {
+		if (!Meteor.users.findOne(userId)) {
 			throw new Meteor.Error('403', 'User does not exists');
 		}
 	},
 	run({ userId }: { userId: string }) {
 		const responseMessage = new ResponseMessage();
 		try {
-			const user = User.findOne(userId);
-			user.remove();//photo user is removed from the beforeRemove hook in Model
+			Meteor.users.remove(userId);
 			responseMessage.create('User removed successfully!');
 		} catch (exception) {
 			console.error('user.delete: ', exception);
@@ -172,12 +172,13 @@ export const updatePersonalDataMethod = new ValidatedMethod({
 		UsersServ.validateEmail(user.emails[0].address, this.userId);
 		UsersServ.validateUsername(user.username, this.userId);
 	},
-	async run({ user, photoFileUser }: { user: MeteorAstronomy.Model<UserType>, photoFileUser: any }) {
+	async run({ user, photoFileUser }: { user: Meteor.User, photoFileUser: any }) {
 		const responseMessage = new ResponseMessage();
 		try {
-			const userToBeUpdated = User.findOne(this.userId);
-			// @ts-ignore
-			userToBeUpdated.set({ username: user.username, 'profile.name': user.profile.name, emails: user.emails });
+			const userToBeUpdated = Meteor.users.findOne(user._id);
+			userToBeUpdated.username=user.username;
+			userToBeUpdated.profile.name=user.profile.name;
+			userToBeUpdated.emails=user.emails;
 			await UsersServ.updateUser(userToBeUpdated, photoFileUser);
 			responseMessage.create('Information updated!');
 		} catch (exception) {

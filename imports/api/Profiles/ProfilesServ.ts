@@ -35,5 +35,19 @@ export default {
 		return Object.keys(StaticProfiles)
 			.filter(staticProfileName => StaticProfiles[staticProfileName].external)
 			.map(staticProfileName => StaticProfiles[staticProfileName].name);
+	},
+	afterUpdate(event: any) {
+		if (event.oldDoc.name !== event.doc.name) {
+			Meteor.users.update({ 'profile.profile': event.oldDoc.name }, {
+				$set: {
+					'profile.profile': event.doc.name
+				}
+			}, { multi: true });
+		}
+		const users = Meteor.users.find({ 'profile.profile': event.doc.name }, { fields: { _id: 1 } }).fetch();
+		const userIds = users.map(user => user._id);
+		// @ts-ignore
+		Meteor.roleAssignment.remove({ 'user._id': { $in: userIds } });
+		Roles.setUserRoles(userIds, event.currentTarget.permissions, event.currentTarget.name);
 	}
 };

@@ -1,6 +1,7 @@
 /// <reference types="./vite.config" />
 
 import { defineConfig } from 'vite'
+import { meteor } from 'meteor-vite/plugin';
 import vue from '@vitejs/plugin-vue'
 
 // https://github.com/vuetifyjs/vuetify-loader/tree/next/packages/vite-plugin
@@ -22,6 +23,9 @@ export default defineConfig({
     },
   },
   plugins: [
+    meteor({
+      clientEntry: 'imports/startup/client/index.ts',
+    }),
     vue(),
     vuetify({ autoImport: true }),
   ],
@@ -30,9 +34,5 @@ export default defineConfig({
     exclude: [
       'vue-meteor-tracker',
     ],
-  },
-
-  meteor: {
-    clientEntry: 'imports/startup/client/index.ts',
   },
 })

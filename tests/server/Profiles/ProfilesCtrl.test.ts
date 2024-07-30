@@ -8,12 +8,11 @@ import { StaticProfiles } from '/imports/api/Profiles/ProfileSeeder';
 import { ProfileType } from '/imports/api/Profiles/ProfileCollection';
 
 describe('ProfilesCtrl', function() {
-	let adminUser: MeteorAstronomy.Model<UserType>;
+	let adminUser: UserType;
 	let existingProfile: ProfileType;
 
 	before(function() {
-		adminUser = new User(Factory.tree('user'));
-		adminUser.save();
+		adminUser=<Meteor.User>Factory.create('user')
 		existingProfile = <ProfileType>Factory.create('profile');
 	});
 

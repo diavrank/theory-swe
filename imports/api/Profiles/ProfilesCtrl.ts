@@ -1,7 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
-import { Profile } from './Profile';
-import { ProfileType } from '/imports/api/Profiles/ProfileCollection';
+import {ProfileCollection, ProfileType} from '/imports/api/Profiles/ProfileCollection';
 import AuthGuard from './../../middlewares/AuthGuard';
 import { ResponseMessage } from '../../startup/server/utils/ResponseMessage';
 import { check, Match } from 'meteor/check';
@@ -41,17 +40,17 @@ export const saveProfileMethod = new ValidatedMethod({
 	 * Crea un nuevo perfil de usuario. Si ya existe lo actualiza.
 	 * @param profile Información del perfil a crear.
 	 */
-	run(profile: MeteorAstronomy.Model<ProfileType>) {
+	run(profile: ProfileType) {
 		const responseMessage = new ResponseMessage();
 		if (profile._id) {//if exists then is created
-			const profileToBeUpdated = Profile.findOne(profile._id);
 			try {
-				profileToBeUpdated.set({
-					name: profile.name,
-					description: profile.description,
-					permissions: profile.permissions
-				});
-				profileToBeUpdated.save();
+				ProfileCollection.update(profile._id,{
+					$set:{
+						name: profile.name,
+						description: profile.description,
+						permissions: profile.permissions
+					}
+				})
 				responseMessage.create('Profile updated successfully!');
 			} catch (exception) {
 				console.error('profile.save: ', exception);
@@ -59,12 +58,11 @@ export const saveProfileMethod = new ValidatedMethod({
 			}
 		} else { //Otherwise is created
 			try {
-				const newProfile = new Profile({
+				ProfileCollection.insert({
 					name: profile.name,
 					description: profile.description,
 					permissions: profile.permissions
-				});
-				newProfile.save();
+				})
 				responseMessage.create('Profile created successfully!');
 			} catch (exception) {
 				console.error('profile.save: ', exception);
@@ -101,7 +99,7 @@ export const deleteProfileMethod = new ValidatedMethod({
 	run({ profileId }: { profileId: string }) {
 		const responseMessage = new ResponseMessage();
 		try {
-			Profile.remove(profileId);
+			ProfileCollection.remove(profileId);
 			responseMessage.create('Profile removed successfully!');
 		} catch (exception) {
 			console.error('profile.delete: ', exception);

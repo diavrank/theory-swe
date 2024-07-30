@@ -1,11 +1,15 @@
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import AuthGuard from '../../middlewares/AuthGuard';
-import { Profile } from '../Profiles/Profile';
 import { check } from 'meteor/check';
 
 //Permisos
 import Permissions from '../../startup/server/Permissions';
 import Binnacle from '../../middlewares/Binnacle';
+import {ProfileCollection} from "@api/Profiles/ProfileCollection";
+import PermissionsService from "@api/Permissions/PermissionsServ";
+
+
+const permissionsService = new PermissionsService();
 
 /**
  * @summary List all permissions of the system
@@ -43,13 +47,14 @@ export const listProfilePermissionsMethod = new ValidatedMethod({
 			console.error('permissions.listByIdProfile: ', exception);
 			throw new Meteor.Error('403', 'The information entered is not valid');
 		}
-		if (!Profile.findOne(profileId)) {
+		if (!ProfileCollection.findOne(profileId)) {
 			throw new Meteor.Error('403', 'Profile does not exist');
 		}
 	},
 	run({ profileId }: { profileId: string }) {
-		const profile = Profile.findOne(profileId);
-		return profile.getPermissions().fetch();
+		const profile = ProfileCollection.findOne(profileId);
+		return permissionsService.getPermissions(profile.permissions).fetch();
+
 	}
 });
 
@@ -72,12 +77,12 @@ export const listNotProfilePermissionsMethod = new ValidatedMethod({
 			console.error('permissions.listOthersForIdProfile: ', exception);
 			throw new Meteor.Error('403', 'The information entered is not valid');
 		}
-		if (!Profile.findOne(profileId)) {
+		if (!ProfileCollection.findOne(profileId)) {
 			throw new Meteor.Error('403', 'Profile does not exist');
 		}
 	},
 	run({ profileId }: { profileId: string }) {
-		const profile = Profile.findOne(profileId);
-		return profile.getPermissionsComplement().fetch();
+		const profile = ProfileCollection.findOne(profileId);
+		return permissionsService.getPermissionsComplement(profile.permissions).fetch();
 	}
 });

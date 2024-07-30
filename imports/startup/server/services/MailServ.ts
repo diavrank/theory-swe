@@ -1,6 +1,4 @@
 import { Meteor } from 'meteor/meteor';
-// @ts-ignore
-import { SSR } from 'meteor/meteorhacks:ssr';
 
 if (Meteor.isDevelopment) {
 	if (Meteor.settings.private?.SENDER_EMAILS) {
@@ -30,12 +28,9 @@ emailTemplates.resetPassword = {
 	},
 	html(_user: Meteor.User, url: string) {
 		const urlWithoutHash = url.replace('#/', '');
-		SSR.compileTemplate('emailResetPassword', Assets.getText(emailResetPassword));
+		//SSR.compileTemplate('emailResetPassword', Assets.getText(emailResetPassword));
 		if (Meteor.isDevelopment) console.info(`Password reset link: ${ urlWithoutHash }`);
-		return SSR.render('emailResetPassword', {
-			productSrc,
-			urlWithoutHash
-		});
+		return 'resetPassword email';
 	}
 };
 
@@ -47,11 +42,8 @@ emailTemplates.enrollAccount = {
 	html(_user: Meteor.User, url: string) {
 		const urlWithoutHash = url.replace('#/', '');
 		if (Meteor.isDevelopment) console.info(`Set initial password link: ${ urlWithoutHash }`);
-		SSR.compileTemplate('emailEnrollAccount', Assets.getText(emailEnrollAccount));
-		return SSR.render('emailEnrollAccount', {
-			productSrc,
-			urlWithoutHash
-		});
+		//SSR.compileTemplate('emailEnrollAccount', Assets.getText(emailEnrollAccount));
+		return 'emailEnrollAccount';
 	}
 };
 
@@ -63,11 +55,8 @@ emailTemplates.verifyEmail = {
 	html(_user: Meteor.User, url: string) {
 		const urlWithoutHash = url.replace('#/', '');
 		if (Meteor.isDevelopment) console.info(`Verify email link: ${ urlWithoutHash }`);
-		SSR.compileTemplate('emailVerifyEmail', Assets.getText(emailVerifyEmail));
-		return SSR.render('emailVerifyEmail', {
-			productSrc,
-			urlWithoutHash
-		});
+		//SSR.compileTemplate('emailVerifyEmail', Assets.getText(emailVerifyEmail));
+		return 'emailVerifyEmail';
 	}
 };
 
