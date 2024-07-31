@@ -51,11 +51,11 @@ export class PermissionMiddleware {
 		return publish.ready();
 	}
 
-	checkPermission(userId: string | null) {
+	async checkPermission(userId: string | null) {
 		if (userId) {
 			// @ts-ignore
-			const group = Roles.getScopesForUser(userId)[0];
-			return Roles.userIsInRole(userId, this.permissions, group);
+			const group = await Roles.getScopesForUserAsync(userId)[0];
+			return Roles.userIsInRoleAsync(userId, this.permissions, group);
 		}
 		return false;
 	}

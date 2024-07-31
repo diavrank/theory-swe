@@ -40,11 +40,11 @@ export const saveProfileMethod = new ValidatedMethod({
 	 * Crea un nuevo perfil de usuario. Si ya existe lo actualiza.
 	 * @param profile Información del perfil a crear.
 	 */
-	run(profile: ProfileType) {
+	async run(profile: ProfileType) {
 		const responseMessage = new ResponseMessage();
 		if (profile._id) {//if exists then is created
 			try {
-				ProfileCollection.update(profile._id,{
+				await ProfileCollection.updateAsync(profile._id,{
 					$set:{
 						name: profile.name,
 						description: profile.description,
@@ -58,7 +58,7 @@ export const saveProfileMethod = new ValidatedMethod({
 			}
 		} else { //Otherwise is created
 			try {
-				ProfileCollection.insert({
+				await ProfileCollection.insertAsync({
 					name: profile.name,
 					description: profile.description,
 					permissions: profile.permissions
@@ -96,10 +96,10 @@ export const deleteProfileMethod = new ValidatedMethod({
 			throw new Meteor.Error('403', 'Profile cannot be removed', 'There are users using this profile');
 		}
 	},
-	run({ profileId }: { profileId: string }) {
+	async run({ profileId }: { profileId: string }) {
 		const responseMessage = new ResponseMessage();
 		try {
-			ProfileCollection.remove(profileId);
+			await ProfileCollection.removeAsync(profileId);
 			responseMessage.create('Profile removed successfully!');
 		} catch (exception) {
 			console.error('profile.delete: ', exception);

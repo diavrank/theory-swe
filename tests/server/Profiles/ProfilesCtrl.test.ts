@@ -12,7 +12,7 @@ describe('ProfilesCtrl', function() {
 	let existingProfile: ProfileType;
 
 	before(function() {
-		adminUser=<Meteor.User>Factory.create('user')
+		adminUser=<UserType>Factory.create('user')
 		existingProfile = <ProfileType>Factory.create('profile');
 	});
 
@@ -48,8 +48,8 @@ describe('ProfilesCtrl', function() {
 			chai.assert.equal(responseMessage.message, 'Profile removed successfully!');
 		});
 
-		it('Profile cannot be removed', function() {
-			const profile = Profile.findOne({ name: StaticProfiles.admin.name });
+		it('Profile cannot be removed', async function() {
+			const profile = await Profile.findOneAsync({ name: StaticProfiles.admin.name });
 			chai.assert.throws(() => {
 				deleteProfileMethod._execute({ userId: adminUser._id }, { profileId: profile._id });
 			}, Meteor.Error, 'Profile cannot be removed');

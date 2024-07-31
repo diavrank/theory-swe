@@ -11,15 +11,15 @@ import { StaticProfiles } from '/imports/api/Profiles/ProfileSeeder';
 export const getSystemOptionsMethod = new ValidatedMethod({
     name: 'getSystemOptions',
     validate: null,
-    run(): SystemOptionType[] {
+    async run(): Promise<SystemOptionType[]> {
         let data: SystemOptionType[] = [];
         if (this.userId) {
-            const userLogged = <Meteor.User>Meteor.users.findOne(this.userId);
-            if (userLogged.profile.profile === StaticProfiles.admin.name) {
+            const userLogged = <Meteor.User>await Meteor.users.findOneAsync(this.userId);
+            if (userLogged.profile?.profile === StaticProfiles.admin.name) {
                 data = SystemOptions.getAllSystemOptions();
             } else {
                 data = SystemOptions.getSystemOptionsByUserRoles(
-                    Roles.getRolesForUser(
+                    await Roles.getRolesForUserAsync(
                         userLogged?._id,
                         userLogged?.profile.profile,
                     ),

@@ -25,8 +25,9 @@ export const StaticProfiles: StaticProfilesType = {
 
 if (process.env.REFRESH_STATIC_PROFILES === 'true' || Meteor.isAppTest) {
     console.log('Updating static profiles.');
-    Object.keys(StaticProfiles).forEach((staticProfileName) => {
-        ProfileCollection.upsert(
+
+    for (const staticProfileName of Object.keys(StaticProfiles)) {
+        await ProfileCollection.upsertAsync(
             { name: StaticProfiles[staticProfileName].name },
             {
                 $set: {
@@ -35,19 +36,19 @@ if (process.env.REFRESH_STATIC_PROFILES === 'true' || Meteor.isAppTest) {
                 },
             },
         );
-        Meteor.users
+        const users = await Meteor.users
             .find({ 'profile.profile': StaticProfiles[staticProfileName].name })
-            .fetch()
-            .forEach((user) => {
-                // @ts-ignore
-                Meteor.roleAssignment.remove({ 'user._id': user._id });
-                if (StaticProfiles[staticProfileName].permissions.length) {
-                    Roles.setUserRoles(
-                        user._id,
-                        StaticProfiles[staticProfileName].permissions,
-                        StaticProfiles[staticProfileName].name,
-                    );
-                }
-            });
-    });
+            .fetchAsync();
+        for (const user of users) {
+            // @ts-ignore
+            await Meteor.roleAssignment.removeAsync({ 'user._id': user._id });
+            if (StaticProfiles[staticProfileName].permissions.length) {
+                await Roles.setUserRolesAsync(
+                    user._id,
+                    StaticProfiles[staticProfileName].permissions,
+                    StaticProfiles[staticProfileName].name,
+                );
+            }
+        }
+    }
 }

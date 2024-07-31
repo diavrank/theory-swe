@@ -169,8 +169,8 @@ export default defineComponent({
     $subscribe: {
       'allProfiles': []
     },
-    profiles() {
-      return ProfileCollection.find({}).fetch();
+    async profiles() {
+      return ProfileCollection.find({}).fetchAsync();
     }
   }
 });

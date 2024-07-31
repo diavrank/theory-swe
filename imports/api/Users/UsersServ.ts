@@ -3,15 +3,15 @@ import { ResponseMessage } from '../../startup/server/utils/ResponseMessage';
 import fileHelper from '../../startup/server/utils/FileOperations';
 import ProfilesServ from '../Profiles/ProfilesServ';
 import { UserType } from '/imports/api/Users/User';
-import { Profile } from '/imports/api/Profiles/Profile';
+import {ProfileCollection} from "@api/Profiles/ProfileCollection";
 
 export const PATH_USER_FILES = 'users/';
 
 export default {
-	validateEmail(newEmail: string, userId: string) {
+	async validateEmail(newEmail: string, userId: string) {
 		const existsEmail = Accounts.findUserByEmail(newEmail);
 		if (userId) {
-			const oldUser = Meteor.users.findOne(userId);
+			const oldUser = await Meteor.users.findOneAsync(userId);
 			if (oldUser?.emails) {
 				if (oldUser.emails[0].address !== newEmail && existsEmail) {
 					throw new Meteor.Error('403', 'The new email is already in use');
@@ -21,10 +21,10 @@ export default {
 			throw new Meteor.Error('403', 'The new email is already in use');
 		}
 	},
-	validateUsername(newUsername: string, userId: string) {
+	async validateUsername(newUsername: string, userId: string) {
 		const existsUsername = Accounts.findUserByUsername(newUsername);
 		if (userId) {
-			const oldUser = Meteor.users.findOne(userId);
+			const oldUser = await Meteor.users.findOneAsync(userId);
 			if (oldUser?.username !== newUsername && existsUsername) {
 				throw new Meteor.Error('403', 'The new username is already in use');
 			}
@@ -32,22 +32,22 @@ export default {
 			throw new Meteor.Error('403', 'The new username is already in use');
 		}
 	},
-	validateProfile(profileName: string) {
-		if (!Profile.findOne({ name: profileName })) {
+	async validateProfile(profileName: string) {
+		if (!await ProfileCollection.findOneAsync({ name: profileName })) {
 			throw new Meteor.Error('403', 'Invalid profile name');
 		}
 	},
-	async createUser(user: Meteor.User, photoFileUser: any) {
+	async createUser(user: UserType, photoFileUser: any) {
 		const userId = Accounts.createUser({
 			username: user.username,
 			// @ts-ignore
 			email: user.emails[0].address,
 			profile: user.profile
 		});
-		user = Meteor.users.findOne(userId);
+		user = await Meteor.users.findOneAsync(userId) as UserType;
 		let avatarSrc = null;
-		if (userId && user.emails) {
-			ProfilesServ.setUserRoles(userId, user.profile.profile);
+		if (userId && user?.emails) {
+			await ProfilesServ.setUserRoles(userId, user.profile?.profile);
 			Accounts.sendEnrollmentEmail(userId, user.emails[0].address);
 		}
 		if (photoFileUser) {
@@ -59,7 +59,7 @@ export default {
 			}
 		}
 		if (avatarSrc) {
-			Meteor.users.upsert(user._id,{
+			await Meteor.users.upsertAsync(user._id,{
 				$set:{
 					'profile.path':user.profile.path,
 				}
@@ -68,7 +68,7 @@ export default {
 	},
 	async updateUser(newUser: UserType, photoFileUser: any): Promise<ResponseMessage> {
 		const responseMessage = new ResponseMessage();
-		const currentUser = Meteor.users.findOne(newUser._id);
+		const currentUser = await Meteor.users.findOneAsync(newUser._id) as UserType;
 		if (currentUser?.emails && newUser.emails) {
 			if (currentUser.emails[0].address !== newUser.emails[0].address) {
 				Accounts.removeEmail(newUser._id, currentUser.emails[0].address);
@@ -80,7 +80,7 @@ export default {
 			Accounts.setUsername(newUser._id, newUser.username);
 		}
 
-		Meteor.users.upsert(newUser._id,{
+		await Meteor.users.upsertAsync(newUser._id,{
 			$set:{
 				'profile':newUser.profile,
 			}
@@ -94,7 +94,7 @@ export default {
 				throw new Meteor.Error('500', 'Error saving user photo.');
 			} else {
 				newUser.profile.path = response.data.fileUrl;
-				Meteor.users.upsert(newUser._id,{
+				await Meteor.users.upsertAsync(newUser._id,{
 					$set:{
 						'profile.path':newUser.profile.path,
 					}
@@ -108,16 +108,16 @@ export default {
 	 * TODO: Migrate to mongoose schema
 	 * @param event
 	 */
-	afterSave(event: any) {
+	async afterSave(event: any) {
 		if (event.doc.profile.profile !== event.oldDoc?.profile.profile) {
-			ProfilesServ.setUserRoles(event.currentTarget._id, event.currentTarget.profile.profile);
+			await ProfilesServ.setUserRoles(event.currentTarget._id, event.currentTarget.profile.profile);
 		}
 	},
 	beforeRemove(event: any) {
 		fileHelper.remove(PATH_USER_FILES + event.currentTarget._id);
 	},
-	afterRemove(event: any) {
+	async afterRemove(event: any) {
 		// @ts-ignore
-		Meteor.roleAssignment.remove({ 'user._id': event.currentTarget._id });
+		await Meteor.roleAssignment.removeAsync({ 'user._id': event.currentTarget._id });
 	}
 };

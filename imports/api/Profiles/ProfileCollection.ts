@@ -1,5 +1,4 @@
 import { Mongo } from 'meteor/mongo';
-import { RoleType } from '/imports/api/Permissions/Permission';
 
 export interface ProfileType {
 	_id: string;

@@ -1,11 +1,12 @@
 import { Meteor } from 'meteor/meteor';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import AuthGuard from './../../middlewares/AuthGuard';
-import { ResponseMessage } from '../../startup/server/utils/ResponseMessage';
+import { ResponseMessage } from '@server/utils/ResponseMessage';
 import { check, Match } from 'meteor/check';
 import UsersServ from './UsersServ';
 import Binnacle from '../../middlewares/Binnacle';
 import Permissions from '../../startup/server/Permissions';
+import {UserType} from "@api/Users/User";
 
 Accounts.onCreateUser((options: any, user: Meteor.User) => {
 	//Configuration for user-status
@@ -21,14 +22,14 @@ Accounts.onCreateUser((options: any, user: Meteor.User) => {
 	return customizedUser;
 });
 
-Accounts.validateLoginAttempt((loginAttempt: any) => {
+Accounts.validateLoginAttempt(async(loginAttempt: any) => {
 	if (loginAttempt.allowed) {
 		if (!loginAttempt.user.emails[0].verified) {
 			throw new Meteor.Error('403', 'The account email has not been verified yet.');
 		}
-		const loginTokensOfUser = loginAttempt.user.services.resume?.loginTokens || [];
+		const loginTokensOfUser:string[] = loginAttempt.user.services.resume?.loginTokens || [];
 		if (loginTokensOfUser.length > 1) {
-			Meteor.users.update(loginAttempt.user._id, {
+			await Meteor.users.updateAsync(loginAttempt.user._id, {
 				$set: {
 					'services.resume.loginTokens': [loginTokensOfUser.pop()]
 				}
@@ -80,11 +81,11 @@ export const saveUserMethod = new ValidatedMethod({
 		UsersServ.validateUsername(user.username, user._id);
 		UsersServ.validateProfile(user.profile.profile);
 	},
-	async run({ user, photoFileUser }: { user: Meteor.User, photoFileUser: any }) {
+	async run({ user, photoFileUser }: { user: UserType, photoFileUser: any }) {
 		const responseMessage = new ResponseMessage();
 		if (user._id) {//if exists then update it
 			try {
-				const userToBeUpdated = Meteor.users.findOne(user._id);
+				const userToBeUpdated = await Meteor.users.findOneAsync(user._id) as UserType;
 				userToBeUpdated.username=user.username;
 				userToBeUpdated.profile=user.profile;
 				userToBeUpdated.emails=user.emails;
@@ -97,7 +98,7 @@ export const saveUserMethod = new ValidatedMethod({
 			}
 		} else {//otherwise is created
 			try {
-				await UsersServ.createUser(user, photoFileUser);
+				await UsersServ.createUser(user as UserType, photoFileUser);
 				responseMessage.create('User created!');
 			} catch (exception) {
 				console.error('user.save: ', exception);
@@ -119,21 +120,21 @@ export const deleteUserMethod = new ValidatedMethod({
 	permissions: [Permissions.USERS.DELETE.VALUE],
 	beforeHooks: [Binnacle.checkIn, AuthGuard.checkPermission],
 	afterHooks: [Binnacle.checkOut],
-	validate({ userId }: { userId: string }) {
+	async validate({ userId }: { userId: string }) {
 		try {
 			check(userId, String);
 		} catch (exception) {
 			console.error('user.delete: ', exception);
 			throw new Meteor.Error('403', 'The information entered is not valid');
 		}
-		if (!Meteor.users.findOne(userId)) {
+		if (!await Meteor.users.findOneAsync(userId)) {
 			throw new Meteor.Error('403', 'User does not exists');
 		}
 	},
-	run({ userId }: { userId: string }) {
+	async run({ userId }: { userId: string }) {
 		const responseMessage = new ResponseMessage();
 		try {
-			Meteor.users.remove(userId);
+			await Meteor.users.removeAsync(userId);
 			responseMessage.create('User removed successfully!');
 		} catch (exception) {
 			console.error('user.delete: ', exception);
@@ -154,7 +155,7 @@ export const updatePersonalDataMethod = new ValidatedMethod({
 	mixins: [MethodHooks],
 	beforeHooks: [Binnacle.checkIn, AuthGuard.isUserLogged],
 	afterHooks: [Binnacle.checkOut],
-	validate({ user }: { user: Meteor.User }) {
+	async validate({ user }: { user: UserType }) {
 		try {
 			check(user, {
 				username: String,
@@ -169,13 +170,13 @@ export const updatePersonalDataMethod = new ValidatedMethod({
 			console.error('user.updatePersonalData: ', exception);
 			throw new Meteor.Error('403', 'The information entered is not valid');
 		}
-		UsersServ.validateEmail(user.emails[0].address, this.userId);
-		UsersServ.validateUsername(user.username, this.userId);
+		await UsersServ.validateEmail(user.emails[0].address, this.userId);
+		await UsersServ.validateUsername(user.username, this.userId);
 	},
-	async run({ user, photoFileUser }: { user: Meteor.User, photoFileUser: any }) {
+	async run({ user, photoFileUser }: { user: UserType, photoFileUser: any }) {
 		const responseMessage = new ResponseMessage();
 		try {
-			const userToBeUpdated = Meteor.users.findOne(user._id);
+			const userToBeUpdated = await Meteor.users.findOneAsync(user._id) as UserType;
 			userToBeUpdated.username=user.username;
 			userToBeUpdated.profile.name=user.profile.name;
 			userToBeUpdated.emails=user.emails;

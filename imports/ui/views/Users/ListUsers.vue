@@ -175,7 +175,7 @@ export default defineComponent({
       'users': []
     },
     users() {
-      return Meteor.users.find({ _id: { $ne: Meteor.userId() || undefined } }).fetch();
+      return Meteor.users.find({ _id: { $ne: Meteor.userId() || undefined } }).fetchAsync();
     }
   }
 });

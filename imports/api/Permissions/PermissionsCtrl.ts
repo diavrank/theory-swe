@@ -5,7 +5,7 @@ import { check } from 'meteor/check';
 //Permisos
 import Permissions from '../../startup/server/Permissions';
 import Binnacle from '../../middlewares/Binnacle';
-import {ProfileCollection} from "@api/Profiles/ProfileCollection";
+import {ProfileCollection, ProfileType} from "@api/Profiles/ProfileCollection";
 import PermissionsService from "@api/Permissions/PermissionsServ";
 
 
@@ -23,8 +23,8 @@ export const listPermissionsMethod = new ValidatedMethod({
 	beforeHooks: [Binnacle.checkIn, AuthGuard.checkPermission],
 	afterHooks: [Binnacle.checkOut],
 	validate: null,
-	run() {
-		return Meteor.roles.find({}).fetch();
+	async run() {
+		return Meteor.roles.find({}).fetchAsync();
 	}
 });
 
@@ -40,20 +40,20 @@ export const listProfilePermissionsMethod = new ValidatedMethod({
 	permissions: [Permissions.PERMISSIONS.LIST.VALUE],
 	beforeHooks: [Binnacle.checkIn, AuthGuard.checkPermission],
 	afterHooks: [Binnacle.checkOut],
-	validate({ profileId }: { profileId: string }) {
+	async validate({ profileId }: { profileId: string }) {
 		try {
 			check(profileId, String);
 		} catch (exception) {
 			console.error('permissions.listByIdProfile: ', exception);
 			throw new Meteor.Error('403', 'The information entered is not valid');
 		}
-		if (!ProfileCollection.findOne(profileId)) {
+		if (!await ProfileCollection.findOneAsync(profileId)) {
 			throw new Meteor.Error('403', 'Profile does not exist');
 		}
 	},
-	run({ profileId }: { profileId: string }) {
-		const profile = ProfileCollection.findOne(profileId);
-		return permissionsService.getPermissions(profile.permissions).fetch();
+	async run({ profileId }: { profileId: string }) {
+		const profile = await ProfileCollection.findOneAsync(profileId) as ProfileType;
+		return permissionsService.getPermissions(profile.permissions).fetchAsync();
 
 	}
 });
@@ -70,19 +70,19 @@ export const listNotProfilePermissionsMethod = new ValidatedMethod({
 	permissions: [Permissions.PERMISSIONS.LIST.VALUE],
 	beforeHooks: [Binnacle.checkIn, AuthGuard.checkPermission],
 	afterHooks: [Binnacle.checkOut],
-	validate({ profileId }: { profileId: string }) {
+	async validate({ profileId }: { profileId: string }) {
 		try {
 			check(profileId, String);
 		} catch (exception) {
 			console.error('permissions.listOthersForIdProfile: ', exception);
 			throw new Meteor.Error('403', 'The information entered is not valid');
 		}
-		if (!ProfileCollection.findOne(profileId)) {
+		if (!await ProfileCollection.findOneAsync(profileId)) {
 			throw new Meteor.Error('403', 'Profile does not exist');
 		}
 	},
-	run({ profileId }: { profileId: string }) {
-		const profile = ProfileCollection.findOne(profileId);
-		return permissionsService.getPermissionsComplement(profile.permissions).fetch();
+	async run({ profileId }: { profileId: string }) {
+		const profile = await ProfileCollection.findOneAsync(profileId) as ProfileType;
+		return permissionsService.getPermissionsComplement(profile.permissions).fetchAsync();
 	}
 });

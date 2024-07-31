@@ -17,7 +17,7 @@ interface UserProfileType {
 
 // TODO: Add UserProfile mongoose schema
 
-export interface UserType extends Meteor.User {
+export interface UserType extends Omit<Meteor.User,'profile'> {
 	profile: UserProfileType;
 	status: UserStatusType;
 

@@ -8,7 +8,7 @@ export default defineComponent({
 			'profiles': []
 		},
 		profiles() {
-			return ProfileCollection.find({}).fetch();
+			return ProfileCollection.find({}).fetchAsync();
 		}
 	}
 })

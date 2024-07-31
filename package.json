@@ -42,7 +42,7 @@
     "@types/chai": "^4.2.22",
     "@types/faker": "^5.5.8",
     "@types/fs-extra": "^9.0.13",
-    "@types/meteor": "^1.4.70",
+    "@types/meteor": "^2.9.7",
     "@types/meteor-mdg-validated-method": "^1.2.3",
     "@types/meteor-roles": "^1.2.33",
     "@types/mocha": "^8.2.2",

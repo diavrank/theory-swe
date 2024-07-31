@@ -8,14 +8,14 @@ import { Roles } from 'meteor/alanning:roles';
  * @param methodArgs Method Arguments
  * @param methodOptions Method options
  */
-const checkPermission: (this: Meteor.MethodThisType, ...args: any[]) => any = function(methodArgs: any, methodOptions: any): any {
+const checkPermission: (this: Meteor.MethodThisType, ...args: any[]) => any = async function(methodArgs: any, methodOptions: any): any {
 	const userId = this.userId;
 	const permissions = methodOptions.permissions;
 	let hasPermission = false;
 	if (userId !== null) {
 		// @ts-ignore
-		const scope = Roles.getScopesForUser(userId)[0];
-		hasPermission = Roles.userIsInRole(userId, permissions, scope);
+		const scope = await Roles.getScopesForUserAsync(userId)[0];
+		hasPermission = await Roles.userIsInRoleAsync(userId, permissions, scope);
 	}
 	if (!hasPermission) {
 		throw new Meteor.Error('403', 'Access denied',
@@ -45,12 +45,12 @@ const isUserLogged: (this: Meteor.MethodThisType, ...args: any[]) => any = funct
 export const checkPermissionMethod = new ValidatedMethod({
 	name: 'checkPermission',
 	validate: null,
-	run(userData: { userId: string, permission: string }) {
+	async run(userData: { userId: string, permission: string }) {
 		let response = false;
 		if (userData.userId && userData.permission) {
-			// @ts-ignore
-			const group = Roles.getScopesForUser(userData.userId)[0];
-			response = Roles.userIsInRole(userData.userId, userData.permission, group);
+
+			const group = await Roles.getScopesForUserAsync(userData.userId)[0];
+			response = await Roles.userIsInRoleAsync(userData.userId, userData.permission, group);
 		}
 		return response;
 	}

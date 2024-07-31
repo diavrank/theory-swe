@@ -62,14 +62,14 @@ export const permissionsArray = Object.keys(Permissions).reduce(
 
 if (process.env.REFRESH_PERMISSIONS === 'true' || Meteor.isAppTest) {
     console.info('Updating permissions.');
-    const currentRoles = Roles.getAllRoles().fetch();
+    const currentRoles = await Roles.getAllRoles().fetchAsync();
     for (let permission of permissionsArray) {
         // @ts-ignore
         if (!currentRoles.find((_role) => _role._id === permission.VALUE)) {
-            Roles.createRole(permission.VALUE);
+            await Roles.createRoleAsync(permission.VALUE);
         }
         // @ts-ignore
-        Meteor.roles.update(permission.VALUE, {
+        await Meteor.roles.updateAsync(permission.VALUE, {
             $set: {
                 publicName: permission.TEXT,
             },
