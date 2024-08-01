@@ -27,3 +27,4 @@ xolvio:cleaner
 dburles:factory
 meteortesting:mocha
 jorgenvatle:vite-bundler@2.0.0-beta.12
+zodern:types

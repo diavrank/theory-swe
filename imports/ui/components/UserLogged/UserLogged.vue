@@ -3,10 +3,10 @@
     <template v-slot:activator="{props}">
       <v-btn variant="text" v-bind="props">
         <v-avatar color="indigo" size="36">
-                    <span v-if="user.profile.path==null" class="text-white text-h5">
+                    <span v-if="user.profile?.path==null" class="text-white text-h5">
                         {{ usernameInitials }}
                     </span>
-          <v-img v-else id="face-preview" :src="user.profile.path"
+          <v-img v-else id="face-preview" :src="user.profile?.path"
                :alt="user.username" />
         </v-avatar>
       </v-btn>

@@ -30,22 +30,22 @@ const getBinnacleContent = (methodInvokation: any, user: Meteor.User | null, bin
 		+ LINE_BREAK;
 };
 
-const checkIn: (this: Meteor.MethodThisType, ...args: any[]) => any = function(methodArgs: any): any {
+const checkIn: (this: Meteor.MethodThisType, ...args: any[]) => any = async function(methodArgs: any): any {
 	if (Meteor.isTest || Meteor.isAppTest) {
 		return methodArgs;
 	}
-	const user = Meteor.user();
+	const user = await Meteor.userAsync();
 	let content = '';
 	content += getBinnacleContent(this, user, BINNACLE_TYPE.checkIn);
 	console.log(content); // TODO: Implement Datadog
 	return methodArgs;
 };
 
-const checkOut: (this: Meteor.MethodThisType, ...args: any[]) => any = function(_methodArgs: any, returnValue: any): any {
+const checkOut: (this: Meteor.MethodThisType, ...args: any[]) => any = async function(_methodArgs: any, returnValue: any): any {
 	if (Meteor.isTest || Meteor.isAppTest) {
 		return returnValue;
 	}
-	const user = Meteor.user();
+	const user = await Meteor.userAsync();
 	let content = '';
 	content += getBinnacleContent(this, user, BINNACLE_TYPE.checkOut);
 	console.log(content); // TODO: Implement Datadog

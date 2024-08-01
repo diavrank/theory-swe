@@ -9,7 +9,7 @@ export const PATH_USER_FILES = 'users/';
 
 export default {
 	async validateEmail(newEmail: string, userId: string) {
-		const existsEmail = Accounts.findUserByEmail(newEmail);
+		const existsEmail = await Accounts.findUserByEmail(newEmail);
 		if (userId) {
 			const oldUser = await Meteor.users.findOneAsync(userId);
 			if (oldUser?.emails) {
@@ -22,7 +22,7 @@ export default {
 		}
 	},
 	async validateUsername(newUsername: string, userId: string) {
-		const existsUsername = Accounts.findUserByUsername(newUsername);
+		const existsUsername = await Accounts.findUserByUsername(newUsername);
 		if (userId) {
 			const oldUser = await Meteor.users.findOneAsync(userId);
 			if (oldUser?.username !== newUsername && existsUsername) {
@@ -38,7 +38,7 @@ export default {
 		}
 	},
 	async createUser(user: UserType, photoFileUser: any) {
-		const userId = Accounts.createUser({
+		const userId = await Accounts.createUserAsync({
 			username: user.username,
 			// @ts-ignore
 			email: user.emails[0].address,

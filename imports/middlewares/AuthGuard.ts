@@ -48,8 +48,7 @@ export const checkPermissionMethod = new ValidatedMethod({
 	async run(userData: { userId: string, permission: string }) {
 		let response = false;
 		if (userData.userId && userData.permission) {
-
-			const group = await Roles.getScopesForUserAsync(userData.userId)[0];
+			const [group] = await Roles.getScopesForUserAsync(userData.userId);
 			response = await Roles.userIsInRoleAsync(userData.userId, userData.permission, group);
 		}
 		return response;

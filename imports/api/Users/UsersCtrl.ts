@@ -61,7 +61,7 @@ export const saveUserMethod = new ValidatedMethod({
 	permissions: [Permissions.USERS.CREATE.VALUE, Permissions.USERS.UPDATE.VALUE],
 	beforeHooks: [Binnacle.checkIn, AuthGuard.checkPermission],
 	afterHooks: [Binnacle.checkOut],
-	validate({ user }: { user: Meteor.User }) {
+	async validate({ user }: { user: Meteor.User }) {
 		try {
 			check(user, {
 				_id: Match.Maybe(String),
@@ -77,9 +77,9 @@ export const saveUserMethod = new ValidatedMethod({
 			console.error('user.save: ', exception);
 			throw new Meteor.Error('403', 'The information entered is not valid');
 		}
-		UsersServ.validateEmail(user.emails[0].address, user._id);
-		UsersServ.validateUsername(user.username, user._id);
-		UsersServ.validateProfile(user.profile.profile);
+		await UsersServ.validateEmail(user.emails[0].address, user._id);
+		await UsersServ.validateUsername(user.username, user._id);
+		await UsersServ.validateProfile(user.profile.profile);
 	},
 	async run({ user, photoFileUser }: { user: UserType, photoFileUser: any }) {
 		const responseMessage = new ResponseMessage();
