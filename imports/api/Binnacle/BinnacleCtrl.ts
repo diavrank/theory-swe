@@ -1,12 +1,11 @@
 import { Meteor } from 'meteor/meteor';
 import { ResponseMessage } from '../../startup/server/utils/ResponseMessage';
 
-// @ts-ignore
-import { ValidatedMethod } from 'meteor/mdg:validated-method';
+import {createMethod} from 'meteor/jam:method';
 import FileOperations from '../../startup/server/utils/FileOperations';
 import Utilities from '../../startup/server/utils/helpers';
 
-export const binnacleMakeBackupMethod = new ValidatedMethod({
+export const binnacleMakeBackupMethod = createMethod({
 	name: 'binnacle.makeBackup',
 	validate: null,
 	async run() {

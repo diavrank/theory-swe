@@ -1,14 +1,13 @@
 import { Meteor } from 'meteor/meteor';
 import SystemOptions, { SystemOptionType } from './SystemOption';
-// @ts-ignore
-import { ValidatedMethod } from 'meteor/mdg:validated-method';
+import {createMethod} from 'meteor/jam:method';
 import { Roles } from 'meteor/alanning:roles';
 import { StaticProfiles } from '/imports/api/Profiles/ProfileSeeder';
 
 /**
  * Regresa las opciones del sistema asociadas a un usuario dependiendo de sus permisos.
  */
-export const getSystemOptionsMethod = new ValidatedMethod({
+export const getSystemOptionsMethod = createMethod({
     name: 'getSystemOptions',
     validate: null,
     async run(): Promise<SystemOptionType[]> {

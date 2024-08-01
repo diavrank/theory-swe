@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-import { ValidatedMethod } from 'meteor/mdg:validated-method';
+import {createMethod} from 'meteor/jam:method';
 import {ProfileCollection, ProfileType} from '/imports/api/Profiles/ProfileCollection';
 import AuthGuard from './../../middlewares/AuthGuard';
 import { ResponseMessage } from '../../startup/server/utils/ResponseMessage';
@@ -16,12 +16,11 @@ import Binnacle from '../../middlewares/Binnacle';
  * @param profile - Object of {@link ProfileType}
  *
  */
-export const saveProfileMethod = new ValidatedMethod({
+export const saveProfileMethod = createMethod({
 	name: 'profile.save',
-	mixins: [MethodHooks],
-	permissions: [Permissions.PROFILES.CREATE.VALUE, Permissions.PROFILES.UPDATE.VALUE],
-	beforeHooks: [Binnacle.checkIn, AuthGuard.checkPermission],
-	afterHooks: [Binnacle.checkOut],
+	before: [Binnacle.checkIn,
+		AuthGuard.checkPermission([Permissions.PROFILES.CREATE.VALUE, Permissions.PROFILES.UPDATE.VALUE])],
+	after: [Binnacle.checkOut],
 	validate(profile: ProfileType) {
 		try {
 			check(profile, {
@@ -78,12 +77,10 @@ export const saveProfileMethod = new ValidatedMethod({
  * @method profile.delete
  * @param profileId - {profileId:string}
  */
-export const deleteProfileMethod = new ValidatedMethod({
+export const deleteProfileMethod = createMethod({
 	name: 'profile.delete',
-	mixins: [MethodHooks],
-	permissions: [Permissions.PROFILES.DELETE.VALUE],
-	beforeHooks: [Binnacle.checkIn, AuthGuard.checkPermission],
-	afterHooks: [Binnacle.checkOut],
+	before: [Binnacle.checkIn, AuthGuard.checkPermission([Permissions.PROFILES.DELETE.VALUE])],
+	after: [Binnacle.checkOut],
 	validate({ profileId }: { profileId: string }) {
 		try {
 			check(profileId, String);

@@ -1,4 +1,3 @@
-import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import AuthGuard from '../../middlewares/AuthGuard';
 import { check } from 'meteor/check';
 
@@ -7,6 +6,7 @@ import Permissions from '../../startup/server/Permissions';
 import Binnacle from '../../middlewares/Binnacle';
 import {ProfileCollection, ProfileType} from "@api/Profiles/ProfileCollection";
 import PermissionsService from "@api/Permissions/PermissionsServ";
+import {createMethod} from 'meteor/jam:method';
 
 
 const permissionsService = new PermissionsService();
@@ -16,12 +16,10 @@ const permissionsService = new PermissionsService();
  * @method permissions.list
  * @return
  */
-export const listPermissionsMethod = new ValidatedMethod({
+export const listPermissionsMethod = createMethod({
 	name: 'permissions.list',
-	mixins: [MethodHooks],
-	permissions: [Permissions.PERMISSIONS.LIST.VALUE],
-	beforeHooks: [Binnacle.checkIn, AuthGuard.checkPermission],
-	afterHooks: [Binnacle.checkOut],
+	before: [Binnacle.checkIn, AuthGuard.checkPermission([Permissions.PERMISSIONS.LIST.VALUE])],
+	after: [Binnacle.checkOut],
 	validate: null,
 	async run() {
 		return Meteor.roles.find({}).fetchAsync();
@@ -34,12 +32,10 @@ export const listPermissionsMethod = new ValidatedMethod({
  * @param profileId - {profileId:string}
  * @return Array of {@link RoleType}
  */
-export const listProfilePermissionsMethod = new ValidatedMethod({
+export const listProfilePermissionsMethod = createMethod({
 	name: 'permissions.listByIdProfile',
-	mixins: [MethodHooks],
-	permissions: [Permissions.PERMISSIONS.LIST.VALUE],
-	beforeHooks: [Binnacle.checkIn, AuthGuard.checkPermission],
-	afterHooks: [Binnacle.checkOut],
+	before: [Binnacle.checkIn, AuthGuard.checkPermission([Permissions.PERMISSIONS.LIST.VALUE])],
+	after: [Binnacle.checkOut],
 	async validate({ profileId }: { profileId: string }) {
 		try {
 			check(profileId, String);
@@ -64,12 +60,10 @@ export const listProfilePermissionsMethod = new ValidatedMethod({
  * @param profileId - {profileId:string}
  * @return Array of {@link RoleType}
  */
-export const listNotProfilePermissionsMethod = new ValidatedMethod({
+export const listNotProfilePermissionsMethod = createMethod({
 	name: 'permissions.listOthersForIdProfile',
-	mixins: [MethodHooks],
-	permissions: [Permissions.PERMISSIONS.LIST.VALUE],
-	beforeHooks: [Binnacle.checkIn, AuthGuard.checkPermission],
-	afterHooks: [Binnacle.checkOut],
+	before: [Binnacle.checkIn, AuthGuard.checkPermission([Permissions.PERMISSIONS.LIST.VALUE])],
+	after: [Binnacle.checkOut],
 	async validate({ profileId }: { profileId: string }) {
 		try {
 			check(profileId, String);

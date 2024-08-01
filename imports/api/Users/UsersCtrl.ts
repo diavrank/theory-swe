@@ -1,5 +1,4 @@
 import { Meteor } from 'meteor/meteor';
-import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import AuthGuard from './../../middlewares/AuthGuard';
 import { ResponseMessage } from '@server/utils/ResponseMessage';
 import { check, Match } from 'meteor/check';
@@ -7,6 +6,7 @@ import UsersServ from './UsersServ';
 import Binnacle from '../../middlewares/Binnacle';
 import Permissions from '../../startup/server/Permissions';
 import {UserType} from "@api/Users/User";
+import {createMethod} from "meteor/jam:method";
 
 Accounts.onCreateUser((options: any, user: Meteor.User) => {
 	//Configuration for user-status
@@ -55,12 +55,11 @@ Accounts.validateLoginAttempt(async(loginAttempt: any) => {
  *
  * @param photoFileUser  Photo of user (in binary format)
  */
-export const saveUserMethod = new ValidatedMethod({
+export const saveUserMethod = createMethod({
 	name: 'user.save',
-	mixins: [MethodHooks],
-	permissions: [Permissions.USERS.CREATE.VALUE, Permissions.USERS.UPDATE.VALUE],
-	beforeHooks: [Binnacle.checkIn, AuthGuard.checkPermission],
-	afterHooks: [Binnacle.checkOut],
+	before: [Binnacle.checkIn,
+		AuthGuard.checkPermission([Permissions.USERS.CREATE.VALUE, Permissions.USERS.UPDATE.VALUE])],
+	after: [Binnacle.checkOut],
 	async validate({ user }: { user: Meteor.User }) {
 		try {
 			check(user, {
@@ -114,12 +113,10 @@ export const saveUserMethod = new ValidatedMethod({
  * @method user.delete
  * @param userId  - { userId: string }
  */
-export const deleteUserMethod = new ValidatedMethod({
+export const deleteUserMethod = createMethod({
 	name: 'user.delete',
-	mixins: [MethodHooks],
-	permissions: [Permissions.USERS.DELETE.VALUE],
-	beforeHooks: [Binnacle.checkIn, AuthGuard.checkPermission],
-	afterHooks: [Binnacle.checkOut],
+	before: [Binnacle.checkIn, AuthGuard.checkPermission([Permissions.USERS.DELETE.VALUE])],
+	after: [Binnacle.checkOut],
 	async validate({ userId }: { userId: string }) {
 		try {
 			check(userId, String);
@@ -150,11 +147,10 @@ export const deleteUserMethod = new ValidatedMethod({
  * @param user
  * {user:Meteor.User}
  */
-export const updatePersonalDataMethod = new ValidatedMethod({
+export const updatePersonalDataMethod = createMethod({
 	name: 'user.updatePersonalData',
-	mixins: [MethodHooks],
-	beforeHooks: [Binnacle.checkIn, AuthGuard.isUserLogged],
-	afterHooks: [Binnacle.checkOut],
+	before: [Binnacle.checkIn, AuthGuard.isUserLogged],
+	after: [Binnacle.checkOut],
 	async validate({ user }: { user: UserType }) {
 		try {
 			check(user, {

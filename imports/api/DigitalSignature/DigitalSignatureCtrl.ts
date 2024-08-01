@@ -1,4 +1,4 @@
-import { ValidatedMethod } from 'meteor/mdg:validated-method';
+import {createMethod} from 'meteor/jam:method';
 import AuthGuard from '@middlewares/AuthGuard';
 import { Meteor } from 'meteor/meteor';
 import { ResponseMessage } from '@server/utils/ResponseMessage';
@@ -9,11 +9,9 @@ import { DigitalSignatureVerifyRequestDto } from '@api/DigitalSignature/dtos/Dig
 
 const digitalSignatureService = new DigitalSignatureService();
 
-export const signDocumentMethod = new ValidatedMethod({
+export const signDocumentMethod = createMethod({
     name: 'digitalSignature.sign',
-    mixins: [MethodHooks],
-    permissions: [Permissions.DIGITAL_SIGNATURE.SIGN.VALUE],
-    beforeHooks: [AuthGuard.checkPermission],
+    before: [AuthGuard.checkPermission([Permissions.DIGITAL_SIGNATURE.SIGN.VALUE])],
     validate(requestDto: DigitalSignatureSignRequestDto) {
         new DigitalSignatureSignRequestDto(requestDto).validate(this);
     },
@@ -38,11 +36,9 @@ export const signDocumentMethod = new ValidatedMethod({
     },
 });
 
-export const verifySignatureMethod = new ValidatedMethod({
+export const verifySignatureMethod = createMethod({
     name: 'digitalSignature.verify',
-    mixins: [MethodHooks],
-    permissions: [Permissions.DIGITAL_SIGNATURE.VERIFY.VALUE],
-    beforeHooks: [AuthGuard.checkPermission],
+    before: [AuthGuard.checkPermission([Permissions.DIGITAL_SIGNATURE.VERIFY.VALUE])],
     validate(requestDto: DigitalSignatureVerifyRequestDto) {
         new DigitalSignatureVerifyRequestDto(requestDto).validate(this);
     },
