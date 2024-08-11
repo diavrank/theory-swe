@@ -71,8 +71,10 @@ export default defineComponent({
   },
   methods: {
     async resetPassword() {
+      console.log('resetPassword: ');
       if (await this.isFormValid(this.$refs.setPasswordFormObserver as FormContext)) {
         const token = this.$route.params.token as string;
+        console.log('token: ', token);
         Accounts.resetPassword(token, this.user.password || '', (err: Error | Meteor.Error | Meteor.TypedError | undefined) => {
           if (err) {
             console.error('An error occurred while resetting the password', err);
