@@ -13,6 +13,7 @@ export default defineConfig({
     extensions: [".ts", ".json", ".vue"],
     alias:{
       "@api": path.resolve(__dirname, './imports/api'),
+      "@server": path.resolve(__dirname, './imports/startup/server'),
       // UI aliases
       "@components": path.resolve(__dirname, './imports/ui/components'),
       "@views": path.resolve(__dirname, './imports/ui/views'),

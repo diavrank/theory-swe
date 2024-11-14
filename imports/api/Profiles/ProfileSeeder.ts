@@ -14,6 +14,8 @@ export interface StaticProfilesType {
     [key: string]: StaticProfileType;
 }
 
+ProfileCollection.rawCollection().createIndex({ name: 1 }, { unique: true, name: 'name' });
+
 export const StaticProfiles: StaticProfilesType = {
     admin: {
         name: 'admin',

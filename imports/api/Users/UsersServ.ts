@@ -59,6 +59,7 @@ export default {
 			}
 		}
 		if (avatarSrc) {
+			user.profile.path = avatarSrc;
 			await Meteor.users.upsertAsync(user._id,{
 				$set:{
 					'profile.path':user.profile.path,
