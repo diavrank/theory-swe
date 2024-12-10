@@ -20,7 +20,7 @@ accounts-base@3.0.0
 accounts-password@3.0.0
 check@1.4.2
 lacosta:method-hooks
-alanning:roles@4.0.0-alpha.2
+alanning:roles@4.0.0
 tracker@1.3.4
 xolvio:cleaner
 dburles:factory
