@@ -24,7 +24,7 @@
     "helmet": "^4.6.0",
     "iso-datestring-validator": "^2.2.0",
     "meteor-node-stubs": "^1.2.7",
-    "meteor-vite": "^1.10.4",
+    "meteor-vite": "^3.1.2",
     "mimetypes": "^0.1.1",
     "mitt": "^3.0.0",
     "pinia": "^2.0.33",
@@ -50,7 +50,7 @@
     "@types/simpl-schema": "^1.12.0",
     "@types/sinon": "^10.0.4",
     "@types/webfontloader": "^1.6.35",
-    "@vitejs/plugin-vue": "^4.0.0",
+    "@vitejs/plugin-vue": "^5.2.1",
     "babel-plugin-module-resolver": "^5.0.0",
     "chai": "^4.3.4",
     "faker": "^5.5.3",
@@ -59,13 +59,13 @@
     "sass": "^1.56.1",
     "sinon": "^11.1.2",
     "typescript": "^4.8.3",
-    "vite": "^4.0.5",
-    "vite-plugin-vuetify": "^1.0.1",
+    "vite": "^6.0.3",
+    "vite-plugin-vuetify": "^2.0.4",
     "vue-cli-plugin-vuetify": "^2.5.8"
   },
   "meteor": {
     "mainModule": {
-      "client": "client/main.ts",
+      "client": "client/main.js",
       "server": "server/main.ts"
     },
     "testModule": {
