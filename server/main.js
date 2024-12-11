@@ -7,6 +7,3 @@
  **/
 import "../_vite-bundle/server/_entry.mjs"
 /** End of vite auto-imports **/
-// Server entry point, imports all server code
-
-import '/imports/startup/server';
