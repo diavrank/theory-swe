@@ -1,5 +1,5 @@
 import { resetDatabase } from 'meteor/xolvio:cleaner';
-import { User, UserType } from '/imports/api/Users/User';
+import { User, UserType } from '../../../imports/api/Users/user.entity';
 import { Factory } from 'meteor/dburles:factory';
 import { deleteProfileMethod, saveProfileMethod } from '/imports/api/Profiles/ProfilesCtrl';
 import { Profile } from '/imports/api/Profiles/Profile';

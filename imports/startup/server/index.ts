@@ -6,7 +6,7 @@ import './services/FirebaseAdmin';
 import './utils/helpers';
 import './Permissions';
 
-import '../../api/Users/UsersCtrl';
+import '../../api/Users/users.controller';
 import '../../api/Users/UsersPubs';
 import '../../api/Rest/UsersRest';
 

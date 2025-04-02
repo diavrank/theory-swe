@@ -14,7 +14,8 @@
           "@middlewares": "./imports/middlewares",
           "@server": "./imports/startup/server"
         }
-      }
+      },
+      "@babel/plugin-proposal-decorators", { "legacy": true }
     ]
   ]
 }

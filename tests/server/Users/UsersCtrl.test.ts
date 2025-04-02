@@ -1,11 +1,11 @@
 import { Random } from 'meteor/random';
 import { resetDatabase } from 'meteor/xolvio:cleaner';
-import { deleteUserMethod, saveUserMethod, updatePersonalDataMethod } from '/imports/api/Users/UsersCtrl';
+import { deleteUserMethod, saveUserMethod, updatePersonalDataMethod } from '../../../imports/api/Users/users.controller';
 import { Factory } from 'meteor/dburles:factory';
 import chai from 'chai';
 import sinon from 'sinon';
 import faker from 'faker';
-import { User } from '/imports/api/Users/User';
+import { User } from '../../../imports/api/Users/user.entity';
 
 describe('UsersCtrl', function() {
 	let adminId: string;

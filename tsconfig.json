@@ -1,21 +1,15 @@
 {
   "compilerOptions": {
     /* Basic Options */
-    "target": "es2018",
-    "module": "esNext",
+    "target": "es2020",
+    "module": "commonjs",
     "lib": [
       "esnext",
       "dom"
     ],
-    "allowJs": true,
-    "checkJs": false,
-    "jsx": "preserve",
-    "incremental": true,
-    "noEmit": true,
-    /* Strict Type-Checking Options */
-    "strict": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
     /* Additional Checks */
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -61,21 +55,14 @@
         ".meteor/local/types/packages.d.ts"
       ]
     },
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
     "types": [
       "node",
       "mocha",
       "@types/busboy"
-    ],
-    "esModuleInterop": true,
-    "preserveSymlinks": true
+    ]
   },
   "exclude": [
     "./.meteor/**",
     "./packages/**"
-  ],
-  "include": [
-    ".meteor/local/types"
   ]
 }
