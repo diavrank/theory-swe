@@ -2,9 +2,8 @@
   "name": "theory-swe",
   "private": true,
   "scripts": {
-    "start": "meteor run",
-    "run:mac": "MONGO_URL=mongodb://localhost:27017/theory-swe meteor --settings ./settings/settings-development.json",
-    "run:mac:debug": "MONGO_URL=mongodb://localhost:27017/theory-swe meteor debug --settings ./settings/settings-development.json",
+    "start": "MONGO_URL=mongodb://localhost:27017/theory-swe meteor --settings ./settings/settings-development.json",
+    "start:debug": "MONGO_URL=mongodb://localhost:27017/theory-swe meteor debug --settings ./settings/settings-development.json",
     "run:windows": "SET MONGO_URL=mongodb://localhost:27017/theory-swe& meteor --settings ./settings/settings-development.json",
     "test": "meteor test --once --full-app --driver-package meteortesting:mocha",
     "test-app": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",

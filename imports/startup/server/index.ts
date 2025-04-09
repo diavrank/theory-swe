@@ -1,14 +1,14 @@
 // Import server startup through a single index entry point
 
-import './SecurityConfig';
-import './services/MailServ';
-import './services/FirebaseAdmin';
-import './utils/helpers';
 import './Permissions';
+import './SecurityConfig';
+import './services/FirebaseAdmin';
+import './services/MailServ';
+import './utils/helpers';
 
-import '../../api/Users/users.controller';
-import '../../api/Users/UsersPubs';
 import '../../api/Rest/UsersRest';
+import '../../api/Users/users.controller';
+import '../../api/Users/users.publication';
 
 import '../../api/Permissions/PermissionsCtrl';
 import '../../api/Permissions/PermissionsPubs';

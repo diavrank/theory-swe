@@ -9,6 +9,10 @@ export class BaseRepository<T> {
         this.collection = collection;
     }
 
+    findAll(selector: Mongo.Selector<T> = {}, options: Mongo.Options<T> = {}) {
+        return this.collection.find({ ...selector, $or: [{ deletedAt: { $exists: false } }, { deletedAt: null }] }, options);
+    }
+
     find(selector: Mongo.Selector<T> = {}, options: Mongo.Options<T> = {}): Promise<T[]> {
         return this.collection.find({ ...selector, $or: [{ deletedAt: { $exists: false } }, { deletedAt: null }] }, options).fetchAsync();
     }
