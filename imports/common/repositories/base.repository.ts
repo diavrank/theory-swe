@@ -47,7 +47,7 @@ export class BaseRepository<T> {
 
     async restore(selector: Mongo.Selector<T>): Promise<number> {
         const result = await this.collection.updateAsync(selector, {
-            $unset: { deletedAt: null },
+            $unset: { deletedAt: null, updatedAt: new Date() },
         });
         return result;
     }
