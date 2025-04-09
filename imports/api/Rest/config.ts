@@ -1,15 +1,13 @@
 // Global API configuration
 // @ts-ignore
-//import { Restivus } from 'meteor/maka:rest';
-//import './upload-middleware';
+import MakaRest from 'meteor/maka:rest';
+import './upload-middleware';
 
 // TODO: Implement Expressjs API
-// const Api = new Restivus({
-// 	version: 'v1',
-// 	useDefaultAuth: true,
-// 	prettyJson: true
-// });
-
-const Api = {};
+const Api = new MakaRest({
+    useDefaultAuth: true,
+    prettyJson: true,
+    isRoot: true
+});
 
 export default Api;

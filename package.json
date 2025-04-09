@@ -27,7 +27,7 @@
     "http-status-codes": "^2.3.0",
     "iso-datestring-validator": "^2.2.0",
     "meteor-node-stubs": "^1.2.7",
-    "meteor-vite": "^3.1.2",
+    "meteor-vite": "^3.6.1",
     "mimetypes": "^0.1.1",
     "mitt": "^3.0.0",
     "pinia": "^2.0.33",

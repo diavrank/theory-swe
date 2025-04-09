@@ -1,4 +1,3 @@
-import { Mongo } from "meteor/mongo";
-import type { User } from "./user.entity";
+import { Meteor } from "meteor/meteor";
 
-export const UserCollection = new Mongo.Collection<User>('users');
+export const UserCollection = Meteor.users;

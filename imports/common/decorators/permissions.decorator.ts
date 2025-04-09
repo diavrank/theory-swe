@@ -10,7 +10,7 @@ export function CheckPermissions(...permissions: string[]) {
         const originalMethod = descriptor.value;
         descriptor.value = async function (...args: any[]) {
             // TODO: apply Auth validation
-            const userId = this.userId;
+            const userId = this.__context.userId;
             let hasPermission = false;
             if (userId !== null) {
                 const [scope] = await Roles.getScopesForUserAsync(userId);

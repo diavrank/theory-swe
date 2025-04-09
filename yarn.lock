@@ -2768,10 +2768,10 @@ meteor-node-stubs@^1.2.7:
     util "^0.12.5"
     vm-browserify "^1.1.2"
 
-meteor-vite@^3.1.2:
-  version "3.1.2"
-  resolved "https://registry.npmjs.org/meteor-vite/-/meteor-vite-3.1.2.tgz"
-  integrity sha512-+JiAwvaDt+QAGWZyC7wDE7kK6+eIrz3SmqKq96ElbIZ5g2I7gTG+nDEMCFS3wssaW17KnMjAWl4WxEB4oorO5A==
+meteor-vite@^3.6.1:
+  version "3.6.1"
+  resolved "https://registry.npmjs.org/meteor-vite/-/meteor-vite-3.6.1.tgz"
+  integrity sha512-LSOJNRLDTUofwnklwtk09gUOTtWrCMCY6UBS9ZJpKXLCUxLLvc9KZZJeA+23COL8W/PatBMZgXj6/W1UCx8WQg==
   dependencies:
     "@babel/parser" "^7.22.5"
     "@babel/traverse" "^7.22.5"
