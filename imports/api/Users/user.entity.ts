@@ -1,5 +1,4 @@
 import { Meteor } from 'meteor/meteor';
-import {ProfileType} from "@api/Profiles/ProfileCollection";
 
 interface UserStatusType {
 	online: boolean;
@@ -15,15 +14,7 @@ interface UserProfileType {
 	path?: string;
 }
 
-// TODO: Add UserProfile mongoose schema
-
-export interface UserType extends Omit<Meteor.User,'profile'> {
-	profile: UserProfileType;
+export interface User extends Meteor.User {
+    profile: UserProfileType;
 	status: UserStatusType;
-
-	getProfile(): ProfileType;
 }
-
-
-
-// TODO: Add User mongoose schema
