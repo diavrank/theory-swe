@@ -18,7 +18,7 @@ export class UserService {
 	async validateEmail(newEmail: string, userId: string) {
 		const existsEmail = await Accounts.findUserByEmail(newEmail);
 		if (userId) {
-			const oldUser = await Meteor.users.findOneAsync(userId);
+			const oldUser = await this.userRepository.findOneOrFail(userId);
 			if (oldUser?.emails) {
 				if (oldUser.emails[0].address !== newEmail && existsEmail) {
 					throw new Meteor.Error('403', 'The new email is already in use');
@@ -32,7 +32,7 @@ export class UserService {
 	async validateUsername(newUsername: string, userId: string) {
 		const existsUsername = await Accounts.findUserByUsername(newUsername);
 		if (userId) {
-			const oldUser = await Meteor.users.findOneAsync(userId);
+			const oldUser = await this.userRepository.findOneOrFail(userId);
 			if (oldUser?.username !== newUsername && existsUsername) {
 				throw new Meteor.Error('403', 'The new username is already in use');
 			}
@@ -88,7 +88,7 @@ export class UserService {
 		}
 		if (avatarSrc) {
 			user.profile.path = avatarSrc;
-			await Meteor.users.upsertAsync(user._id, {
+			await this.userRepository.upsert(user._id, {
 				$set: {
 					'profile.path': user.profile.path,
 				}
@@ -98,7 +98,7 @@ export class UserService {
 
 	async updateUser(newUser: User, photoFileUser: any): Promise<ResponseMessage> {
 		const responseMessage = new ResponseMessage();
-		const currentUser = await Meteor.users.findOneAsync(newUser._id) as User;
+		const currentUser = await this.userRepository.findOneOrFail(newUser._id);
 		if (currentUser?.emails && newUser.emails) {
 			if (currentUser.emails[0].address !== newUser.emails[0].address) {
 				Accounts.removeEmail(newUser._id, currentUser.emails[0].address);
@@ -110,7 +110,7 @@ export class UserService {
 			Accounts.setUsername(newUser._id, newUser.username);
 		}
 
-		await Meteor.users.upsertAsync(newUser._id, {
+		await this.userRepository.upsert(newUser._id, {
 			$set: {
 				'profile': newUser.profile,
 			}
@@ -124,7 +124,7 @@ export class UserService {
 				throw new Meteor.Error('500', 'Error saving user photo.');
 			} else {
 				newUser.profile.path = response.data.fileUrl;
-				await Meteor.users.upsertAsync(newUser._id, {
+				await this.userRepository.upsert(newUser._id, {
 					$set: {
 						'profile.path': newUser.profile.path,
 					}

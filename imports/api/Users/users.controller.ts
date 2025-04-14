@@ -55,7 +55,6 @@ export class UsersController extends BaseController {
 
 	@Method('user.save')
 	@CheckPermissions(Permissions.USERS.CREATE.VALUE, Permissions.USERS.UPDATE.VALUE)
-	//@Dto(UserResponseDto)
 	@Validate(SaveUserRequestDto)
 	async saveUser(usersRequestDto: SaveUserRequestDto) {
 		const { user } = usersRequestDto;
