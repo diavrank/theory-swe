@@ -46,11 +46,9 @@ Accounts.validateLoginAttempt(async (loginAttempt: any) => {
 
 @Controller()
 export class UsersController extends BaseController {
-	private userService: UserService;
 
-	constructor() {
+	constructor(private readonly userService: UserService) {
 		super();
-		this.userService = new UserService();
 	}
 
 	@Method('user.save')

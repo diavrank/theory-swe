@@ -1,13 +1,4 @@
 import { Mongo } from 'meteor/mongo';
+import { type Profile } from './profile.entity';
 
-export interface ProfileType {
-	_id: string;
-	name: string;
-	description: string;
-	permissions: string[];
-
-	getPermissions(): Function;
-	getPermissionsComplement(): Function;
-}
-
-export const ProfileCollection = new Mongo.Collection<ProfileType>('profiles');
+export const ProfileCollection = new Mongo.Collection<Profile>('profiles');

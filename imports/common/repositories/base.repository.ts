@@ -21,6 +21,19 @@ export class BaseRepository<T> {
         return this.collection.insertAsync({ ...document, updatedAt: new Date(), deletedAt: null });
     }
 
+    async update(
+        selector: Mongo.Selector<T> | Mongo.ObjectID | string,
+        modifier: Mongo.Modifier<T>,
+        options: { multi?: boolean; upsert?: boolean; arrayFilters?: { [identifier: string]: any }[] } = {}
+    ): Promise<number> {
+        if ('$set' in modifier) {
+            modifier.$set = { ...modifier.$set, updatedAt: new Date() };
+        } else {
+            modifier.$set = { updatedAt: new Date() };
+        }
+        return this.collection.updateAsync(selector, modifier, options);
+    }
+
     async upsert(
         selector: Mongo.Selector<T> | Mongo.ObjectID | string,
         modifier: Mongo.Modifier<T>,
@@ -40,6 +53,11 @@ export class BaseRepository<T> {
             throw new Meteor.Error(StatusCodes.UNPROCESSABLE_ENTITY, errorMessage);
         }
         return document;
+    }
+
+    async findOne(selector: Mongo.Selector<T> | Mongo.ObjectID | string): Promise<T | undefined> {
+        
+        return this.collection.findOneAsync(selector);
     }
 
     async softDelete(selector: Mongo.Selector<T>): Promise<number> {

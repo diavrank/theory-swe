@@ -1,19 +1,22 @@
-import { ProfileCollection } from "@api/Profiles/ProfileCollection";
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import fileHelper from '../../startup/server/utils/FileOperations';
 import { ResponseMessage } from '../../startup/server/utils/ResponseMessage';
-import ProfilesServ from '../Profiles/ProfilesServ';
+import { ProfilesService } from "../Profiles/profiles.service";
 import { SaveUserRequestDto } from './dtos/save-user-request.dto';
 import { UserRequestDto } from './dtos/user-request.dto';
 import { UserUpdatePersonalDataRequestDto } from './dtos/user-update-personal-data-request.dto';
 import { User } from './user.entity';
 import { UserRepository } from './user.repository';
+import { Injectable } from '/imports/common/decorators/injectable.decorator';
 
 export const PATH_USER_FILES = 'users/';
 
+@Injectable()
 export class UserService {
 	private userRepository = new UserRepository();
+
+	constructor(private profilesService: ProfilesService) {}
 
 	async validateEmail(newEmail: string, userId: string) {
 		const existsEmail = await Accounts.findUserByEmail(newEmail);
@@ -42,7 +45,7 @@ export class UserService {
 	}
 
 	async validateProfile(profileName: string) {
-		if (!await ProfileCollection.findOneAsync({ name: profileName })) {
+		if (!await this.profilesService.profileExists(profileName)) {
 			throw new Meteor.Error('403', 'Invalid profile name');
 		}
 	}
@@ -75,7 +78,7 @@ export class UserService {
 		const user = await this.userRepository.findOneOrFail(userId);
 		let avatarSrc = null;
 		if (userId && user?.emails) {
-			await ProfilesServ.setUserRoles(userId, user.profile?.profile);
+			await this.profilesService.setUserRoles(userId, user.profile?.profile);
 			Accounts.sendEnrollmentEmail(userId, user.emails[0].address);
 		}
 		if (photoFileUser) {
@@ -150,9 +153,13 @@ export class UserService {
 
 	}
 
+	getUsersByProfileName(profileName: string): Promise<User[]> {
+		return this.userRepository.find({ 'profile.profile': profileName });
+	}
+
 	async afterSave(event: any) {
 		if (event.doc.profile.profile !== event.oldDoc?.profile.profile) {
-			await ProfilesServ.setUserRoles(event.currentTarget._id, event.currentTarget.profile.profile);
+			await this.profilesService.setUserRoles(event.currentTarget._id, event.currentTarget.profile.profile);
 		}
 	}
 
