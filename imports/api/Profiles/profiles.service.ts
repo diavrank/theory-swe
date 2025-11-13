@@ -6,14 +6,19 @@ import { UpdateProfileDto } from './dtos/update-profile.dto';
 import { Profile } from './profile.entity';
 import { ProfileRepository } from './profile.repository';
 import { StaticProfiles } from './ProfileSeeder';
+import { Inject } from '/imports/common/decorators/inject.decorator';
 import { Injectable } from '/imports/common/decorators/injectable.decorator';
 import { ResponseMessage } from '/imports/startup/server/utils/ResponseMessage';
+import { forwardRef } from '/imports/common/utils/forward-ref';
 
 @Injectable()
 export class ProfilesService {
   private profileRepository = new ProfileRepository();
-
-  constructor(private userService: UserService) {}
+  
+  constructor(
+    @Inject(forwardRef(() => UserService))
+    private userService: UserService
+  ) {}
 
   async validateName(name: string, profileId?: string): Promise<void> {
     const existingProfile = await this.profileRepository.findOneByName(name);

@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Container } from './container';
+import { Container, ContainerAware } from './container';
 
 export function Module(config: {
     imports?: any[];
@@ -7,32 +7,39 @@ export function Module(config: {
     controllers?: any[];
 }) {
     return function (target: any) {
+        // Create a container for this module
+        const moduleContainer = Container.createChildContainer();
+        
         // Handle imports first
         if (config.imports) {
-            config.imports.forEach(module => {
-                // Initialize imported modules
-                new module();
+            config.imports.forEach(importedModule => {
+                // Don't instantiate modules directly, just register them
+                if (importedModule.forwardRef) {
+                    console.log('importedModule4: ', importedModule.forwardRef.get());
+                    moduleContainer.set(importedModule.forwardRef.get().name, importedModule.forwardRef.get());
+                } else {
+                    moduleContainer.set(importedModule.name, importedModule);
+                }
             });
         }
+
+        const resolveProvider = (providerClass: any) => {
+            if (Container.has(providerClass.name)) {
+                moduleContainer.set(providerClass.name, Container.get(providerClass.name));
+                return;
+            }
+            const paramTypes = Reflect.getMetadata('design:paramtypes', providerClass) || [];
+            const args = paramTypes.map((type: any) => moduleContainer.get(type.name));
+            moduleContainer.set(providerClass.name, new providerClass(...args));
+        };
 
         // Then handle providers
         if (config.providers) {
             config.providers.forEach(provider => {
                 if (typeof provider === 'function') {
-                    // Get the constructor parameters
-                    const paramTypes = Reflect.getMetadata('design:paramtypes', provider) || [];
-                    // Create instance with dependencies
-                    const args = paramTypes.map((type: any) => {
-                        return Container.get(type.name);
-                    });
-                    Container.set(provider.name, new provider(...args));
+                    resolveProvider(provider);
                 } else if (provider.forwardRef) {
-                    const providerClass = provider.forwardRef.get();
-                    const paramTypes = Reflect.getMetadata('design:paramtypes', providerClass) || [];
-                    const args = paramTypes.map((type: any) => {
-                        return Container.get(type.name);
-                    });
-                    Container.set(providerClass.name, new providerClass(...args));
+                    resolveProvider(provider.forwardRef.get());
                 }
             });
         }
@@ -41,15 +48,21 @@ export function Module(config: {
         if (config.controllers) {
             config.controllers.forEach(controller => {
                 if (typeof controller === 'function') {
-                    // Get the constructor parameters
-                    const paramTypes = Reflect.getMetadata('design:paramtypes', controller) || [];
-                    // Create instance with dependencies
-                    const args = paramTypes.map((type: any) => {
-                        return Container.get(type.name);
-                    });
-                    Container.set(controller.name, new controller(...args));
+                    let instance: any;
+                    if (Container.has(controller.name)) {
+                        instance = Container.get(controller.name);
+                    } else {
+                        const paramTypes = Reflect.getMetadata('design:paramtypes', controller) || [];
+                        const args = paramTypes.map((type: any) => moduleContainer.get(type.name));
+                        instance = new controller(...args);
+                    }
+                    moduleContainer.set(controller.name, instance);
+                    (controller as ContainerAware).__container = moduleContainer;
                 }
             });
         }
+
+        // Store the container in the module class
+        target.__container = moduleContainer;
     };
 } 

@@ -9,6 +9,8 @@ import { UserUpdatePersonalDataRequestDto } from './dtos/user-update-personal-da
 import { User } from './user.entity';
 import { UserRepository } from './user.repository';
 import { Injectable } from '/imports/common/decorators/injectable.decorator';
+import { Inject } from '/imports/common/decorators/inject.decorator';
+import { forwardRef } from '/imports/common/utils/forward-ref';
 
 export const PATH_USER_FILES = 'users/';
 
@@ -16,7 +18,10 @@ export const PATH_USER_FILES = 'users/';
 export class UserService {
 	private userRepository = new UserRepository();
 
-	constructor(private profilesService: ProfilesService) {}
+	constructor(
+		@Inject(forwardRef(() => ProfilesService))
+		private profilesService: ProfilesService
+	) {}
 
 	async validateEmail(newEmail: string, userId: string) {
 		const existsEmail = await Accounts.findUserByEmail(newEmail);
