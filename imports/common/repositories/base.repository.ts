@@ -67,6 +67,14 @@ export class BaseRepository<T> {
         return result;
     }
 
+    async delete(selector: Mongo.Selector<T>): Promise<number> {
+        const result = await this.collection.removeAsync(selector);
+        if (result === 0) {
+            throw new Meteor.Error(StatusCodes.NOT_FOUND, 'Document not found');
+        }
+        return result;
+    }
+
     async restore(selector: Mongo.Selector<T>): Promise<number> {
         const result = await this.collection.updateAsync(selector, {
             $unset: { deletedAt: null, updatedAt: new Date() },

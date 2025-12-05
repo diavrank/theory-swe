@@ -8,8 +8,8 @@ import { UserRequestDto } from './dtos/user-request.dto';
 import { UserUpdatePersonalDataRequestDto } from './dtos/user-update-personal-data-request.dto';
 import { User } from './user.entity';
 import { UserRepository } from './user.repository';
-import { Injectable } from '/imports/common/decorators/injectable.decorator';
 import { Inject } from '/imports/common/decorators/inject.decorator';
+import { Injectable } from '/imports/common/decorators/injectable.decorator';
 import { forwardRef } from '/imports/common/utils/forward-ref';
 
 export const PATH_USER_FILES = 'users/';
@@ -56,25 +56,25 @@ export class UserService {
 	}
 
 	async saveUser(usersRequestDto: SaveUserRequestDto) {
-		const responseMessage = new ResponseMessage();
 		const { user, photoFileUser } = usersRequestDto;
+		let userId = user._id;
 
-		if (user._id) {//if exists then update it
+		if (userId) {//if exists then update it
 			const userToBeUpdated = await this.userRepository.findOneOrFail(user._id);
 			userToBeUpdated.username = user.username;
 			userToBeUpdated.profile = user.profile;
 			userToBeUpdated.emails = user.emails;
 
 			await this.updateUser(userToBeUpdated, photoFileUser);
-			responseMessage.create('User updated!');
 		} else {//otherwise is created
-			await this.createUser(user, photoFileUser);
-			responseMessage.create('User created!');
+			const newUser = await this.createUser(user, photoFileUser);
+			userId = newUser._id;
 		}
-		return responseMessage;
+
+		return this.userRepository.findOneOrFail(userId)
 	}
 
-	async createUser(userRequestDto: UserRequestDto, photoFileUser?: string) {
+	async createUser(userRequestDto: UserRequestDto, photoFileUser?: string): Promise<User> {
 		const userId = await Accounts.createUserAsync({
 			username: userRequestDto.username,
 			email: userRequestDto.emails[0].address,
@@ -102,6 +102,8 @@ export class UserService {
 				}
 			})
 		}
+
+		return user;
 	}
 
 	async updateUser(newUser: User, photoFileUser: any): Promise<ResponseMessage> {
@@ -140,6 +142,7 @@ export class UserService {
 			}
 		}
 		responseMessage.message = 'User updated successful';
+
 		return responseMessage;
 	}
 
@@ -154,7 +157,7 @@ export class UserService {
 
 	async deleteUser(userId: string) {
 		const user = await this.userRepository.findOneOrFail(userId);
-		await this.userRepository.softDelete(user._id);
+		await this.userRepository.delete(user._id);
 
 	}
 

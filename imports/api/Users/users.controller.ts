@@ -4,14 +4,17 @@ import { Meteor } from 'meteor/meteor';
 import Permissions from '../../startup/server/Permissions';
 import { SaveUserRequestDto } from './dtos/save-user-request.dto';
 import { UserDeleteRequestDto } from './dtos/user-delete-request.dto';
+import { UserResponseDto } from './dtos/user-response.dto';
 import { UserUpdatePersonalDataRequestDto } from './dtos/user-update-personal-data-request.dto';
 import { UserService } from './users.service';
 import { BaseController } from '/imports/common/controllers/base.controller';
 import { Auth } from '/imports/common/decorators/auth-guard.decorator';
 import { Controller } from '/imports/common/decorators/controller.decorator';
+import { Dto } from '/imports/common/decorators/dto.decorator';
 import { Method } from '/imports/common/decorators/method.decorator';
 import { CheckPermissions } from '/imports/common/decorators/permissions.decorator';
 import { Validate } from '/imports/common/decorators/validate.decorator';
+import { DeleteResponse } from '/imports/common/dtos/delete-response.dto';
 
 Accounts.onCreateUser((options: any, user: Meteor.User) => {
 	//Configuration for user-status
@@ -54,6 +57,7 @@ export class UsersController extends BaseController {
 	@Method('user.save')
 	@CheckPermissions(Permissions.USERS.CREATE.VALUE, Permissions.USERS.UPDATE.VALUE)
 	@Validate(SaveUserRequestDto)
+	@Dto(UserResponseDto)
 	async saveUser(usersRequestDto: SaveUserRequestDto) {
 		const { user } = usersRequestDto;
 
@@ -67,11 +71,9 @@ export class UsersController extends BaseController {
 	@Method('user.delete')
 	@CheckPermissions(Permissions.USERS.DELETE.VALUE)
 	@Validate(UserDeleteRequestDto)
+	@Dto(DeleteResponse)
 	async deleteUser(requestDto: UserDeleteRequestDto) {
-		const responseMessage = new ResponseMessage();
 		await this.userService.deleteUser(requestDto.userId);
-		responseMessage.create('User removed successfully!');
-		return responseMessage;
 	}
 
 	@Method('user.updatePersonalData')

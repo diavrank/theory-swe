@@ -1,3 +1,5 @@
+import { Meteor } from "meteor/meteor";
+
 export default class PermissionsService {
     getPermissions(permissions:string[]) {
         return Meteor.roles.find({ _id: { $in: permissions } });

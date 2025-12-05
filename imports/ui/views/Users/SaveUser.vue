@@ -77,14 +77,13 @@
 </template>
 
 <script lang="ts">
-import { Field, Form, FormContext } from 'vee-validate';
 import { ProfileCollection } from '@api/Profiles/ProfileCollection';
-import validateForm from '@mixins/validateForm';
-import { ResponseMessage } from '@server/utils/ResponseMessage';
-import { Meteor } from 'meteor/meteor';
-import { LOADER_MESSAGES } from '/imports/ui/constants/loader-messages.const';
 import uploadImage from '@mixins/users/uploadImage';
+import validateForm from '@mixins/validateForm';
+import { Meteor } from 'meteor/meteor';
+import { Field, Form, FormContext } from 'vee-validate';
 import { defineComponent } from 'vue';
+import { LOADER_MESSAGES } from '/imports/ui/constants/loader-messages.const';
 import { useTemporalStore } from '/imports/ui/stores/temporal';
 
 export default defineComponent({
@@ -152,13 +151,13 @@ export default defineComponent({
         this.$loader.activate(LOADER_MESSAGES.SAVE_USER);
         //TODO: Refresh this.user with values from
         Meteor.call('user.save', { user: this.user, photoFileUser: this.photoFileUser },
-            (error: Meteor.Error, response: ResponseMessage) => {
+            (error: Meteor.Error) => {
               this.$loader.deactivate();
               if (error) {
                 console.error(error);
                 this.$alert.showAlertSimple('error', error.reason);
               } else {
-                this.$alert.showAlertSimple('success', response.message);
+                this.$alert.showAlertSimple('success', 'User saved successfully!');
                 this.$router.push({ name: 'home.users' });
               }
             });

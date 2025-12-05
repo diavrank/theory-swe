@@ -8,7 +8,7 @@ interface UserStatusType {
 
 // TODO: Add UserStatus mongoose schema
 
-interface UserProfileType {
+export interface UserProfileType {
 	profile: string;
 	name: string;
 	path?: string;
