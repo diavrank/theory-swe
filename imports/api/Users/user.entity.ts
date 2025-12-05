@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 
-interface UserStatusType {
+export interface UserStatusType {
 	online: boolean;
 	idle?: boolean;
 	lastLogin?: any;

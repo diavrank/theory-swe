@@ -1,4 +1,4 @@
-import { User, UserProfileType } from "../user.entity";
+import { User, UserProfileType, UserStatusType } from "../user.entity";
 import { ResponseDto } from "/imports/common/dtos/response.dto";
 
 export class UserResponseDto extends ResponseDto {
@@ -7,6 +7,7 @@ export class UserResponseDto extends ResponseDto {
     email: string;
     createdAt: Date;
     profile: UserProfileType;
+    status: UserStatusType;
 
     build(user: User): UserResponseDto {
         this.id = user._id;
@@ -14,6 +15,7 @@ export class UserResponseDto extends ResponseDto {
         this.email = user.emails[0].address;
         this.createdAt = user.createdAt;
         this.profile = user.profile;
+        this.status = {online: user.status.online};
 
         return this.send();
     }

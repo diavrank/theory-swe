@@ -60,7 +60,7 @@
                     </v-text-field>
                   </Field>
                   <Field name="email" v-slot="{ field, errors }" rules="required|email">
-                    <v-text-field v-bind="field" v-model="user.emails[0].address"
+                    <v-text-field v-bind="field" v-model="user.email"
                                   id="inputEmail"
                                   :error-messages="errors"
                                   label="Email"
@@ -83,6 +83,8 @@ import validateForm from '@mixins/validateForm';
 import { Meteor } from 'meteor/meteor';
 import { Field, Form, FormContext } from 'vee-validate';
 import { defineComponent } from 'vue';
+import { UserRequestDto } from '/imports/api/Users/dtos/user-request.dto';
+import { UserResponseDto } from '/imports/api/Users/dtos/user-response.dto';
 import { LOADER_MESSAGES } from '/imports/ui/constants/loader-messages.const';
 import { useTemporalStore } from '/imports/ui/stores/temporal';
 
@@ -104,9 +106,10 @@ export default defineComponent({
         targetButton: ''
       },
       user: {
-        emails: [{ verified: false }],
+        email: '',
+        username: '',
         profile: {}
-      } as Meteor.User,
+      } as UserRequestDto,
       initialValues: {
         name: '',
         profile: '',
@@ -122,23 +125,14 @@ export default defineComponent({
     } else if (this.$route.meta.type === 'edit') {
       this.dataView.title = 'Edit user';
       this.dataView.targetButton = 'Update';
-      const tempUser = this.temporalStore.element;
+      const tempUser = this.temporalStore.element as UserResponseDto;
       if (tempUser) {
-        this.user = {
-          _id: tempUser._id,
-          username: tempUser.username,
-          emails: tempUser.emails,
-          profile: {
-            profile: tempUser.profile.profile,
-            name: tempUser.profile.name,
-            path: tempUser.profile.path
-          }
-        };
+        this.user = tempUser;
         this.initialValues = {
           name: tempUser.profile.name,
           profile: tempUser.profile.profile,
           username: tempUser.username,
-          email: tempUser.emails[0].address
+          email: tempUser.email
         };
       } else {
         this.$router.push({ name: 'home.users' });

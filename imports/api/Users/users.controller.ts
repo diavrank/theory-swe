@@ -61,8 +61,8 @@ export class UsersController extends BaseController {
 	async saveUser(usersRequestDto: SaveUserRequestDto) {
 		const { user } = usersRequestDto;
 
-		await this.userService.validateEmail(user.emails[0].address, user._id);
-		await this.userService.validateUsername(user.username, user._id);
+		await this.userService.validateEmail(user.email, user.id);
+		await this.userService.validateUsername(user.username, user.id);
 		await this.userService.validateProfile(user.profile.profile);
 
 		return this.userService.saveUser(usersRequestDto);

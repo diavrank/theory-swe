@@ -60,12 +60,13 @@
 
 <script lang="ts">
 import ModalRemove from '@components/Utilities/Modals/ModalRemove.vue';
-import { defineComponent } from 'vue';
-import { ModalData } from '@typings/utilities';
-import { Meteor } from 'meteor/meteor';
 import { ResponseMessage } from '@server/utils/ResponseMessage';
 import { User } from '@typings/users';
+import { ModalData } from '@typings/utilities';
+import { Meteor } from 'meteor/meteor';
 import { mapActions } from 'pinia';
+import { defineComponent } from 'vue';
+import { UserResponseDto } from '/imports/api/Users/dtos/user-response.dto';
 import { useTemporalStore } from '/imports/ui/stores/temporal';
 
 export default defineComponent({
@@ -126,7 +127,7 @@ export default defineComponent({
           }
         },
         {
-          key: 'emails[0].address',
+          key: 'email',
           title: 'Email',
           sortable: true,
           class: ['subtitle-1', 'font-weight-light'],
@@ -145,7 +146,7 @@ export default defineComponent({
   },
   methods: {
     ...mapActions(useTemporalStore, ['setElement']),
-    openEditUser(user: User): void {
+    openEditUser(user: UserResponseDto): void {
       this.setElement(user);
       this.$router.push({ name: 'home.users.edit' });
     },

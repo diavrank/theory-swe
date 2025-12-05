@@ -1,14 +1,6 @@
-import { IsString, IsBoolean, IsOptional, ValidateNested, IsArray } from "class-validator";
 import { Type } from "class-transformer";
+import { IsEmail, IsOptional, IsString, ValidateNested } from "class-validator";
 import { RequestDto } from "/imports/common/dtos/request.dto";
-
-class EmailDto {
-    @IsString()
-    address: string;
-
-    @IsBoolean()
-    verified: boolean;
-}
 
 class ProfileDto {
     @IsString()
@@ -25,15 +17,13 @@ class ProfileDto {
 export class UserRequestDto extends RequestDto {
     @IsString()
     @IsOptional()
-    _id?: string;
+    id?: string;
 
     @IsString()
     username: string;
 
-    @IsArray()
-    @ValidateNested({ each: true })
-    @Type(() => EmailDto)
-    emails: EmailDto[];
+    @IsEmail()
+    email: string;
 
     @ValidateNested()
     @Type(() => ProfileDto)

@@ -57,13 +57,16 @@ export class UserService {
 
 	async saveUser(usersRequestDto: SaveUserRequestDto) {
 		const { user, photoFileUser } = usersRequestDto;
-		let userId = user._id;
+		let userId = user.id;
 
 		if (userId) {//if exists then update it
-			const userToBeUpdated = await this.userRepository.findOneOrFail(user._id);
+			const userToBeUpdated = await this.userRepository.findOneOrFail(user.id);
 			userToBeUpdated.username = user.username;
 			userToBeUpdated.profile = user.profile;
-			userToBeUpdated.emails = user.emails;
+			if(userToBeUpdated.emails[0]?.address !== user.email){
+				userToBeUpdated.emails[0].address = user.email;
+				userToBeUpdated.emails[0].verified = false;
+			}
 
 			await this.updateUser(userToBeUpdated, photoFileUser);
 		} else {//otherwise is created
@@ -77,7 +80,7 @@ export class UserService {
 	async createUser(userRequestDto: UserRequestDto, photoFileUser?: string): Promise<User> {
 		const userId = await Accounts.createUserAsync({
 			username: userRequestDto.username,
-			email: userRequestDto.emails[0].address,
+			email: userRequestDto.email,
 			profile: userRequestDto.profile
 		});
 		const user = await this.userRepository.findOneOrFail(userId);
