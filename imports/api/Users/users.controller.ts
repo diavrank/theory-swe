@@ -36,7 +36,8 @@ Accounts.validateLoginAttempt(async (loginAttempt: any) => {
 			throw new Meteor.Error('403', 'The account email has not been verified yet.');
 		}
 		const loginTokensOfUser: string[] = loginAttempt.user.services.resume?.loginTokens || [];
-		if (loginTokensOfUser.length > 1) {
+		// Allow only up to 3 simultaneus tokens with the same user.
+		if (loginTokensOfUser.length > 3) {
 			await Meteor.users.updateAsync(loginAttempt.user._id, {
 				$set: {
 					'services.resume.loginTokens': [loginTokensOfUser.pop()]
