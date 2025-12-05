@@ -8,8 +8,8 @@ import { ProfileRepository } from './profile.repository';
 import { StaticProfiles } from './ProfileSeeder';
 import { Inject } from '/imports/common/decorators/inject.decorator';
 import { Injectable } from '/imports/common/decorators/injectable.decorator';
-import { ResponseMessage } from '/imports/startup/server/utils/ResponseMessage';
 import { forwardRef } from '/imports/common/utils/forward-ref';
+import { ResponseMessage } from '/imports/startup/server/utils/ResponseMessage';
 
 @Injectable()
 export class ProfilesService {

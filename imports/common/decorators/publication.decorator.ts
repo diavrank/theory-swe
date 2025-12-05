@@ -1,18 +1,14 @@
 import { Meteor, Subscription } from 'meteor/meteor';
 import 'reflect-metadata';
-import { ResponseDto } from '../dtos/response.dto';
 import { BasePublication } from '../publications/base.publication';
-import { Type } from '../types/type.interface';
 import { Container, ContainerAware } from '../utils/container';
 import { ForwardRef } from '../utils/forward-ref';
 import { getInjectTokens, InjectToken } from './inject.decorator';
-import { getPublishDto } from './publish-dto.decorator';
 
 export function Publication(name: string) {
 	return function(constructor: new (...args: any[]) => BasePublication & ContainerAware) {
 		const paramTypes = Reflect.getMetadata('design:paramtypes', constructor) || [];
 		const injectTokens = getInjectTokens(constructor);
-		const dto = getPublishDto(constructor);
 
 		const resolveContainer = () => {
 			let current: typeof constructor & ContainerAware = constructor;
@@ -34,60 +30,9 @@ export function Publication(name: string) {
 		Meteor.publish(name, function(...args: any[]) {
 			const instance = buildInstance();
 			instance.__context = this as Subscription;
-			const result = instance.init(...args);
-
-			if (!dto) {
-				return result;
-			}
-
-			return publishCursorWithDto(name, this, result, dto);
+			return instance.init(...args);
 		});
 	};
-}
-
-function publishCursorWithDto(
-	publicationName: string,
-	subscription: Subscription,
-	cursor: any,
-	dto: Type<ResponseDto>
-) {
-	if (!cursor || typeof cursor.observe !== 'function') {
-		return cursor;
-	}
-
-	const collectionName = getCollectionName(cursor);
-	if (!collectionName) {
-		throw new Meteor.Error('publication-error', `Cannot resolve collection name for publication "${publicationName}".`);
-	}
-
-	const toDto = (doc: any) => new dto().build(doc);
-
-	const handle = cursor.observe({
-		added(doc) {
-			subscription.added(collectionName, doc._id, toDto(doc));
-		},
-		changed(newDoc) {
-			subscription.changed(collectionName, newDoc._id, toDto(newDoc));
-		},
-		removed(oldDoc) {
-			subscription.removed(collectionName, oldDoc._id);
-		},
-	});
-
-	subscription.onStop(() => {
-		if (typeof handle?.stop === 'function') {
-			handle.stop();
-		}
-	});
-	subscription.ready();
-};
-
-function getCollectionName(cursor: any): string | undefined {
-	return cursor?._cursorDescription?.collectionName
-		|| cursor?._collection?._name
-		|| cursor?.collection?._name
-		|| cursor?.collectionName
-		|| cursor?.name;
 }
 
 function resolveInjectionToken(
