@@ -5,6 +5,7 @@ import { Publication } from '/imports/common/decorators/publication.decorator';
 import { ReactiveDto } from '/imports/common/decorators/reactive-dto.decorator';
 import { BasePublication } from '/imports/common/publications/base.publication';
 
+// TODO: Add decorator to check authentication
 @Publication('users')
 export class UsersPublication extends BasePublication {
 	constructor(

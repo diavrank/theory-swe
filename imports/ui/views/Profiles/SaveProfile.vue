@@ -102,15 +102,16 @@
 </template>
 
 <script lang="ts">
-import draggable from 'vuedraggable';
-import { Field, Form, FormContext } from 'vee-validate';
-import validateForm from '@mixins/validateForm';
-import { defineComponent } from 'vue';
-import { Meteor } from 'meteor/meteor';
-import { ResponseMessage } from '@server/utils/ResponseMessage';
 import { RoleType } from '@api/Permissions/Permission';
-import { LOADER_MESSAGES } from '/imports/ui/constants/loader-messages.const';
+import validateForm from '@mixins/validateForm';
+import { ResponseMessage } from '@server/utils/ResponseMessage';
 import { VueDraggableEvents } from '@typings/utilities';
+import { Meteor } from 'meteor/meteor';
+import { Field, Form, FormContext } from 'vee-validate';
+import { defineComponent } from 'vue';
+import draggable from 'vuedraggable';
+import { PermissionsResponseDto } from '/imports/api/Permissions/dtos/permissions-response.dto';
+import { LOADER_MESSAGES } from '/imports/ui/constants/loader-messages.const';
 import { useTemporalStore } from '/imports/ui/stores/temporal';
 
 enum PermissionGroup {
@@ -219,30 +220,30 @@ export default defineComponent({
     },
     initPermissionLists() {
       Meteor.call('permissions.listOthersForIdProfile', { profileId: this.profile._id },
-          (err: Meteor.Error, response: RoleType[]) => {
+          (err: Meteor.Error, response: PermissionsResponseDto) => {
             if (err) {
               console.error('Error listing permissions: ', err);
               return;
             }
-            this.allPermissions = response;
+            this.allPermissions = response.data;
           });
 
       Meteor.call('permissions.listByIdProfile', { profileId: this.profile._id },
-          (err: Meteor.Error, response: RoleType[]) => {
+          (err: Meteor.Error, response: PermissionsResponseDto) => {
             if (err) {
               console.error('Error listing profile permissions: ', err);
               return;
             }
-            this.selfPermissions = response;
+            this.selfPermissions = response.data;
           });
     },
     listAllPermissions() {
-      Meteor.call('permissions.list', (err: Meteor.Error, response: RoleType[]) => {
+      Meteor.call('permissions.list', (err: Meteor.Error, response: PermissionsResponseDto) => {
         if (err) {
           console.error('Error listing all permissions: ', err);
           return;
         }
-        this.allPermissions = response;
+        this.allPermissions = response.data;
       });
     }
   }

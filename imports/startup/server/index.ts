@@ -8,10 +8,6 @@ import './utils/helpers';
 
 import { AppModule } from '../../api/app.module';
 import '../../api/Rest/UsersRest';
-import '../../api/Users/users.publication';
-
-import '../../api/Permissions/PermissionsCtrl';
-import '../../api/Permissions/PermissionsPubs';
 
 import '../../api/Profiles/profiles.publication';
 import '../../api/Profiles/ProfileSeeder';
