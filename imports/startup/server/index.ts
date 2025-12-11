@@ -15,8 +15,6 @@ import '../../api/Profiles/ProfileSeeder';
 import '../../api/SystemOptions/SystemOption';
 import '../../api/SystemOptions/SystemOptionsCtrl';
 
-import '../../api/DigitalSignature/DigitalSignatureCtrl';
-
 import '../../api/Binnacle/BinnacleCtrl';
 
 const appModule = new AppModule();

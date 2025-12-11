@@ -1,0 +1,13 @@
+import { DigitalSignatureController } from './digital-signature.controller';
+import { DigitalSignatureService } from './digital-signature.service';
+import { Module } from '/imports/common/utils/module';
+
+@Module({
+    controllers: [
+        DigitalSignatureController
+    ],
+    providers: [
+        DigitalSignatureService
+    ]
+})
+export class DigitalSignatureModule {}

@@ -2,6 +2,8 @@ import { Meteor } from 'meteor/meteor';
 import Utilities from '../../startup/server/utils/helpers';
 import { UserPresence } from './userPresence';
 
+// TODO: Maybe this file should be moved to the auth.module.ts
+
 // If `sessionIds` is undefined this signifies we need a fresh start.
 // When a full cleanup is necessary we will unset the status field to show all users as offline
 UserPresence.onCleanup(function onCleanup(sessionIds?: string[]) {

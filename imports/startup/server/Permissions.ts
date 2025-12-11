@@ -60,6 +60,7 @@ export const permissionsArray = Object.keys(Permissions).reduce(
     [],
 );
 
+// TODO: Fix the --settings option from yarn start, it's not working. Create a backfill for new permissions.
 if (process.env.REFRESH_PERMISSIONS === 'true' || Meteor.isAppTest) {
     console.info('Updating permissions.');
     const currentRoles = await Roles.getAllRoles().fetchAsync();

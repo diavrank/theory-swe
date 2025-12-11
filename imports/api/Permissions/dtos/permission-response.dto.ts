@@ -13,6 +13,7 @@ export class PermissionResponseDto extends ResponseDto {
         this.name = permission.name;
         this.publicName = permission.publicName;
         this.children = permission.children;
+        // TODO: Validate if it's required in the FE, if not,remove it
         this.scope = permission.scope;
 
         return this.send();

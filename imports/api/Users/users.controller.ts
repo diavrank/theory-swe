@@ -15,6 +15,7 @@ import { CheckPermissions } from '/imports/common/decorators/permissions.decorat
 import { Validate } from '/imports/common/decorators/validate.decorator';
 import { DeleteResponse } from '/imports/common/dtos/delete-response.dto';
 
+// TODO: Maybe these listeners should be moved to auth.module 
 Accounts.onCreateUser((options: any, user: Meteor.User) => {
 	//Configuration for user-status
 	const customizedUser = Object.assign({
