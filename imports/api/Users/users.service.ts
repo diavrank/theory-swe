@@ -5,7 +5,6 @@ import { ResponseMessage } from '../../startup/server/utils/ResponseMessage';
 import { ProfilesService } from "../Profiles/profiles.service";
 import { SaveUserRequestDto } from './dtos/save-user-request.dto';
 import { UserRequestDto } from './dtos/user-request.dto';
-import { UserUpdatePersonalDataRequestDto } from './dtos/user-update-personal-data-request.dto';
 import { User } from './user.entity';
 import { UserRepository } from './user.repository';
 import { Inject } from '/imports/common/decorators/inject.decorator';
@@ -148,15 +147,6 @@ export class UserService {
 
 		return responseMessage;
 	}
-
-	async updatePersonalData(requestDto: UserUpdatePersonalDataRequestDto): Promise<ResponseMessage> {
-		const userToBeUpdated = await this.userRepository.findOneOrFail(requestDto.user._id);
-		userToBeUpdated.username = requestDto.user.username;
-		userToBeUpdated.profile.name = requestDto.user.profile.name;
-		userToBeUpdated.emails = requestDto.user.emails;
-		return this.updateUser(userToBeUpdated, requestDto.photoFileUser);
-	}
-
 
 	async deleteUser(userId: string) {
 		const user = await this.userRepository.findOneOrFail(userId);

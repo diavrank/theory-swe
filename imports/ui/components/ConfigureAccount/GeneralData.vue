@@ -41,7 +41,7 @@
                 </v-text-field>
               </Field>
               <Field v-slot="{ field, errors }" name="email" rules="required|email">
-                <v-text-field v-bind="field" v-model="user.emails[0].address"
+                <v-text-field v-bind="field" v-model="user.email"
                               id="inputEmail" name="email"
                               :error-messages="errors"
                               label="Email*"
@@ -64,13 +64,13 @@
 
 <script lang="ts">
 import profilesMixin from '@mixins/accounts/profiles';
-import validateForm from '@mixins/validateForm';
 import uploadImage from '@mixins/users/uploadImage';
-import { Form, Field, FormContext } from 'vee-validate';
+import validateForm from '@mixins/validateForm';
 import { Meteor } from 'meteor/meteor';
-import { User } from '@typings/users';
+import { Field, Form, FormContext } from 'vee-validate';
 import { defineComponent } from 'vue';
-import { ResponseMessage } from '@server/utils/ResponseMessage';
+import { User } from '../../typings/users';
+import { UserRequestDto } from '/imports/api/Users/dtos/user-request.dto';
 import { useAuthStore } from '/imports/ui/stores/auth';
 
 export default defineComponent({
@@ -87,23 +87,25 @@ export default defineComponent({
   data() {
     return {
       user: {
-        emails: [{ verified: false }],
+        email: '',
+        username: '',
         profile: {}
-      } as User,
+      } as UserRequestDto,
       photoFileUser: null,
       initialValues: {
         name: '',
+        profile: '',
         username: '',
         email: ''
       }
     };
   },
   created() {
-    const user = this.authStore.user;
+    const user:User = this.authStore.user;
     if (user) {
       this.user = {
         username: user.username,
-        emails: user.emails,
+        email: user.emails[0].address,
         profile: {
           profile: user.profile.profile,
           name: user.profile.name,
@@ -111,9 +113,9 @@ export default defineComponent({
         }
       };
       this.initialValues = {
-        name: user.profile.name as string,
-        username: user.username as string,
-        email: user.emails[0].address as string
+        name: user.profile.name,
+        username: user.username,
+        email: user.emails[0].address
       };
     }
   },
@@ -122,7 +124,7 @@ export default defineComponent({
       if (await this.isFormValid(this.$refs.dataFormObserver as FormContext)) {
         this.$loader.activate('Updating data. . .');
         Meteor.call('user.updatePersonalData', { user: this.user, photoFileUser: this.photoFileUser },
-            (err: Meteor.Error, response: ResponseMessage) => {
+            (err: Meteor.Error) => {
               this.$loader.deactivate();
               if (err) {
                 console.error('Error to save user: ', err);
@@ -130,7 +132,7 @@ export default defineComponent({
               } else {
                 this.authStore.setUser(Meteor.user());
                 this.emitter.emit('setUserLogged');
-                this.$alert.showAlertSimple('success', response.message);
+                this.$alert.showAlertSimple('success', 'Information updated!');
               }
             });
       }

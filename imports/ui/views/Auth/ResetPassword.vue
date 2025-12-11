@@ -3,7 +3,7 @@
     <div class="title">Reset password</div>
       <Form as="div" v-slot="{handleSubmit}" ref="setPasswordFormObserver">
         <v-form @submit="handleSubmit($event,resetPassword)" autocomplete="off">
-          <Field v-slot="{ field, errors}" name="new password" ref="confirmation"
+          <Field v-slot="{ field, errors}" name="new-password" ref="confirmation"
                               rules="strength_password|required">
             <v-text-field v-bind="field" v-model="user.password" id="inputNewPassword"
                           :type="showPass.new ? 'text' : 'password'"
@@ -21,7 +21,7 @@
               </template>
             </v-text-field>
           </Field>
-          <Field v-slot="{ field, errors}" name="confirm password" rules="required|confirmed:confirmation">
+          <Field v-slot="{ field, errors}" name="confirm password" rules="required|confirmed:@new-password">
             <v-text-field v-bind="field" v-model="user.confirmPassword" id="inputConfirmPassword"
                           :type="showPass.confirm ? 'text' : 'password'"
                           :error-messages="errors"
@@ -47,10 +47,10 @@
 </template>
 
 <script lang="ts">
-import {Form, Field, FormContext} from 'vee-validate';
-import  {defineComponent} from 'vue';
 import validateForm from '@mixins/validateForm';
 import { Meteor } from 'meteor/meteor';
+import { Field, Form, FormContext } from 'vee-validate';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'ResetPassword',

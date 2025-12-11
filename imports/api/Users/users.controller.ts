@@ -1,11 +1,9 @@
-import { ResponseMessage } from '@server/utils/ResponseMessage';
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import Permissions from '../../startup/server/Permissions';
 import { SaveUserRequestDto } from './dtos/save-user-request.dto';
 import { UserDeleteRequestDto } from './dtos/user-delete-request.dto';
 import { UserResponseDto } from './dtos/user-response.dto';
-import { UserUpdatePersonalDataRequestDto } from './dtos/user-update-personal-data-request.dto';
 import { UserService } from './users.service';
 import { BaseController } from '/imports/common/controllers/base.controller';
 import { Auth } from '/imports/common/decorators/auth-guard.decorator';
@@ -79,18 +77,17 @@ export class UsersController extends BaseController {
 
 	@Method('user.updatePersonalData')
 	@Auth()
-	@Validate(UserUpdatePersonalDataRequestDto)
-	async updatePersonalData(requestDto: UserUpdatePersonalDataRequestDto) {
-		const responseMessage = new ResponseMessage();
+	@Validate(SaveUserRequestDto)
+	@Dto(UserResponseDto)
+	async updatePersonalData(requestDto: SaveUserRequestDto) {
 		const { user } = requestDto;
 
-		await this.userService.validateEmail(user.emails[0].address, this.__context.userId);
+		await this.userService.validateEmail(user.email, this.__context.userId);
 		await this.userService.validateUsername(user.username, this.__context.userId);
 
-		requestDto.user._id = this.__context.userId;
-		await this.userService.updatePersonalData(requestDto);
-		responseMessage.create('Information updated!');
-		return responseMessage;
+		requestDto.user.id = this.__context.userId;
+		
+		return this.userService.saveUser(requestDto);
 	}
 }
 
