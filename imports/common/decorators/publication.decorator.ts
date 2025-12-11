@@ -10,6 +10,7 @@ export function Publication(name: string) {
 		const paramTypes = Reflect.getMetadata('design:paramtypes', constructor) || [];
 		const injectTokens = getInjectTokens(constructor);
 
+		// TODO: each publicatinon should be added to the module.
 		const resolveContainer = () => {
 			let current: typeof constructor & ContainerAware = constructor;
 			while (current && !current.__container) {
