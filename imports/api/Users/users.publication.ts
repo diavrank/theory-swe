@@ -17,6 +17,7 @@ export class UsersPublication extends BasePublication {
 	@ReactiveDto(UserResponseDto)
 	init() {
 		const selector = { 'profile.profile': { $nin: this.profilesService.getStaticProfilesForExternalUsers() } };
+		// TODO: Add server side pagination
 		return this.userRepository.findAll(selector, {
 			fields: {
 				username: 1,

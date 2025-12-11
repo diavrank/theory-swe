@@ -4,6 +4,7 @@ import Permissions from '../../startup/server/Permissions';
 import { SaveUserRequestDto } from './dtos/save-user-request.dto';
 import { UserDeleteRequestDto } from './dtos/user-delete-request.dto';
 import { UserResponseDto } from './dtos/user-response.dto';
+import './UserPresenceConfig';
 import { UserService } from './users.service';
 import { BaseController } from '/imports/common/controllers/base.controller';
 import { Auth } from '/imports/common/decorators/auth-guard.decorator';
