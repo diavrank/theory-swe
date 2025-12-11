@@ -46,6 +46,7 @@
                     </v-text-field>
                   </Field>
                   <Field name="profile" v-slot="{ field, errors }" rules="required">
+                    <!-- TODO: update defineComponent type to recognize "profiles" meteor computed property. -->
                     <v-select v-bind="field" v-model="user.profile.profile" :items="profiles" id="selectProfile"
                               item-title="description" item-value="name"
                               :error-messages="errors"
