@@ -1,4 +1,4 @@
-import { SystemOptionType } from '../system-options.constants';
+import { SystemOptionType } from '../constants/system-options.constants';
 import { ResponseDto } from '/imports/common/dtos/response.dto';
 
 export class SystemOptionResponseDto extends ResponseDto {

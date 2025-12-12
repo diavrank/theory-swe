@@ -1,6 +1,6 @@
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
-import Permissions from '../../startup/server/Permissions';
+import Permissions from '../Permissions/helpers/permissions.helpers';
 import { SaveUserRequestDto } from './dtos/save-user-request.dto';
 import { UserDeleteRequestDto } from './dtos/user-delete-request.dto';
 import { UserResponseDto } from './dtos/user-response.dto';
@@ -88,7 +88,7 @@ export class UsersController extends BaseController {
 		await this.userService.validateUsername(user.username, this.__context.userId);
 
 		requestDto.user.id = this.__context.userId;
-		
+
 		return this.userService.saveUser(requestDto);
 	}
 }

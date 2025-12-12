@@ -1,7 +1,7 @@
 import { Roles } from 'meteor/alanning:roles';
-import { UserService } from '../Users/users.service';
-import { StaticProfiles } from './ProfileSeeder';
-import { systemOptions, SystemOptionType } from './system-options.constants';
+import { UserService } from '../../Users/users.service';
+import { StaticProfiles } from '../constants/static-profiles.constant';
+import { systemOptions, SystemOptionType } from '../constants/system-options.constants';
 import { Injectable } from '/imports/common/decorators/injectable.decorator';
 
 @Injectable()
@@ -9,7 +9,7 @@ export class SystemOptionsService {
 
     constructor(
         private userService: UserService
-      ) {}
+    ) { }
 
     getSystemOptionsByPermissions(permissions: string[]): SystemOptionType[] {
         if (!permissions || permissions.length === 0) {
@@ -29,7 +29,7 @@ export class SystemOptionsService {
         return systemOptions;
     }
 
-    async getSystemOptionsByUserId(userId:string):Promise<SystemOptionType[]>{
+    async getSystemOptionsByUserId(userId: string): Promise<SystemOptionType[]> {
         const userLogged = await this.userService.getUserById(userId);
 
         if (userLogged.profile.profile === StaticProfiles.admin.name) {

@@ -1,6 +1,6 @@
-import { SystemOptionType } from '../system-options.constants';
-import { SystemOptionsService } from '../system-options.service';
+import { SystemOptionType } from '../constants/system-options.constants';
 import { SystemOptionsResponseDto } from '../dtos/system-options-response.dto';
+import { SystemOptionsService } from '../services/system-options.service';
 import { BaseController } from '/imports/common/controllers/base.controller';
 import { Auth } from '/imports/common/decorators/auth-guard.decorator';
 import { Controller } from '/imports/common/decorators/controller.decorator';
@@ -18,7 +18,7 @@ export class SystemOptionsController extends BaseController {
     @Auth()
     @Dto(SystemOptionsResponseDto)
     async getSystemOptions(): Promise<SystemOptionType[]> {
-        
+
         return this.systemOptionsService.getSystemOptionsByUserId(this.__context.userId);
     }
 }

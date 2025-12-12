@@ -1,5 +1,4 @@
-import { ResponseMessage } from '@server/utils/ResponseMessage';
-import Permissions from '../../startup/server/Permissions';
+import Permissions from '../Permissions/helpers/permissions.helpers';
 import { SaveProfileDto } from './dtos/create-profile.dto';
 import { DeleteProfileDto } from './dtos/delete-profile.dto';
 import { ProfileResponseDto } from './dtos/profile-response.dto';
@@ -33,7 +32,6 @@ export class ProfilesController extends BaseController {
   @Validate(DeleteProfileDto)
   async deleteProfile(deleteProfileDto: DeleteProfileDto) {
     await this.profilesService.delete(deleteProfileDto.profileId);
-    return new ResponseMessage().create('Profile removed successfully!');
   }
 
   @Method('profile.listNonExternal')

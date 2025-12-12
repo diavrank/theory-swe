@@ -1,35 +1,15 @@
-import { permissionsArray } from '../../startup/server/Permissions';
-import { Meteor } from 'meteor/meteor';
 import { Roles } from 'meteor/alanning:roles';
-import { ProfileCollection } from '/imports/api/Profiles/ProfileCollection';
+import { Meteor } from 'meteor/meteor';
+import { StaticProfiles } from '../../api/Profiles/constants/static-profiles.constant';
+import { Profile } from '../../api/Profiles/profile.entity';
 
-export interface StaticProfileType {
-    name: string;
-    description: string;
-    permissions: string[];
-    external: boolean;
-}
 
-export interface StaticProfilesType {
-    [key: string]: StaticProfileType;
-}
-
-ProfileCollection.rawCollection().createIndex({ name: 1 }, { unique: true, name: 'name' });
-
-export const StaticProfiles: StaticProfilesType = {
-    admin: {
-        name: 'admin',
-        description: 'Administrator',
-        permissions: permissionsArray.map((p) => p.VALUE),
-        external: false,
-    },
-};
-
+// TODO: Convert to a backfill
 if (process.env.REFRESH_STATIC_PROFILES === 'true' || Meteor.isAppTest) {
     console.log('Updating static profiles.');
 
     for (const staticProfileName of Object.keys(StaticProfiles)) {
-        await ProfileCollection.upsertAsync(
+        await Profile.collection.upsertAsync(
             { name: StaticProfiles[staticProfileName].name },
             {
                 $set: {

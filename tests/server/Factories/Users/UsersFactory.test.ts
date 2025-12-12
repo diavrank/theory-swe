@@ -1,7 +1,7 @@
+import faker from 'faker';
 import { Factory } from 'meteor/dburles:factory';
 import { Meteor } from 'meteor/meteor';
-import faker from 'faker';
-import { StaticProfiles } from '/imports/api/Profiles/ProfileSeeder';
+import { StaticProfiles } from '../../../../imports/backfills/recurring/RefreshStaticProfilesBackfill';
 
 Factory.define('user', Meteor.users, {
 	username: () => faker.internet.userName(),

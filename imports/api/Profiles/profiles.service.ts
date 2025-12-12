@@ -1,10 +1,10 @@
 import { Roles } from 'meteor/alanning:roles';
 import { Meteor } from 'meteor/meteor';
 import { UserService } from '../Users/users.service';
+import { StaticProfiles } from './constants/static-profiles.constant';
 import { SaveProfileDto } from './dtos/create-profile.dto';
 import { Profile } from './profile.entity';
 import { ProfileRepository } from './profile.repository';
-import { StaticProfiles } from './ProfileSeeder';
 import { Inject } from '/imports/common/decorators/inject.decorator';
 import { Injectable } from '/imports/common/decorators/injectable.decorator';
 import { forwardRef } from '/imports/common/utils/forward-ref';
@@ -95,7 +95,7 @@ export class ProfilesService {
     if (users.length > 0) {
       throw new Meteor.Error('403', 'Cannot delete profile: There are users using this profile');
     }
-    await this.profileRepository.softDelete(id);
+    await this.profileRepository.delete(id);
   }
 
   async getUsersByProfile(profileId: string): Promise<any[]> {

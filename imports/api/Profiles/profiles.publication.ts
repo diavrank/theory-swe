@@ -1,6 +1,8 @@
+import { ProfileResponseDto } from './dtos/profile-response.dto';
 import { ProfileRepository } from './profile.repository';
 import { ProfilesService } from './profiles.service';
 import { Publication } from "/imports/common/decorators/publication.decorator";
+import { ReactiveDto } from '/imports/common/decorators/reactive-dto.decorator';
 import { BasePublication } from "/imports/common/publications/base.publication";
 
 /**
@@ -17,6 +19,7 @@ export class ProfilesPublication extends BasePublication {
 		super();
 	}
 
+	@ReactiveDto(ProfileResponseDto)
 	init() {
 		return this.profileRepository.findAll({ name: { $nin: this.profilesService.getStaticProfileNames() } });
 	}

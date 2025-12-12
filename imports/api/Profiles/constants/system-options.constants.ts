@@ -1,4 +1,4 @@
-import Permissions from '../../startup/server/Permissions';
+import Permissions from '../../Permissions/helpers/permissions.helpers';
 
 export interface SystemOptionType {
     icon: string;

@@ -1,6 +1,6 @@
-import Permissions from '../../startup/server/Permissions';
 import { PermissionsResponseDto } from './dtos/permissions-response.dto';
 import { ProfilePermissionsRequestDto } from './dtos/profile-permissions-request.dto';
+import Permissions from './helpers/permissions.helpers';
 import { PermissionsService } from './permissions.service';
 import { BaseController } from '/imports/common/controllers/base.controller';
 import { Controller } from '/imports/common/decorators/controller.decorator';
