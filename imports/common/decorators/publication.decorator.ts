@@ -6,7 +6,7 @@ import { ForwardRef } from '../utils/forward-ref';
 import { getInjectTokens, InjectToken } from './inject.decorator';
 
 export function Publication(name: string) {
-	return function(constructor: new (...args: any[]) => BasePublication & ContainerAware) {
+	return function (constructor: new (...args: any[]) => BasePublication & ContainerAware) {
 		const paramTypes = Reflect.getMetadata('design:paramtypes', constructor) || [];
 		const injectTokens = getInjectTokens(constructor);
 
@@ -28,7 +28,8 @@ export function Publication(name: string) {
 			return new constructor(...args);
 		};
 
-		Meteor.publish(name, function(...args: any[]) {
+		console.log('registering publication: ', name);
+		Meteor.publish(name, function (...args: any[]) {
 			const instance = buildInstance();
 			instance.__context = this as Subscription;
 			return instance.init(...args);

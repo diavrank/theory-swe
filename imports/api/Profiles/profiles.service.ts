@@ -8,7 +8,6 @@ import { StaticProfiles } from './ProfileSeeder';
 import { Inject } from '/imports/common/decorators/inject.decorator';
 import { Injectable } from '/imports/common/decorators/injectable.decorator';
 import { forwardRef } from '/imports/common/utils/forward-ref';
-import { ResponseMessage } from '/imports/startup/server/utils/ResponseMessage';
 
 @Injectable()
 export class ProfilesService {
@@ -72,23 +71,23 @@ export class ProfilesService {
     await Roles.setUserRolesAsync(userIds, newPermissions, newProfileName);
   }
 
-  async save(saveProfileDto: SaveProfileDto): Promise<ResponseMessage> {
+  async save(saveProfileDto: SaveProfileDto): Promise<Profile> {
     const { _id, name, description, permissions } = saveProfileDto;
     await this.validateName(name, _id);
 
-    const responseMessage = new ResponseMessage();
-    if (_id) {
+    let profileId = _id;
+    if (profileId) {
       await this.update(saveProfileDto);
-      responseMessage.create('Profile updated successfully!');
+
     } else {
-      await this.profileRepository.insert({
+      profileId = await this.profileRepository.insert({
         name,
         description,
         permissions
       });
-      responseMessage.create('Profile created successfully!');
     }
-    return responseMessage;
+
+    return this.profileRepository.findOneOrFail(profileId);
   }
 
   async delete(id: string): Promise<void> {
@@ -113,6 +112,10 @@ export class ProfilesService {
     // @ts-ignore
     await Meteor.roleAssignment.removeAsync({ 'user._id': userId });
     await Roles.setUserRolesAsync(userId, profile?.permissions, profileName);
+  }
+
+  async listNonExternalProfiles(): Promise<Profile[]> {
+    return this.profileRepository.find({ name: { $nin: this.getStaticProfilesForExternalUsers() } });
   }
 
   async profileExists(profileName: string): Promise<boolean> {

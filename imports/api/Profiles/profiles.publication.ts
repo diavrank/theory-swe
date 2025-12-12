@@ -1,27 +1,24 @@
-import { Meteor } from "meteor/meteor";
 import { ProfileRepository } from './profile.repository';
 import { ProfilesService } from './profiles.service';
+import { Publication } from "/imports/common/decorators/publication.decorator";
+import { BasePublication } from "/imports/common/publications/base.publication";
 
 /**
  * @summary List all non static profiles
  * @publication profiles
  *
  */
-Meteor.publish('profiles', function() {
+@Publication('profiles')
+export class ProfilesPublication extends BasePublication {
+	constructor(
+		private readonly profileRepository: ProfileRepository = new ProfileRepository(),
+		private readonly profilesService: ProfilesService = new ProfilesService(null as any)
+	) {
+		super();
+	}
 
-	const profileRepository = new ProfileRepository();
-	const profilesService = new ProfilesService(null as any);
-	return profileRepository.findAll({ name: { $nin: profilesService.getStaticProfileNames() } });
-});
+	init() {
+		return this.profileRepository.findAll({ name: { $nin: this.profilesService.getStaticProfileNames() } });
+	}
+}
 
-
-/**
- * @summary List all profiles which aren't for external users
- * @publication allProfiles
- */
-Meteor.publish('allProfiles', function() {
-	const profileRepository = new ProfileRepository();
-	const profilesService = new ProfilesService(null as any);
-
-	return profileRepository.findAll({ name: { $nin: profilesService.getStaticProfilesForExternalUsers() } });
-});

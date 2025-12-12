@@ -104,7 +104,6 @@
 <script lang="ts">
 import { RoleType } from '@api/Permissions/Permission';
 import validateForm from '@mixins/validateForm';
-import { ResponseMessage } from '@server/utils/ResponseMessage';
 import { VueDraggableEvents } from '@typings/utilities';
 import { Meteor } from 'meteor/meteor';
 import { Field, Form, FormContext } from 'vee-validate';
@@ -204,12 +203,12 @@ export default defineComponent({
       if (await this.isFormValid(this.$refs.profileObserver as FormContext)) {
         this.$loader.activate(LOADER_MESSAGES.SAVE_PROFILE);
         Meteor.call('profile.save', this.profile,
-            (error: Meteor.Error, response: ResponseMessage) => {
+            (error: Meteor.Error) => {
               this.$loader.deactivate();
               if (error) {
                 this.$alert.showAlertSimple('error', error.reason);
               } else {
-                this.$alert.showAlertSimple('success', response.message);
+                this.$alert.showAlertSimple('success', 'Profile saved successfully');
                 this.$router.push({ name: 'home.profiles' });
               }
             });

@@ -46,7 +46,6 @@
                     </v-text-field>
                   </Field>
                   <Field name="profile" v-slot="{ field, errors }" rules="required">
-                    <!-- TODO: update defineComponent type to recognize "profiles" meteor computed property. -->
                     <v-select v-bind="field" v-model="user.profile.profile" :items="profiles" id="selectProfile"
                               item-title="description" item-value="name"
                               :error-messages="errors"
@@ -78,12 +77,13 @@
 </template>
 
 <script lang="ts">
-import { ProfileCollection } from '@api/Profiles/ProfileCollection';
+import { ProfilesResponseDto } from '@api/Profiles/dtos/profiles-response.dto';
 import uploadImage from '@mixins/users/uploadImage';
 import validateForm from '@mixins/validateForm';
 import { Meteor } from 'meteor/meteor';
 import { Field, Form, FormContext } from 'vee-validate';
 import { defineComponent } from 'vue';
+import { ProfileResponseDto } from '/imports/api/Profiles/dtos/profile-response.dto';
 import { UserRequestDto } from '/imports/api/Users/dtos/user-request.dto';
 import { UserResponseDto } from '/imports/api/Users/dtos/user-response.dto';
 import { LOADER_MESSAGES } from '/imports/ui/constants/loader-messages.const';
@@ -116,7 +116,8 @@ export default defineComponent({
         profile: '',
         username: '',
         email: ''
-      }
+      },
+      profiles: [] as ProfileResponseDto[]
     };
   },
   created() {
@@ -139,8 +140,18 @@ export default defineComponent({
         this.$router.push({ name: 'home.users' });
       }
     }
+    this.loadProfiles();
   },
   methods: {
+    loadProfiles() {
+      Meteor.call('profile.listNonExternal', (error: Meteor.Error, response: ProfilesResponseDto) => {
+        if (error) {
+          console.error('Error listing profiles: ', error);
+          return;
+        }
+        this.profiles = response?.data || [];
+      });
+    },
     async saveUser() {
       if (await this.isFormValid(this.$refs.userFormObserver as FormContext)) {
         this.$loader.activate(LOADER_MESSAGES.SAVE_USER);
@@ -157,14 +168,6 @@ export default defineComponent({
               }
             });
       }
-    }
-  },
-  meteor: {
-    $subscribe: {
-      'allProfiles': []
-    },
-    profiles() {
-      return ProfileCollection.find({}).fetch();
     }
   }
 });

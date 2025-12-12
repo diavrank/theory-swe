@@ -9,7 +9,6 @@ import './utils/helpers';
 import { AppModule } from '../../api/app.module';
 import '../../api/Rest/UsersRest';
 
-import '../../api/Profiles/profiles.publication';
 import '../../api/Profiles/ProfileSeeder';
 
 const appModule = new AppModule();
