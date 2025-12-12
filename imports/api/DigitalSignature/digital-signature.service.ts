@@ -16,7 +16,7 @@ export class DigitalSignatureService {
         signer.write(document);
         signer.end();
 
-        // TODO: Fix implementation
+        // Follow instructions on the View to generate properly the keys.
         return signer.sign(privateKey, 'base64');
     }
 

@@ -22,7 +22,13 @@
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-  name: 'LytAuth'
+  name: 'LytAuth',
+  mounted() {
+    document.documentElement.classList.add('auth-no-scroll');
+  },
+  unmounted() {
+    document.documentElement.classList.remove('auth-no-scroll');
+  }
 });
 </script>
 

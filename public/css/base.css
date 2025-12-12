@@ -1,3 +1,7 @@
-html{
+html {
+    overflow-y: auto;
+}
+
+html.auth-no-scroll {
     overflow-y: hidden !important;
 }
