@@ -18,15 +18,12 @@ shell-server@0.6.2            # Server-side component of the `meteor shell` comm
 static-html@1.4.0             # Define static page content in .html files
 accounts-base@3.1.2
 accounts-password@3.2.1
-check@1.4.4
-lacosta:method-hooks
 alanning:roles@4.0.0
 tracker@1.3.4
 xolvio:cleaner
 dburles:factory
 meteortesting:mocha
 zodern:types
-jam:method
 harry97:ssr
 jorgenvatle:vite
 maka:rest

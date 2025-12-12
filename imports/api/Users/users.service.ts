@@ -1,7 +1,6 @@
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import fileHelper from '../../startup/server/utils/FileOperations';
-import { ResponseMessage } from '../../startup/server/utils/ResponseMessage';
 import { ProfilesService } from "../Profiles/profiles.service";
 import { SaveUserRequestDto } from './dtos/save-user-request.dto';
 import { UserRequestDto } from './dtos/user-request.dto';
@@ -20,7 +19,7 @@ export class UserService {
 	constructor(
 		@Inject(forwardRef(() => ProfilesService))
 		private profilesService: ProfilesService
-	) {}
+	) { }
 
 	async validateEmail(newEmail: string, userId: string) {
 		const existsEmail = await Accounts.findUserByEmail(newEmail);
@@ -62,7 +61,7 @@ export class UserService {
 			const userToBeUpdated = await this.userRepository.findOneOrFail(user.id);
 			userToBeUpdated.username = user.username;
 			userToBeUpdated.profile = user.profile;
-			if(userToBeUpdated.emails[0]?.address !== user.email){
+			if (userToBeUpdated.emails[0]?.address !== user.email) {
 				userToBeUpdated.emails[0].address = user.email;
 				userToBeUpdated.emails[0].verified = false;
 			}
@@ -108,8 +107,7 @@ export class UserService {
 		return user;
 	}
 
-	async updateUser(newUser: User, photoFileUser: any): Promise<ResponseMessage> {
-		const responseMessage = new ResponseMessage();
+	async updateUser(newUser: User, photoFileUser: any): Promise<void> {
 		const currentUser = await this.userRepository.findOneOrFail(newUser._id);
 		if (currentUser?.emails && newUser.emails) {
 			if (currentUser.emails[0].address !== newUser.emails[0].address) {
@@ -127,6 +125,11 @@ export class UserService {
 				'profile': newUser.profile,
 			}
 		});
+
+		if (currentUser.profile.profile !== newUser.profile.profile) {
+			await this.profilesService.setUserRoles(currentUser._id, newUser.profile.profile);
+		}
+
 		if (photoFileUser) {
 			if (currentUser?.profile.path) {
 				fileHelper.remove(currentUser.profile.path.substring(currentUser.profile.path.indexOf(PATH_USER_FILES)));
@@ -143,33 +146,21 @@ export class UserService {
 				});
 			}
 		}
-		responseMessage.message = 'User updated successful';
-
-		return responseMessage;
 	}
 
 	async deleteUser(userId: string) {
 		const user = await this.userRepository.findOneOrFail(userId);
+		fileHelper.remove(PATH_USER_FILES + userId);
+		// @ts-ignore
+		await Meteor.roleAssignment.removeAsync({ 'user._id': userId });
 		await this.userRepository.delete(user._id);
-
 	}
 
 	getUsersByProfileName(profileName: string): Promise<User[]> {
 		return this.userRepository.find({ 'profile.profile': profileName });
 	}
 
-	async afterSave(event: any) {
-		if (event.doc.profile.profile !== event.oldDoc?.profile.profile) {
-			await this.profilesService.setUserRoles(event.currentTarget._id, event.currentTarget.profile.profile);
-		}
-	}
-
-	beforeRemove(event: any) {
-		fileHelper.remove(PATH_USER_FILES + event.currentTarget._id);
-	}
-
-	async afterRemove(event: any) {
-		// @ts-ignore
-		await Meteor.roleAssignment.removeAsync({ 'user._id': event.currentTarget._id });
+	getUserById(id: string): Promise<User> {
+		return this.userRepository.findOneOrFail(id);
 	}
 }

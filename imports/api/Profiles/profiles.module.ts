@@ -1,6 +1,8 @@
 import { UsersModule } from '../Users/users.module';
+import { SystemOptionsController } from './controllers/system-options.controller';
 import { ProfilesController } from './profiles.controller';
 import { ProfilesService } from './profiles.service';
+import { SystemOptionsService } from './system-options.service';
 import { forwardRef } from '/imports/common/utils/forward-ref';
 import { Module } from '/imports/common/utils/module';
 
@@ -9,10 +11,12 @@ import { Module } from '/imports/common/utils/module';
         forwardRef(() => UsersModule)
     ],
     controllers: [
-        ProfilesController
+        ProfilesController,
+        SystemOptionsController
     ],
     providers: [
-        ProfilesService
+        ProfilesService,
+        SystemOptionsService
     ]
 })
 export class ProfilesModule { } 

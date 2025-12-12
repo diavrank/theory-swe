@@ -2,7 +2,6 @@ import { Roles } from 'meteor/alanning:roles';
 import { Meteor } from 'meteor/meteor';
 import { UserService } from '../Users/users.service';
 import { SaveProfileDto } from './dtos/create-profile.dto';
-import { UpdateProfileDto } from './dtos/update-profile.dto';
 import { Profile } from './profile.entity';
 import { ProfileRepository } from './profile.repository';
 import { StaticProfiles } from './ProfileSeeder';
@@ -14,11 +13,11 @@ import { ResponseMessage } from '/imports/startup/server/utils/ResponseMessage';
 @Injectable()
 export class ProfilesService {
   private profileRepository = new ProfileRepository();
-  
+
   constructor(
     @Inject(forwardRef(() => UserService))
     private userService: UserService
-  ) {}
+  ) { }
 
   async validateName(name: string, profileId?: string): Promise<void> {
     const existingProfile = await this.profileRepository.findOneByName(name);
@@ -41,26 +40,45 @@ export class ProfilesService {
     });
   }
 
-  async update(updateProfileDto: UpdateProfileDto): Promise<void> {
-    if (updateProfileDto.name) {
-      await this.validateName(updateProfileDto.name, updateProfileDto._id);
+  async update(updateProfileDto: SaveProfileDto): Promise<void> {
+    const { name: newProfileName,
+      permissions: newPermissions,
+      description: newDescription
+    } = updateProfileDto;
+
+    const oldProfile = await this.profileRepository.findOneOrFail(updateProfileDto._id);
+
+    await this.validateName(newProfileName, updateProfileDto._id);
+    await this.profileRepository.update(updateProfileDto._id, {
+      $set: {
+        name: newProfileName,
+        description: newDescription,
+        permissions: newPermissions
+      }
+    });
+
+    // Update permissions
+    if (oldProfile.name !== updateProfileDto.name) {
+      await Meteor.users.updateAsync(
+        { 'profile.profile': oldProfile.name },
+        { $set: { 'profile.profile': newProfileName } },
+        { multi: true }
+      );
     }
-    await this.profileRepository.update(updateProfileDto._id, updateProfileDto);
+    const users = await this.userService.getUsersByProfileName(newProfileName);
+    const userIds = users.map(user => user._id);
+    // @ts-ignore
+    await Meteor.roleAssignment.removeAsync({ 'user._id': { $in: userIds } });
+    await Roles.setUserRolesAsync(userIds, newPermissions, newProfileName);
   }
 
   async save(saveProfileDto: SaveProfileDto): Promise<ResponseMessage> {
     const { _id, name, description, permissions } = saveProfileDto;
-    await this.validateName(name,_id);
+    await this.validateName(name, _id);
 
     const responseMessage = new ResponseMessage();
     if (_id) {
-      await this.profileRepository.update(_id, {
-        $set: {
-          name,
-          description,
-          permissions
-        }
-      });
+      await this.update(saveProfileDto);
       responseMessage.create('Profile updated successfully!');
     } else {
       await this.profileRepository.insert({
@@ -111,20 +129,5 @@ export class ProfilesService {
     return Object.keys(StaticProfiles)
       .filter(staticProfileName => StaticProfiles[staticProfileName].external)
       .map(staticProfileName => StaticProfiles[staticProfileName].name);
-  }
-
-  async afterUpdate(oldDoc: Profile, newDoc: Profile): Promise<void> {
-    if (oldDoc.name !== newDoc.name) {
-      await Meteor.users.updateAsync(
-        { 'profile.profile': oldDoc.name },
-        { $set: { 'profile.profile': newDoc.name } },
-        { multi: true }
-      );
-    }
-    const users = await this.userService.getUsersByProfileName(newDoc?.name);
-    const userIds = users.map(user => user._id);
-    // @ts-ignore
-    await Meteor.roleAssignment.removeAsync({ 'user._id': { $in: userIds } });
-    await Roles.setUserRolesAsync(userIds, newDoc.permissions, newDoc.name);
   }
 } 

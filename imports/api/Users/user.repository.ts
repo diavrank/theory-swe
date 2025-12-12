@@ -1,7 +1,7 @@
 import { Mongo } from 'meteor/mongo';
-import { BaseRepository } from '/imports/common/repositories/base.repository';
-import { User } from './user.entity';
 import { UserCollection } from './user.collection';
+import { User } from './user.entity';
+import { BaseRepository } from '/imports/common/repositories/base.repository';
 
 export class UserRepository extends BaseRepository<User> {
 

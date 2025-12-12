@@ -12,7 +12,4 @@ import '../../api/Rest/UsersRest';
 import '../../api/Profiles/profiles.publication';
 import '../../api/Profiles/ProfileSeeder';
 
-import '../../api/SystemOptions/SystemOption';
-import '../../api/SystemOptions/SystemOptionsCtrl';
-
 const appModule = new AppModule();
