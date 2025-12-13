@@ -4,7 +4,7 @@ import './services/FirebaseAdmin';
 import './services/MailServ';
 
 import { AppModule } from '../../api/app.module';
-import '../../api/Rest/UsersRest';
+import '../../api/Users/users-rest.controller';
 
 import '../../backfills/recurring/RefreshPermissionsBackfill';
 import '../../backfills/recurring/RefreshStaticProfilesBackfill';

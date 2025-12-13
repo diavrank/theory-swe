@@ -1,9 +1,8 @@
 import fs from 'fs-extra';
 import { Meteor } from 'meteor/meteor';
 // @ts-ignore
+import { loadEsm } from "load-esm";
 import mimeTypes from 'mimetypes';
-// @ts-ignore
-import detect from 'detect-file-type';
 import { BASE_URL_STORAGE, firebaseAdminStorage } from '../services/FirebaseAdmin';
 import { ResponseMessage } from './ResponseMessage';
 import Utilities from './helpers';
@@ -19,6 +18,12 @@ if (Meteor.isDevelopment) {
 export default {
 	path_upload_files: process.env.STORAGE_PATH + '/.uploads',
 	PATH_USER_FILE: 'users/',
+	async fileTypeModule() {
+		// Import a pure ESM package from a CommonJS TS project
+		const esmModule = await loadEsm<typeof import("file-type")>('file-type');
+
+		return esmModule;
+	},
 	/**
 	 * Saves a file in the private directory.
 	 * @param blob
@@ -30,22 +35,23 @@ export default {
 		let success = false;
 		const encoding = 'binary';
 		const chroot = this.path_upload_files;
-		path = chroot + (path ? `/${ path }` : '');
+		path = chroot + (path ? `/${path}` : '');
 
 		fs.ensureDirSync(path);
 		const writeFileSync = Meteor.wrapAsync(fs.writeFile);
 		try {
-			writeFileSync(`${ path }/${ name }`, blob, encoding);
+			writeFileSync(`${path}/${name}`, blob, encoding);
 			success = true;
 		} catch (error) {
 			console.error('There was an error during saving the file: ', error);
 		}
 		return success;
 	},
-	getFile(path: string) {
+	async getFile(path: string) {
 		const buffer = fs.readFileSync(this.path_upload_files + '/' + path);
-		const syncFromFile = Meteor.wrapAsync(detect.fromFile);
-		const mime = syncFromFile(this.path_upload_files + '/' + path);
+		const { fileTypeFromFile } = await this.fileTypeModule();
+		const mime = await fileTypeFromFile(this.path_upload_files + '/' + path);
+
 		return { data: buffer, meta: mime };
 	},
 	/**
@@ -59,16 +65,16 @@ export default {
 		const responseMessage = new ResponseMessage();
 		try {
 			const encoding = 'base64';
-			fs.ensureDirSync(`${this.path_upload_files}/${ path }`);
+			fs.ensureDirSync(`${this.path_upload_files}/${path}`);
 			const base64EncodedImageString = base64file.split(';base64,').pop();
 			// @ts-ignore
 			const mimeType = base64file.match(/data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+).*,.*/)[1];
-			const filename = `${ name }${ Utilities.generateNumberToken(10, 99) }.${ mimeTypes.detectExtension(mimeType) }`;
-			const fileUrl = `${ process.env.ROOT_URL }/api/v1/${ path }/${ filename }`;
-			await new Promise((resolve,reject) => {
-				fs.writeFile(`${this.path_upload_files}/${ path }/${ filename }`, base64EncodedImageString, encoding, (err) => {
+			const filename = `${name}${Utilities.generateNumberToken(10, 99)}.${mimeTypes.detectExtension(mimeType)}`;
+			const fileUrl = `${process.env.ROOT_URL}/api/${path}/${filename}`;
+			await new Promise((resolve, reject) => {
+				fs.writeFile(`${this.path_upload_files}/${path}/${filename}`, base64EncodedImageString, encoding, (err) => {
 					if (err) {
-						reject(`Failed to save file: ${ err }`);
+						reject(`Failed to save file: ${err}`);
 					} else {
 						resolve('File saved successfully!');
 					}
@@ -83,9 +89,9 @@ export default {
 	},
 	async saveFileFromBufferToGoogleStorage(fileBuffer: any, name: string, path: string, mimeType: string) {
 		const responseMessage = new ResponseMessage();
-		const filename = `${ name }${ Utilities.generateNumberToken(10, 99) }.${ mimeTypes.detectExtension(mimeType) }`;
-		const file = firebaseAdminStorage.file(`${ path }/${ filename }`);
-		const fileUrl = `${ BASE_URL_STORAGE }/${ firebaseAdminStorage.name }/${ path }/${ filename }`;
+		const filename = `${name}${Utilities.generateNumberToken(10, 99)}.${mimeTypes.detectExtension(mimeType)}`;
+		const file = firebaseAdminStorage.file(`${path}/${filename}`);
+		const fileUrl = `${BASE_URL_STORAGE}/${firebaseAdminStorage.name}/${path}/${filename}`;
 		try {
 			await file.save(fileBuffer, {
 				metadata: {
@@ -142,7 +148,7 @@ export default {
 	 */
 	remove(path: string) {
 		if (path) {
-			path = `${ this.path_upload_files }/${ path }`;
+			path = `${this.path_upload_files}/${path}`;
 			fs.removeSync(path);
 		}
 	}
