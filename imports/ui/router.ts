@@ -18,7 +18,6 @@ const verifyPermission = (authStore: AuthStoreType, to: RouteLocationNormalized,
 	const permission = to.meta?.permission;
 	if (permission && userLogged) {
 		Meteor.call('auth.checkPermission', {
-			userId: userLogged._id,
 			permission: permission
 		}, (err: Meteor.Error, response: CheckPermissionResponseDto) => {
 			if (err) {
@@ -38,7 +37,7 @@ const verifyPermission = (authStore: AuthStoreType, to: RouteLocationNormalized,
 }
 
 router.beforeEach((to: RouteLocationNormalized, from: RouteLocationNormalized,
-                   next: NavigationGuardNext) => {
+	next: NavigationGuardNext) => {
 	const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
 	const authStore = useAuthStore();
 	const isLogged = authStore.isLogged;
