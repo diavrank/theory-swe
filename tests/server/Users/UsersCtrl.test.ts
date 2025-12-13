@@ -28,6 +28,7 @@ describe('UsersCtrl', function () {
 			'emails': [{ address: existingEmail, verified: false }],
 			'username': existingUsername
 		});
+		// TODO: fix Meteor.server type
 		saveUserMethod = Meteor.server.method_handlers['user.save'];
 		updatePersonalDataMethod = Meteor.server.method_handlers['user.updatePersonalData'];
 		deleteUserMethod = Meteor.server.method_handlers['user.delete'];
