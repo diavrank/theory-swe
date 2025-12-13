@@ -58,7 +58,6 @@
     "types": [
       "node",
       "mocha",
-      "@types/busboy"
     ]
   },
   "exclude": [

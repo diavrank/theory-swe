@@ -1,3 +1,3 @@
-declare module 'meteor/xolvio:cleaner' {
+declare module 'meteor/jessedev:cleaner' {
 	export const resetDatabase: Function;
 }
