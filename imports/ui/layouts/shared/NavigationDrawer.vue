@@ -35,17 +35,12 @@
 </template>
 
 <script lang="ts">
-import FooterView from './FooterView.vue';
-import { defineComponent } from 'vue';
 import { Meteor } from 'meteor/meteor';
+import { defineComponent } from 'vue';
+import FooterView from './FooterView.vue';
+import { SystemOptionResponseDto } from '/imports/api/Profiles/dtos/system-option-response.dto';
+import { SystemOptionsResponseDto } from '/imports/api/Profiles/dtos/system-options-response.dto';
 import { useTemporalStore } from '/imports/ui/stores/temporal';
-
-interface SystemOption {
-  title: string;
-  namePath: string;
-  icon: string;
-  divider: boolean;
-}
 
 export default defineComponent({
   name: 'NavigationDrawer',
@@ -55,17 +50,18 @@ export default defineComponent({
     return {temporalStore};
   },
   data: () => ({
-    options: [] as SystemOption[],
+    options: [] as SystemOptionResponseDto[],
     optionSelected: 0,
     navigationDrawer: null as boolean | null
   }),
   created() {
-    Meteor.call('getSystemOptions', (err: Meteor.Error, options: SystemOption[]) => {
+    Meteor.call('profile.getSystemOptions', (err: Meteor.Error, response: SystemOptionsResponseDto) => {
       if (err) {
         console.error('Failed to get system options', err);
-      } else {
-        this.options = options;
+        return;
       }
+
+      this.options = response.data;
     });
   },
   methods: {

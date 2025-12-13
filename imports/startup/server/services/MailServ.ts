@@ -1,6 +1,4 @@
 import { Meteor } from 'meteor/meteor';
-// @ts-ignore
-import { SSR } from 'meteor/meteorhacks:ssr';
 
 if (Meteor.isDevelopment) {
 	if (Meteor.settings.private?.SENDER_EMAILS) {
@@ -28,9 +26,10 @@ emailTemplates.resetPassword = {
 	subject() {
 		return `Reset your password`;
 	},
-	html(_user: Meteor.User, url: string) {
+	async html(_user: Meteor.User, url: string) {
 		const urlWithoutHash = url.replace('#/', '');
-		SSR.compileTemplate('emailResetPassword', Assets.getText(emailResetPassword));
+		const emailResetPasswordTemplate = await Assets.getTextAsync(emailResetPassword);
+		SSR.compileTemplate('emailResetPassword', emailResetPasswordTemplate);
 		if (Meteor.isDevelopment) console.info(`Password reset link: ${ urlWithoutHash }`);
 		return SSR.render('emailResetPassword', {
 			productSrc,
@@ -44,10 +43,11 @@ emailTemplates.enrollAccount = {
 	subject() {
 		return `Welcome to ${ name }`;
 	},
-	html(_user: Meteor.User, url: string) {
+	async html(_user: Meteor.User, url: string) {
 		const urlWithoutHash = url.replace('#/', '');
 		if (Meteor.isDevelopment) console.info(`Set initial password link: ${ urlWithoutHash }`);
-		SSR.compileTemplate('emailEnrollAccount', Assets.getText(emailEnrollAccount));
+		const emailEnrollAccountTemplate = await Assets.getTextAsync(emailEnrollAccount);
+		SSR.compileTemplate('emailEnrollAccount', emailEnrollAccountTemplate);
 		return SSR.render('emailEnrollAccount', {
 			productSrc,
 			urlWithoutHash
@@ -60,10 +60,11 @@ emailTemplates.verifyEmail = {
 	subject() {
 		return `Verify your email`;
 	},
-	html(_user: Meteor.User, url: string) {
+	async html(_user: Meteor.User, url: string) {
 		const urlWithoutHash = url.replace('#/', '');
 		if (Meteor.isDevelopment) console.info(`Verify email link: ${ urlWithoutHash }`);
-		SSR.compileTemplate('emailVerifyEmail', Assets.getText(emailVerifyEmail));
+		const emailVerifyEmailTemplate = await Assets.getTextAsync(emailVerifyEmail);
+		SSR.compileTemplate('emailVerifyEmail', emailVerifyEmailTemplate);
 		return SSR.render('emailVerifyEmail', {
 			productSrc,
 			urlWithoutHash

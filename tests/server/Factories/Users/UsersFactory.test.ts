@@ -1,7 +1,7 @@
+import faker from 'faker';
 import { Factory } from 'meteor/dburles:factory';
 import { Meteor } from 'meteor/meteor';
-import faker from 'faker';
-import { StaticProfiles } from '/imports/api/Profiles/ProfileSeeder';
+import { StaticProfiles } from '/imports/api/Profiles/constants/static-profiles.constant';
 
 Factory.define('user', Meteor.users, {
 	username: () => faker.internet.userName(),
@@ -17,7 +17,7 @@ Factory.define('user', Meteor.users, {
 			loginTokens: () => []
 		}
 	},
-	emails: () => [{ address: faker.internet.email(), verified: true }],
+	email: () => faker.internet.email(),
 	createdAt: () => new Date(),
 	status: {
 		online: () => false
@@ -30,5 +30,5 @@ Factory.define('simpleUser', Meteor.users, {
 		name: () => faker.name.findName(),
 		profile: () => StaticProfiles.admin.name
 	},
-	emails: () => [{ address: faker.internet.email(), verified: true }]
+	email: () => faker.internet.email()
 });

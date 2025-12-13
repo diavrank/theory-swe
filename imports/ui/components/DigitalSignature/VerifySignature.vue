@@ -81,8 +81,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
 import { ResponseMessage } from '@server/utils/ResponseMessage';
+import { Meteor } from 'meteor/meteor';
+import { defineComponent } from 'vue';
 
 export default defineComponent({
     name: 'VerifySignature',

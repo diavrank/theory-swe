@@ -1,11 +1,14 @@
-import { DirectiveBinding, VNode } from 'vue';
 import { Meteor } from 'meteor/meteor';
+import { DirectiveBinding, VNode } from 'vue';
+import { User } from '../typings/users';
 
-export const VCan = function(el: HTMLElement, binding: DirectiveBinding, vNode: VNode) {
+export const VCan = async function (el: HTMLElement, binding: DirectiveBinding, vNode: VNode) {
 	const behaviour = binding.modifiers.disable ? 'disable' : 'hide';
+	const currentUser = <User>await Meteor.userAsync();
+	const currentUserProfile = currentUser?.profile.profile;
 	// @ts-ignore
-	const hasPermission = Roles.userIsInRole(Meteor.userId(), `${ binding.value }-${ binding.arg }`,
-		Meteor.user()?.profile.profile);
+	const hasPermission = await Roles.userIsInRoleAsync(Meteor.userId(), `${binding.value}-${binding.arg}`,
+		currentUserProfile);
 	if (!hasPermission) {
 		if (behaviour === 'hide') {
 			// @ts-ignore

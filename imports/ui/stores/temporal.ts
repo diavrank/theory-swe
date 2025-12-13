@@ -1,5 +1,5 @@
-import { defineStore } from 'pinia';
 import { useStorage } from '@vueuse/core';
+import { defineStore } from 'pinia';
 
 export const useTemporalStore = defineStore('temporal', {
     state: () => ({
@@ -8,7 +8,7 @@ export const useTemporalStore = defineStore('temporal', {
         drawer: useStorage('drawer', true)
     }),
     actions: {
-        setElement(element: any) {
+        setElement<T>(element: T) {
             this.element = element;
         },
         setStatus(status: boolean) {

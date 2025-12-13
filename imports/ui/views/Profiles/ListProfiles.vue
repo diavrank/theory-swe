@@ -49,11 +49,11 @@
 <script lang="ts">
 import ModalRemove from '@components/Utilities/Modals/ModalRemove.vue';
 import profilesMixin from '@mixins/accounts/profiles';
-import  {defineComponent} from 'vue';
+import { ResponseMessage } from '@server/utils/ResponseMessage';
 import { Profile } from '@typings/users';
 import { ModalData } from '@typings/utilities';
 import { Meteor } from 'meteor/meteor';
-import { ResponseMessage } from '@server/utils/ResponseMessage';
+import { defineComponent } from 'vue';
 import { useTemporalStore } from '/imports/ui/stores/temporal';
 
 export default defineComponent({
@@ -112,7 +112,7 @@ export default defineComponent({
           }
 
         } else {
-          this.$alert.showAlertSimple('success', response.message);
+          this.$alert.showAlertSimple('success', 'Profile removed successfully!');
         }
       });
 

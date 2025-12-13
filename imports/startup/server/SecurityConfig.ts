@@ -4,9 +4,9 @@ import { WebApp } from 'meteor/webapp';
 
 Meteor.startup(() => {
 	// Sets "X-Frame-Options: SAMEORIGIN"
-	WebApp.connectHandlers.use(helmet.frameguard());
+	WebApp.handlers.use(helmet.frameguard());
 	// Sets "X-Content-Type-Options: nosniff"
-	WebApp.connectHandlers.use(helmet.noSniff());
+	WebApp.handlers.use(helmet.noSniff());
 	// Sets "X-XSS-Protection: 0"
-	WebApp.connectHandlers.use(helmet.xssFilter());
+	WebApp.handlers.use(helmet.xssFilter());
 });

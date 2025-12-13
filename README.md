@@ -28,7 +28,7 @@ Applies concepts like:
     - Observer (Publish/Subscribe)
 - [X] Role Based Access Control (RBAC)
 
-**Tech stack:** Meteor (Node.js), MongoDB, Vue 3, Vuetify, TypeScript, Mocha.
+**Tech stack:** Meteor (Node.js), MongoDB, Vue, Vuetify, TypeScript, Mocha.
 
 Supported Platforms
 -------------------
@@ -40,10 +40,10 @@ Supported Platforms
 System Requirements
 -------------------
 
-- Node 14+ [download here](https://nodejs.org/es/download/)
+- Node 20+ [download here](https://nodejs.org/es/download/)
 - Yarn 1.22.0+
-- Meteor 2.13.3 [Installation](https://www.meteor.com/install)
-- Mongo [6.0.4](https://www.mongodb.com/download-center/community) and [Mongo Booster](https://nosqlbooster.com/downloads) 
+- Meteor 3.3.2 [Installation](https://www.meteor.com/install)
+- Mongo [7.0.4](https://www.mongodb.com/download-center/community) and [Mongo Booster](https://nosqlbooster.com/downloads) 
 - **Note:** In some cases it is necesary to disable antivrus in order to works SMTP Server
 
 ## Installation
@@ -96,11 +96,6 @@ yarn run:mac
 SET MONGO_URL=mongodb://localhost:27017/theory-swe
 yarn run:windows
 ```
-
-
-**Note:**
-You can configure your Jetbrains IDE to run the project from the IDE execution button.
-
 
 Usage
 ---------------
