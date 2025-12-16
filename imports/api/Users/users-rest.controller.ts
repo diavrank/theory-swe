@@ -43,7 +43,7 @@ class UsersRestController {
 	async getUserFile(@Param('userId') userId: string, @Param('filename') filename: string, @Res() res: Response) {
 		const decodedUserId = decodeURIComponent(userId);
 		const decodedFilename = decodeURIComponent(filename);
-		const path = `users/${decodedUserId}/${decodedFilename}`;
+		const path = `users/${decodedUserId}/avatar/${decodedFilename}`;
 
 		try {
 			const file = await fileHelper.getFile(path);

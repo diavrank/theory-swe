@@ -1,6 +1,7 @@
 import { ProfilesService } from '../Profiles/profiles.service';
 import { UserResponseDto } from './dtos/user-response.dto';
 import { UserRepository } from './user.repository';
+import { Auth } from '/imports/common/decorators/auth-guard.decorator';
 import { Publication } from '/imports/common/decorators/publication.decorator';
 import { ReactiveDto } from '/imports/common/decorators/reactive-dto.decorator';
 import { BasePublication } from '/imports/common/publications/base.publication';
@@ -15,6 +16,7 @@ export class UsersPublication extends BasePublication {
 		super();
 	}
 
+	@Auth()
 	@ReactiveDto(UserResponseDto)
 	init() {
 		const selector = { 'profile.profile': { $nin: this.profilesService.getStaticProfilesForExternalUsers() } };

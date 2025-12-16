@@ -88,7 +88,7 @@ export class UserService {
 			Accounts.sendEnrollmentEmail(userId, user.emails[0].address);
 		}
 		if (photoFileUser) {
-			const response = await fileHelper.saveFileFromBase64(photoFileUser, 'avatar', PATH_USER_FILES + userId + 'avatar');
+			const response = await fileHelper.saveFileFromBase64(photoFileUser, 'avatar', PATH_USER_FILES + userId + '/avatar');
 			if (!response.data.success) {
 				throw new Meteor.Error('500', 'Error saving user photo.');
 			} else {
@@ -134,7 +134,7 @@ export class UserService {
 			if (currentUser?.profile.path) {
 				fileHelper.remove(currentUser.profile.path.substring(currentUser.profile.path.indexOf(PATH_USER_FILES)));
 			}
-			const response = await fileHelper.saveFileFromBase64(photoFileUser, 'avatar', PATH_USER_FILES + newUser._id + 'avatar');
+			const response = await fileHelper.saveFileFromBase64(photoFileUser, 'avatar', PATH_USER_FILES + newUser._id + '/avatar');
 			if (!response.data.success) {
 				throw new Meteor.Error('500', 'Error saving user photo.');
 			} else {
