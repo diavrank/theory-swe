@@ -2,6 +2,12 @@
   "private": {
     "ROOT_URL": "http://localhost:3000",
     "MAIL_URL": "smtp://user:password@smtp.gmail.com:587",
+    "MAILPIT": {
+      "HOST": "localhost",
+      "PORT": 1025,
+      "USER": "",
+      "PASSWORD": ""
+    },
     "MONGO_URL": "mongodb://localhost:27017/theory-swe",
     "REFRESH_PERMISSIONS": false,
     "REFRESH_STATIC_PROFILES": false,

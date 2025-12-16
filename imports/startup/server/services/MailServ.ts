@@ -1,5 +1,34 @@
 import { Meteor } from 'meteor/meteor';
 
+type MailpitSettings = {
+	HOST?: string;
+	PORT?: number;
+	USER?: string;
+	PASSWORD?: string;
+};
+
+const mailpitConfig: MailpitSettings | undefined = Meteor.settings.private?.MAILPIT;
+
+const getMailpitMailUrl = (config?: MailpitSettings) => {
+	if (!config?.HOST || !config?.PORT) return undefined;
+
+	const hasPassword = typeof config.PASSWORD === 'string' && config.PASSWORD.length > 0;
+	const hasUser = typeof config.USER === 'string' && config.USER.length > 0;
+
+	if (!hasUser) return `smtp://${ config.HOST }:${ config.PORT }`;
+
+	const encodedUser = encodeURIComponent(config.USER);
+	const encodedPassword = hasPassword ? encodeURIComponent(config.PASSWORD) : undefined;
+	const credentials = encodedPassword ? `${ encodedUser }:${ encodedPassword }@` : `${ encodedUser }@`;
+
+	return `smtp://${ credentials }${ config.HOST }:${ config.PORT }`;
+};
+
+const applyRootUrlFromSettings = () => {
+	const rootUrl = Meteor.settings.private?.ROOT_URL;
+	if (rootUrl) process.env.ROOT_URL = rootUrl;
+};
+
 if (Meteor.isDevelopment) {
 	if (Meteor.settings.private?.SENDER_EMAILS) {
 		process.env.EMAIL_SERVICES = Meteor.settings.private.SENDER_EMAILS.SERVICES;
@@ -74,9 +103,16 @@ emailTemplates.verifyEmail = {
 
 //Activate the service of Mails.
 if (Meteor.isDevelopment) {
-	if (Meteor.settings.private?.MAIL_URL) {
-		process.env.MAIL_URL = Meteor.settings.private.MAIL_URL;
-		process.env.ROOT_URL = Meteor.settings.private.ROOT_URL;
+	const mailpitMailUrl = getMailpitMailUrl(mailpitConfig);
+	const settingsMailUrl = Meteor.settings.private?.MAIL_URL;
+
+	if (mailpitMailUrl) {
+		process.env.MAIL_URL = mailpitMailUrl;
+		applyRootUrlFromSettings();
+		console.info(`[Scaffold] - Mailpit configured at ${ mailpitConfig?.HOST }:${ mailpitConfig?.PORT }`);
+	} else if (settingsMailUrl) {
+		process.env.MAIL_URL = settingsMailUrl;
+		applyRootUrlFromSettings();
 	} else {
 		console.warn('[Scaffold] - Email settings are not configured. Emails will not be sent. ');
 	}
