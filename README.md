@@ -61,6 +61,16 @@ Note: For Windows Systems verify that mongo is configured as environment system 
 mongorestore --db theory-swe ./database/theory-swe
 ```
 
+**Run the backfills:**
+
+```shell
+yarn backfill <backfill_name>
+```
+
+Available backfills:
+ - RefreshPermissionsBackfill
+ - RefreshStaticProfilesBackfill
+
 **The following commands are only for support:**
 
 - Export a backup of the database (data exported as formats BSON and JSON):

@@ -1,4 +1,4 @@
-import { permissionsArray } from "../../Permissions/helpers/permissions.helpers";
+import { permissionsArray, readOnlyPermissions } from "../../Permissions/helpers/permissions.helpers";
 
 export interface StaticProfileType {
     name: string;
@@ -18,4 +18,10 @@ export const StaticProfiles: StaticProfilesType = {
         permissions: permissionsArray.map((p) => p.VALUE),
         external: false,
     },
+    readOnly: {
+        name: 'read-only',
+        description: 'Read Only',
+        permissions: readOnlyPermissions,
+        external: false,
+    }
 };

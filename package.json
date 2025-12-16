@@ -5,6 +5,7 @@
     "start": "MONGO_URL=mongodb://localhost:27017/theory-swe meteor --settings ./settings/settings-development.json",
     "start:debug": "MONGO_URL=mongodb://localhost:27017/theory-swe meteor debug --settings ./settings/settings-development.json",
     "run:windows": "SET MONGO_URL=mongodb://localhost:27017/theory-swe& meteor --settings ./settings/settings-development.json",
+    "backfill": "node ./scripts/runBackfill.js",
     "test": "meteor test --once --full-app --driver-package meteortesting:mocha",
     "test:watch": "TEST_WATCH=1 meteor test --full-app --driver-package meteortesting:mocha",
     "visualize": "meteor --production --extra-packages bundle-visualizer"

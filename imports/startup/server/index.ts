@@ -5,8 +5,8 @@ import './services/MailServ';
 
 import { AppModule } from '../../api/app.module';
 import '../../api/Users/users-rest.controller';
-
-import '../../backfills/recurring/RefreshPermissionsBackfill';
-import '../../backfills/recurring/RefreshStaticProfilesBackfill';
+import { initBackfills } from '../../backfills/runBackfills';
 
 const appModule = new AppModule();
+
+initBackfills();

@@ -3,33 +3,36 @@ import { Meteor } from 'meteor/meteor';
 import { StaticProfiles } from '../../api/Profiles/constants/static-profiles.constant';
 import { Profile } from '../../api/Profiles/profile.entity';
 
+export class RefreshStaticProfilesBackfill {
+    static readonly backfillName = 'RefreshStaticProfilesBackfill';
 
-// TODO: Convert to a backfill
-if (process.env.REFRESH_STATIC_PROFILES === 'true' || Meteor.isAppTest) {
-    console.log('Updating static profiles.');
+    async run(): Promise<void> {
+        console.info('[Backfill] Updating static profiles.');
 
-    for (const staticProfileName of Object.keys(StaticProfiles)) {
-        await Profile.collection.upsertAsync(
-            { name: StaticProfiles[staticProfileName].name },
-            {
-                $set: {
-                    description: StaticProfiles[staticProfileName].description,
-                    permissions: StaticProfiles[staticProfileName].permissions,
+        for (const staticProfileName of Object.keys(StaticProfiles)) {
+            const staticProfile = StaticProfiles[staticProfileName];
+
+            await Profile.collection.upsertAsync(
+                { name: staticProfile.name },
+                {
+                    $set: {
+                        description: staticProfile.description,
+                        permissions: staticProfile.permissions,
+                    },
                 },
-            },
-        );
-        const users = await Meteor.users
-            .find({ 'profile.profile': StaticProfiles[staticProfileName].name })
-            .fetchAsync();
-        for (const user of users) {
-            // @ts-ignore
-            await Meteor.roleAssignment.removeAsync({ 'user._id': user._id });
-            if (StaticProfiles[staticProfileName].permissions.length) {
-                await Roles.setUserRolesAsync(
-                    user._id,
-                    StaticProfiles[staticProfileName].permissions,
-                    StaticProfiles[staticProfileName].name,
-                );
+            );
+
+            const users = await Meteor.users
+                .find({ 'profile.profile': staticProfile.name })
+                .fetchAsync();
+
+            for (const user of users) {
+                // @ts-ignore
+                await Meteor.roleAssignment.removeAsync({ 'user._id': user._id });
+
+                if (staticProfile.permissions.length) {
+                    await Roles.setUserRolesAsync(user._id, staticProfile.permissions, staticProfile.name);
+                }
             }
         }
     }

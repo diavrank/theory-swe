@@ -58,6 +58,13 @@ export const permissionsArray = Object.keys(Permissions).reduce(
     [],
 );
 
+export const readOnlyPermissions = [
+    Permissions.PERMISSIONS.LIST.VALUE,
+    Permissions.USERS.LIST.VALUE,
+    Permissions.PROFILES.LIST.VALUE,
+    Permissions.DIGITAL_SIGNATURE.VIEW.VALUE,
+];
+
 
 
 export default Permissions;
