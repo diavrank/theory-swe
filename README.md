@@ -89,7 +89,21 @@ yarn
 
 Go to `./settings/` and copy `settings-development-example.json` to `settings-development.json` and modify the following:
 
-- **MAIL_URL:** Update the connection string according to your smtp credentials.
+- **MAIL_URL:** 
+
+For development environment.
+
+Install mailpit:
+````shell
+brew install mailpit
+````
+Open a separate terminal to run mailpit:
+````shell
+mailpit
+````
+
+For production environment:
+Update the connection string according to your smtp credentials.
 
 Running project
 ---------------
