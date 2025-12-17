@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json.schemastore.org/swcrc",
+  "jsc": {
+    "target": "es2020",
+    "parser": {
+      "syntax": "typescript",
+      "decorators": true
+    },
+    "transform": {
+      "legacyDecorator": true,
+      "decoratorMetadata": true,
+      "useDefineForClassFields": false
+    },
+    "baseUrl": ".",
+    "paths": {
+      "@root/*": ["./*"],
+      "@api/*": ["./imports/api/*"],
+      "@middlewares/*": ["./imports/middlewares/*"],
+      "@server/*": ["./imports/startup/server/*"],
+      "@components/*": ["./imports/ui/components/*"],
+      "@views/*": ["./imports/ui/views/*"],
+      "@layouts/*": ["./imports/ui/layouts/*"],
+      "@routes/*": ["./imports/ui/routes/*"],
+      "@mixins/*": ["./imports/ui/mixins/*"],
+      "@typings/*": ["./imports/ui/typings/*"]
+    }
+  },
+  "module": {
+    "type": "es6"
+  }
+}

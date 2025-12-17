@@ -11,11 +11,10 @@
     "visualize": "meteor --production --extra-packages bundle-visualizer"
   },
   "dependencies": {
-    "@babel/core": "^7.20.2",
-    "@babel/runtime": "^7.20.1",
     "@mdi/font": "^7.0.96",
     "@vee-validate/rules": "^4.6.7",
     "@vueuse/core": "^9.13.0",
+    "@swc/helpers": "^0.6.15",
     "bcrypt": "^5.0.1",
     "body-parser": "^2.2.1",
     "class-transformer": "^0.5.1",
@@ -47,7 +46,7 @@
     "webfontloader": "^1.6.28"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-decorators": "^7.25.9",
+    "@swc/core": "^1.10.1",
     "@types/body-parser": "^1.19.6",
     "@types/chai": "^4.2.22",
     "@types/express": "^5.0.6",
@@ -59,7 +58,6 @@
     "@types/sinon": "^10.0.4",
     "@types/webfontloader": "^1.6.35",
     "@vitejs/plugin-vue": "^5.2.1",
-    "babel-plugin-module-resolver": "^5.0.0",
     "chai": "^4.3.4",
     "faker": "^5.5.3",
     "husky": "^7.0.2",
@@ -78,6 +76,7 @@
     },
     "testModule": {
       "server": "tests/server/main.ts"
-    }
+    },
+    "modern": true
   }
 }
