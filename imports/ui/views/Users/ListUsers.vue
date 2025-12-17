@@ -12,10 +12,20 @@
       </v-tooltip>
     </div>
     <div class="section elevation-1">
-      <v-data-table :headers="headers" :items="users" @dblclick:row="(event,{item})=>openEditUser(item)">
+      <v-data-table-server
+        :headers="headers"
+        :items="users"
+        :items-length="pagination.total"
+        :loading="loading"
+        loading-text="Loading... Please wait"
+        v-model:page="pagination.page"
+        v-model:items-per-page="pagination.itemsPerPage"
+        @update:options="loadUsers"
+        density="compact"
+        @dblclick:row="(event,{item})=>openEditUser(item)">
         <template v-slot:item.avatar="{ item }">
-          <div class="d-flex align-center pt-5 pb-5">
-            <v-avatar>
+          <div class="d-flex align-center">
+            <v-avatar size="x-small">
                     <span v-if="item.profile.path == null" class="text-dark text-h5">
                         {{ $filters.initials(item.username, 2) }}
                     </span>
@@ -24,7 +34,7 @@
           </div>
         </template>
         <template v-slot:item.status="{ item }">
-          <div class="d-flex align-center pt-5 pb-5">
+          <div class="d-flex align-center">
             <v-icon :color="item.status.online?'green':'red'">
               mdi:mdi-checkbox-blank-circle
             </v-icon>
@@ -33,7 +43,7 @@
         <template v-slot:item.action="{ item }">
           <v-tooltip location="bottom" transition="fab-transition">
             <template v-slot:activator="{props}">
-              <v-btn v-can:edit.hide="'users'" icon="edit" color="success" v-bind="props" size="x-small" class="mr-2"
+              <v-btn v-can:edit.hide="'users'" variant="text" icon="edit" color="success" v-bind="props" size="x-small" class="mr-2"
                      @click="openEditUser(item)">
               </v-btn>
             </template>
@@ -41,14 +51,14 @@
           </v-tooltip>
           <v-tooltip location="bottom" transition="fab-transition">
             <template v-slot:activator="{props}">
-              <v-btn v-can:delete.hide="'users'" icon="close" color="error" v-bind="props" size="x-small" class="mr-2"
+              <v-btn v-can:delete.hide="'users'" variant="text" icon="close" color="error" v-bind="props" size="x-small" class="mr-2"
                      @click="openRemoveModal(item)">
               </v-btn>
             </template>
             <span>Remove</span>
           </v-tooltip>
         </template>
-      </v-data-table>
+      </v-data-table-server>
       <modal-remove ref="refModalRemove"
                     preposition="al"
                     type-element="usuario"
@@ -78,6 +88,13 @@ export default defineComponent({
       _id: undefined,
       element: {}
     } as ModalData,
+    loading: true,
+    pagination: {
+      page: 1,
+      itemsPerPage: 10,
+      total: 0
+    },
+    usersSubscription: null,
     headersData: {
       path: '',
       status: {},
@@ -144,8 +161,23 @@ export default defineComponent({
         }];
     }
   },
+  mounted() {
+    this.loadTotalUsers();
+  },
   methods: {
     ...mapActions(useTemporalStore, ['setElement']),
+    loadTotalUsers(): void {
+      Meteor.call('users.getTotal', (err: Meteor.Error, total: number) => {
+        if (err) {
+          console.error('Error counting users: ', err);
+          this.$alert.showAlertSimple('error', err.reason);
+
+          return;
+        }
+        this.pagination.total = total || 0;
+        this.loading = false;
+      });
+    },
     openEditUser(user: UserResponseDto): void {
       this.setElement(user);
       this.$router.push({ name: 'home.users.edit' });
@@ -167,16 +199,31 @@ export default defineComponent({
               this.$alert.showAlertSimple('error', err.reason);
             } else {
               this.$alert.showAlertSimple('success', response.message);
+              this.loadTotalUsers();
             }
           });
+    },
+    loadUsers({page, itemsPerPage}){
+      this.loading = true;
+      if(this.usersSubscription){
+        this.usersSubscription.sub.stop();
+      }
+      this.usersSubscription = this.$subscribe('users',{page,limit: itemsPerPage});    
     }
   },
-  meteor: {
-    $subscribe: {
-      'users': []
-    },
+  watch: {
+      'usersSubscription.sub.ready'(newValue) {
+          if (newValue) {
+            this.loading = false;
+          }
+      }
+  },
+  meteor:{
     users() {
-      return Meteor.users.find({ _id: { $ne: Meteor.userId() || undefined } }).fetch();
+      //TODO: Sort by name
+      return Meteor.users
+          .find({ _id: { $ne: Meteor.userId() || undefined } })
+          .fetch();
     }
   }
 });

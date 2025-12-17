@@ -1,6 +1,7 @@
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import fileHelper from '../../startup/server/utils/FileOperations';
+import { StaticProfiles } from '../Profiles/constants/static-profiles.constant';
 import { ProfilesService } from "../Profiles/profiles.service";
 import { SaveUserRequestDto } from './dtos/save-user-request.dto';
 import { UserRequestDto } from './dtos/user-request.dto';
@@ -162,5 +163,18 @@ export class UserService {
 
 	getUserById(id: string): Promise<User> {
 		return this.userRepository.findOneOrFail(id);
+	}
+
+	getUsersTotal(excludeUserId: string) {
+		const externalProfileNames = Object.keys(StaticProfiles)
+			.filter((staticProfileName) => StaticProfiles[staticProfileName].external)
+			.map((staticProfileName) => StaticProfiles[staticProfileName].name);
+
+		return Meteor.users.find({
+			_id: { $ne: excludeUserId },
+			'profile.profile': { $nin: externalProfileNames }
+		},
+			{ fields: { _id: 1 } })
+			.countAsync();
 	}
 }

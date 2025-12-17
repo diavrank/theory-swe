@@ -91,5 +91,10 @@ export class UsersController extends BaseController {
 
 		return this.userService.saveUser(requestDto);
 	}
-}
 
+	@Method('users.getTotal')
+	@CheckPermissions(Permissions.USERS.LIST.VALUE)
+	getUsersTotal() {
+		return this.userService.getUsersTotal(this.__context.userId);
+	}
+}
