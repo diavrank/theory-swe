@@ -3,24 +3,24 @@ import { Meteor } from 'meteor/meteor';
 import { createApp } from 'vue';
 
 // Main app
-import App from '../../ui/App.vue';
-import router from '../../ui/router';
+import mitt, { Emitter, EventType } from 'mitt';
+import { createPinia } from 'pinia';
 import { VueMeteor } from 'vue-meteor-tracker';
-import { VCan } from '/imports/ui/directives/v-can-directive';
+import App from '../../ui/App.vue';
+import '../../ui/plugins';
+import vuetify from '../../ui/plugins/vuetify';
+import router from '../../ui/router';
 import AlertMessage from '/imports/ui/components/Utilities/Alerts/AlertMessage.vue';
 import Loader from '/imports/ui/components/Utilities/Loaders/Loader.vue';
-import mitt, { Emitter, EventType } from 'mitt';
-import vuetify from '../../ui/plugins/vuetify';
-import { loadFonts } from '/imports/ui/plugins/webfontloader';
-import '../../ui/plugins';
+import { VCan } from '/imports/ui/directives/v-can-directive';
 import filters from '/imports/ui/filters';
-import { createPinia } from 'pinia';
+import { loadFonts } from '/imports/ui/plugins/webfontloader';
 
 declare module 'vue' {
 	interface ComponentCustomProperties {
 		$alert: typeof AlertMessage;
 		$loader: typeof Loader;
-		$filters: Object,
+		$filters: typeof filters,
 		emitter: Emitter<Record<EventType, unknown>>;
 	}
 }
