@@ -1,4 +1,4 @@
-import { User, UserProfileType, UserStatusType } from '../user.entity';
+import type { User, UserProfileType, UserStatusType } from '../user.entity';
 import { ResponseDto } from '/imports/common/dtos/response.dto';
 
 export class UserPublicationResponseDto extends ResponseDto {

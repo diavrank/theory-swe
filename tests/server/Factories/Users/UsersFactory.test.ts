@@ -1,9 +1,9 @@
 import faker from 'faker';
 import { Factory } from 'meteor/dburles:factory';
-import { Meteor } from 'meteor/meteor';
 import { StaticProfiles } from '/imports/api/Profiles/constants/static-profiles.constant';
+import { User } from '/imports/api/Users/user.entity';
 
-Factory.define('user', Meteor.users, {
+Factory.define('user', User.collection, {
 	username: () => faker.internet.userName(),
 	profile: {
 		name: () => faker.name.findName(),
@@ -24,7 +24,7 @@ Factory.define('user', Meteor.users, {
 	}
 });
 
-Factory.define('simpleUser', Meteor.users, {
+Factory.define('simpleUser', User.collection, {
 	username: () => faker.internet.userName(),
 	profile: {
 		name: () => faker.name.findName(),

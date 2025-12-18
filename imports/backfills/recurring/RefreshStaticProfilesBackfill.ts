@@ -2,6 +2,7 @@ import { Roles } from 'meteor/alanning:roles';
 import { Meteor } from 'meteor/meteor';
 import { StaticProfiles } from '../../api/Profiles/constants/static-profiles.constant';
 import { Profile } from '../../api/Profiles/profile.entity';
+import { User } from '/imports/api/Users/user.entity';
 
 export class RefreshStaticProfilesBackfill {
     static readonly backfillName = 'RefreshStaticProfilesBackfill';
@@ -22,7 +23,7 @@ export class RefreshStaticProfilesBackfill {
                 },
             );
 
-            const users = await Meteor.users
+            const users = await User.collection
                 .find({ 'profile.profile': staticProfile.name })
                 .fetchAsync();
 

@@ -1,5 +1,5 @@
 
-import { User } from "../user.entity";
+import { type User } from "../user.entity";
 import { UserResponseDto } from "./user-response.dto";
 import { ResponseDto } from "/imports/common/dtos/response.dto";
 

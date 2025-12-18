@@ -12,12 +12,24 @@
       </v-tooltip>
     </div>
     <div class="section elevation-1">
+      <div class="d-flex justify-end mb-4">
+        <v-text-field
+          v-model="search"
+          label="Search full name"
+          prepend-inner-icon="mdi:mdi-magnify"
+          clearable
+          hide-details
+          density="compact"
+          variant="outlined"
+        />
+      </div>
       <v-data-table-server
         :headers="headers"
         :items="users"
         :items-length="pagination.total"
         :loading="loading"
         loading-text="Loading... Please wait"
+        :search="search"
         v-model:page="pagination.page"
         v-model:items-per-page="pagination.itemsPerPage"
         @update:options="loadUsers"
@@ -77,6 +89,7 @@ import { Meteor } from 'meteor/meteor';
 import { mapActions } from 'pinia';
 import { defineComponent } from 'vue';
 import { UserResponseDto } from '/imports/api/Users/dtos/user-response.dto';
+import { UserCollection } from '/imports/api/Users/user.collection';
 import { useTemporalStore } from '/imports/ui/stores/temporal';
 
 export default defineComponent({
@@ -94,6 +107,7 @@ export default defineComponent({
       itemsPerPage: 10,
       total: 0
     },
+    search: '',
     usersSubscription: null,
     headersData: {
       path: '',
@@ -166,8 +180,9 @@ export default defineComponent({
   },
   methods: {
     ...mapActions(useTemporalStore, ['setElement']),
-    loadTotalUsers(): void {
-      Meteor.call('users.getTotal', (err: Meteor.Error, total: number) => {
+    loadTotalUsers(search = this.search): void {
+      const normalizedSearch = search.trim();
+      Meteor.call('users.getTotal', { search: normalizedSearch || undefined }, (err: Meteor.Error, total: number) => {
         if (err) {
           console.error('Error counting users: ', err);
           this.$alert.showAlertSimple('error', err.reason);
@@ -175,7 +190,6 @@ export default defineComponent({
           return;
         }
         this.pagination.total = total || 0;
-        this.loading = false;
       });
     },
     openEditUser(user: UserResponseDto): void {
@@ -203,12 +217,20 @@ export default defineComponent({
             }
           });
     },
-    loadUsers({page, itemsPerPage}){
+    loadUsers({ page, itemsPerPage }) {
       this.loading = true;
-      if(this.usersSubscription){
+      const normalizedSearch = this.search.trim();
+
+      if (this.usersSubscription) {
         this.usersSubscription.sub.stop();
       }
-      this.usersSubscription = this.$subscribe('users',{page,limit: itemsPerPage});    
+
+      this.usersSubscription = this.$subscribe('users', {
+        page,
+        limit: itemsPerPage,
+        search: normalizedSearch || undefined
+      });
+      this.loadTotalUsers(normalizedSearch);
     }
   },
   watch: {
@@ -220,8 +242,7 @@ export default defineComponent({
   },
   meteor:{
     users() {
-      //TODO: Sort by name
-      return Meteor.users
+      return UserCollection
           .find({ _id: { $ne: Meteor.userId() || undefined } })
           .fetch();
     }

@@ -1,9 +1,10 @@
 import { Roles } from 'meteor/alanning:roles';
 import { Meteor } from 'meteor/meteor';
+import { User } from '../Users/user.entity';
 import { UserService } from '../Users/users.service';
 import { StaticProfiles } from './constants/static-profiles.constant';
 import { SaveProfileDto } from './dtos/create-profile.dto';
-import { Profile } from './profile.entity';
+import { type Profile } from './profile.entity';
 import { ProfileRepository } from './profile.repository';
 import { Inject } from '/imports/common/decorators/inject.decorator';
 import { Injectable } from '/imports/common/decorators/injectable.decorator';
@@ -58,7 +59,8 @@ export class ProfilesService {
 
     // Update permissions
     if (oldProfile.name !== updateProfileDto.name) {
-      await Meteor.users.updateAsync(
+      // TODO: use usersService
+      await User.collection.updateAsync(
         { 'profile.profile': oldProfile.name },
         { $set: { 'profile.profile': newProfileName } },
         { multi: true }

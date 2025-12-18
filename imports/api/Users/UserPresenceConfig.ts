@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import Utilities from '../../startup/server/utils/helpers';
+import { User } from './user.entity';
 import { UserPresence } from './userPresence';
 
 // TODO: Maybe this file should be moved to the auth.module.ts
@@ -8,14 +9,14 @@ import { UserPresence } from './userPresence';
 // When a full cleanup is necessary we will unset the status field to show all users as offline
 UserPresence.onCleanup(function onCleanup(sessionIds?: string[]) {
 	if (!sessionIds) {
-		Meteor.users.updateAsync({}, { $set: { 'status.online': false }, $unset: { 'status.idle': true } }, { multi: true });
+		User.collection.updateAsync({}, { $set: { 'status.online': false }, $unset: { 'status.idle': true } }, { multi: true });
 	}
 });
 
 // When a user comes online we set their status to online and set the lastOnline field to the current time
 UserPresence.onUserOnline(function onUserOnline(userId: string, connection?: Meteor.Connection) {
 	if (connection) {
-		Meteor.users.updateAsync(userId, {
+		User.collection.updateAsync(userId, {
 			$set: {
 				'status.online': true,
 				'status.idle': false,
@@ -30,10 +31,10 @@ UserPresence.onUserOnline(function onUserOnline(userId: string, connection?: Met
 
 // When a user goes idle we'll set their status to indicate this
 UserPresence.onUserIdle(function onUserIdle(userId: string) {
-	Meteor.users.updateAsync(userId, { $set: { 'status.idle': true } });
+	User.collection.updateAsync(userId, { $set: { 'status.idle': true } });
 });
 
 // When a user goes offline we'll unset their status field to indicate offline status
 UserPresence.onUserOffline(function onUserOffline(userId: string) {
-	Meteor.users.updateAsync(userId, { $set: { 'status.online': false }, $unset: { 'status.idle': true } });
+	User.collection.updateAsync(userId, { $set: { 'status.online': false }, $unset: { 'status.idle': true } });
 });

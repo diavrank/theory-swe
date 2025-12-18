@@ -4,6 +4,7 @@ import Permissions from '../Permissions/helpers/permissions.helpers';
 import { SaveUserRequestDto } from './dtos/save-user-request.dto';
 import { UserDeleteRequestDto } from './dtos/user-delete-request.dto';
 import { UserResponseDto } from './dtos/user-response.dto';
+import { User } from './user.entity';
 import './UserPresenceConfig';
 import { UserService } from './users.service';
 import { BaseController } from '/imports/common/controllers/base.controller';
@@ -38,7 +39,7 @@ Accounts.validateLoginAttempt(async (loginAttempt: any) => {
 		const loginTokensOfUser: string[] = loginAttempt.user.services.resume?.loginTokens || [];
 		// Allow only up to 3 simultaneus tokens with the same user.
 		if (loginTokensOfUser.length > 3) {
-			await Meteor.users.updateAsync(loginAttempt.user._id, {
+			await User.collection.updateAsync(loginAttempt.user._id, {
 				$set: {
 					'services.resume.loginTokens': [loginTokensOfUser.pop()]
 				}
@@ -94,7 +95,7 @@ export class UsersController extends BaseController {
 
 	@Method('users.getTotal')
 	@CheckPermissions(Permissions.USERS.LIST.VALUE)
-	getUsersTotal() {
-		return this.userService.getUsersTotal(this.__context.userId);
+	getUsersTotal(request?: { search?: string }) {
+		return this.userService.getUsersTotal(this.__context.userId, request?.search);
 	}
 }

@@ -1,6 +1,7 @@
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
+import { NpmModuleMongodb } from 'meteor/npm-mongo';
 import process from 'node:process';
 
 type SessionStatus = 1 | 2; // 1 = idle, 2 = online
@@ -43,10 +44,11 @@ const assertFunction = (fn: unknown, message: string) => {
 	}
 };
 
-const createIndex = async (collection: Mongo.Collection<any>, index: Mongo.IndexSpecifier, options?: Mongo.IndexOptions) => {
+const createIndex = async (collection: Mongo.Collection<any>, index: NpmModuleMongodb.IndexSpecification, options?: NpmModuleMongodb.CreateIndexesOptions) => {
 	if ((collection as any).createIndexAsync) {
 		return (collection as any).createIndexAsync(index, options);
 	}
+	// TODO: Remove the below methods since are not compatible in Server side.
 	if ((collection as any).createIndex) {
 		return (collection as any).createIndex(index, options);
 	}

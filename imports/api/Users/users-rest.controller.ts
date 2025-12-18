@@ -6,6 +6,7 @@ import multer from 'multer';
 import 'reflect-metadata';
 import { Get, JsonController, Param, Post, QueryParam, Req, Res, UseBefore, useExpressServer } from 'routing-controllers';
 import fileHelper from '../../startup/server/utils/FileOperations';
+import { User } from './user.entity';
 
 const upload = multer({ storage: multer.memoryStorage() });
 const API_BASE_PATH = '/api';
@@ -19,7 +20,7 @@ const getAuthenticatedUserId = async (req: Request) => {
 	}
 
 	const hashedToken = Accounts['_hashLoginToken'](token);
-	const user = await Meteor.users.findOneAsync({
+	const user = await User.collection.findOneAsync({
 		_id: userId,
 		'services.resume.loginTokens.hashedToken': hashedToken
 	});

@@ -1,4 +1,4 @@
-import { Profile } from "../profile.entity";
+import { type Profile } from "../profile.entity";
 import { ResponseDto } from "/imports/common/dtos/response.dto";
 
 export class ProfileResponseDto extends ResponseDto {

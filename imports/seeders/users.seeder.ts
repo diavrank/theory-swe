@@ -1,7 +1,7 @@
 import { Accounts } from 'meteor/accounts-base';
 import { Factory } from 'meteor/dburles:factory';
-import { Meteor } from 'meteor/meteor';
 import { Random } from 'meteor/random';
+import { User } from '../api/Users/user.entity';
 import type { UserRequestDto } from '/imports/api/Users/dtos/user-request.dto';
 
 const parseBooleanEnv = (value: string | undefined, defaultValue: boolean): boolean => {
@@ -26,6 +26,7 @@ export class UsersSeeder {
 
     async run(): Promise<void> {
         if (!UsersSeeder.factoriesLoaded) {
+            // TODO: move this Factory to a factories folder to be used in seeders and tests. This is to avoid the dynamic import.
             await import('../../tests/server/Factories/Users/UsersFactory.test');
             UsersSeeder.factoriesLoaded = true;
         }
@@ -35,7 +36,7 @@ export class UsersSeeder {
         const shouldClearExisting = parseBooleanEnv(process.env.SEED_CLEAR, true);
 
         if (shouldClearExisting) {
-            const removedCount = await Meteor.users.removeAsync({ 'profile.seededBy': UsersSeeder.seederName } as any);
+            const removedCount = await User.collection.removeAsync({ 'profile.seededBy': UsersSeeder.seederName } as any);
             console.info(`[Seed] Removed ${removedCount} previously-seeded users`);
         }
 
@@ -54,7 +55,7 @@ export class UsersSeeder {
                 profile: templateUser.profile,
             });
 
-            await Meteor.users.updateAsync(
+            await User.collection.updateAsync(
                 { _id: userId } as any,
                 {
                     $set: {

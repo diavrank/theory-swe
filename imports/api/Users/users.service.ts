@@ -5,7 +5,7 @@ import { StaticProfiles } from '../Profiles/constants/static-profiles.constant';
 import { ProfilesService } from "../Profiles/profiles.service";
 import { SaveUserRequestDto } from './dtos/save-user-request.dto';
 import { UserRequestDto } from './dtos/user-request.dto';
-import { User } from './user.entity';
+import { type User } from './user.entity';
 import { UserRepository } from './user.repository';
 import { Inject } from '/imports/common/decorators/inject.decorator';
 import { Injectable } from '/imports/common/decorators/injectable.decorator';
@@ -40,7 +40,7 @@ export class UserService {
 		const existsUsername = await Accounts.findUserByUsername(newUsername);
 		if (userId) {
 			const oldUser = await this.userRepository.findOneOrFail(userId);
-			if (oldUser?.username !== newUsername && existsUsername) {
+			if (oldUser.username !== newUsername && existsUsername) {
 				throw new Meteor.Error('403', 'The new username is already in use');
 			}
 		} else if (existsUsername) {
@@ -165,16 +165,12 @@ export class UserService {
 		return this.userRepository.findOneOrFail(id);
 	}
 
-	getUsersTotal(excludeUserId: string) {
+	getUsersTotal(excludeUserId: string, search?: string) {
 		const externalProfileNames = Object.keys(StaticProfiles)
 			.filter((staticProfileName) => StaticProfiles[staticProfileName].external)
 			.map((staticProfileName) => StaticProfiles[staticProfileName].name);
+		const searchTerm = search?.trim();
 
-		return Meteor.users.find({
-			_id: { $ne: excludeUserId },
-			'profile.profile': { $nin: externalProfileNames }
-		},
-			{ fields: { _id: 1 } })
-			.countAsync();
+		return this.userRepository.findUsersTotal({ search: searchTerm, excludeUserId, externalProfileNames });
 	}
 }

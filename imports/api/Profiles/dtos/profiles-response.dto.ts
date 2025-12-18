@@ -1,4 +1,4 @@
-import { Profile } from '../profile.entity';
+import { type Profile } from '../profile.entity';
 import { ProfileResponseDto } from './profile-response.dto';
 import { ResponseDto } from '/imports/common/dtos/response.dto';
 
