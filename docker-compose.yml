@@ -1,4 +1,4 @@
-version: '3'
+version: '3.9'
 
 services:
   app:
@@ -47,7 +47,7 @@ services:
       - scaffold-net
   mongo-primary:
     container_name: mongo-primary
-    image: bitnami/mongodb:7.0
+    image: bitnami/mongodb:latest
     restart: always
     environment:
       - MONGODB_ADVERTISED_HOSTNAME=mongo-primary
@@ -65,7 +65,7 @@ services:
       - scaffold-net
   mongo-secondary:
     container_name: mongo-secondary
-    image: bitnami/mongodb:7.0
+    image: bitnami/mongodb:latest
     restart: always
     depends_on:
       - mongo-primary
@@ -81,7 +81,7 @@ services:
       - scaffold-net
   mongo-arbiter:
     container_name: mongo-arbiter
-    image: bitnami/mongodb:7.0
+    image: bitnami/mongodb:latest
     restart: always
     depends_on:
       - mongo-primary

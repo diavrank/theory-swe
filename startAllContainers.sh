@@ -1,1 +1,1 @@
-doppler run -- docker-compose up -d
+doppler run -- docker compose up -d
