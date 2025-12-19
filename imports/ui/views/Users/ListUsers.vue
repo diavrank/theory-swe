@@ -83,14 +83,16 @@
 <script lang="ts">
 import ModalRemove from '@components/Utilities/Modals/ModalRemove.vue';
 import { ResponseMessage } from '@server/utils/ResponseMessage';
-import { User } from '@typings/users';
 import { ModalData } from '@typings/utilities';
 import { Meteor } from 'meteor/meteor';
 import { mapActions } from 'pinia';
 import { defineComponent } from 'vue';
+import type { VDataTableServer } from 'vuetify/components';
 import { UserResponseDto } from '/imports/api/Users/dtos/user-response.dto';
 import { UserCollection } from '/imports/api/Users/user.collection';
 import { useTemporalStore } from '/imports/ui/stores/temporal';
+
+type DataTableHeaders = NonNullable<InstanceType<typeof VDataTableServer>['$props']['headers']>;
 
 export default defineComponent({
   name: 'ListUsers',
@@ -118,26 +120,28 @@ export default defineComponent({
     }
   }),
   computed: {
-    headers() {
+    headers(): DataTableHeaders {
       const self = this;
+      const headerProps = { class: ['subtitle-1', 'font-weight-light'] };
+
       return [
         {
           key: 'avatar',
           title: 'Image',
           sortable: false,
-          class: ['subtitle-1', 'font-weight-light']
+          headerProps
         },
         {
           key: 'status',
           title: 'Online',
           sortable: true,
-          class: ['subtitle-1', 'font-weight-light']
+          headerProps
         },
         {
           key: 'profile.name',
           title: 'Full name',
           sortable: true,
-          class: ['subtitle-1', 'font-weight-light'],
+          headerProps,
           filter(value: any): boolean {
             return value != null &&
                 typeof value === 'string' &&
@@ -149,7 +153,7 @@ export default defineComponent({
           key: 'username',
           title: 'Username',
           sortable: true,
-          class: ['subtitle-1', 'font-weight-light'],
+          headerProps,
           filter(value: any): boolean {
             return value != null &&
                 typeof value === 'string' &&
@@ -161,8 +165,7 @@ export default defineComponent({
           key: 'email',
           title: 'Email',
           sortable: true,
-          class: ['subtitle-1', 'font-weight-light'],
-          divider: true,
+          headerProps,
           filter(value: any): boolean {
             return value != null &&
                 typeof value === 'string' &&
@@ -171,9 +174,12 @@ export default defineComponent({
         },
         {
           key: 'action', title: 'Options', sortable: false, align: 'center',
-          class: ['subtitle-1', 'font-weight-light']
+          headerProps
         }];
-    }
+    },
+    users(): UserResponseDto[] {
+      return (this as any).users
+    },
   },
   mounted() {
     this.loadTotalUsers();
@@ -196,9 +202,9 @@ export default defineComponent({
       this.setElement(user);
       this.$router.push({ name: 'home.users.edit' });
     },
-    openRemoveModal(user: User): void {
+    openRemoveModal(user: UserResponseDto): void {
       this.modalData.element = user;
-      this.modalData._id = user._id;
+      this.modalData._id = user.id;
       this.modalData.element.removed = false;
       this.modalData.mainNameElement = user.profile.name;
       this.$refs.refModalRemove.dialog = true;
