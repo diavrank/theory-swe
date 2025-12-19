@@ -1,6 +1,4 @@
-#!/usr/bin/env bash
-
-set -euo pipefail
+#!/usr/bin bash
 
 # Update Docker installation steps for the latest Ubuntu release (24.04+)
 sudo apt-get update
