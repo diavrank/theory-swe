@@ -5,3 +5,5 @@ node_modules/
 .uploads
 .binnacle
 settings/settings-development.json
+# for mongodb database in cloud env
+data/
