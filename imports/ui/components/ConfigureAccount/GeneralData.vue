@@ -63,7 +63,6 @@
 </template>
 
 <script lang="ts">
-import profilesMixin from '@mixins/accounts/profiles';
 import uploadImage from '@mixins/users/uploadImage';
 import validateForm from '@mixins/validateForm';
 import { Meteor } from 'meteor/meteor';
@@ -75,7 +74,7 @@ import { useAuthStore } from '/imports/ui/stores/auth';
 
 export default defineComponent({
   name: 'GeneralData',
-  mixins: [validateForm, profilesMixin, uploadImage],
+  mixins: [validateForm, uploadImage],
   components: {
     Form,
     Field

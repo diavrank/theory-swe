@@ -1,6 +1,8 @@
 import Permissions from '../Permissions/helpers/permissions.helpers';
 import { SaveProfileDto } from './dtos/create-profile.dto';
 import { DeleteProfileDto } from './dtos/delete-profile.dto';
+import { ProfilesPaginatedRequestDto } from './dtos/profiles-paginated-request.dto';
+import { ProfilesPaginatedResponseDto } from './dtos/profiles-paginated-response.dto';
 import { ProfileResponseDto } from './dtos/profile-response.dto';
 import { ProfilesResponseDto } from './dtos/profiles-response.dto';
 import { ProfilesService } from './profiles.service';
@@ -39,5 +41,13 @@ export class ProfilesController extends BaseController {
   @Dto(ProfilesResponseDto)
   async listNonExternalProfiles() {
     return this.profilesService.listNonExternalProfiles();
+  }
+
+  @Method('profile.listPaginated')
+  @CheckPermissions(Permissions.PROFILES.LIST.VALUE)
+  @Validate(ProfilesPaginatedRequestDto)
+  @Dto(ProfilesPaginatedResponseDto)
+  async listPaginatedProfiles(requestDto: ProfilesPaginatedRequestDto) {
+    return this.profilesService.listPaginatedProfiles(requestDto);
   }
 }

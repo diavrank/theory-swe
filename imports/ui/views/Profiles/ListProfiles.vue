@@ -14,8 +14,18 @@
           </v-tooltip>
         </div>
         <div class="section elevation-1">
-          <v-data-table :headers="headers" :items="profiles" :sort-by="[{ key: 'description', order: 'asc' }]"
-                        @dblclick:row="(event,{item})=>openEditProfile(item)">
+          <v-data-table-server
+            :headers="headers"
+            :items="profiles"
+            :items-length="pagination.total"
+            :loading="loading"
+            loading-text="Loading... Please wait"
+            v-model:page="pagination.page"
+            v-model:items-per-page="pagination.itemsPerPage"
+            @update:options="loadProfiles"
+            :sort-by="[{ key: 'description', order: 'asc' }]"
+            density="compact"
+            @dblclick:row="(event,{item})=>openEditProfile(item)">
             <template v-slot:item.action="{ item }">
               <v-tooltip location="bottom" transition="fab-transition">
                 <template v-slot:activator="{props}">
@@ -34,7 +44,7 @@
                 <span>Remove</span>
               </v-tooltip>
             </template>
-          </v-data-table>
+          </v-data-table-server>
           <modal-remove ref="refModalRemove"
                         preposition="el"
                         type-element="perfil"
@@ -48,18 +58,17 @@
 
 <script lang="ts">
 import ModalRemove from '@components/Utilities/Modals/ModalRemove.vue';
-import profilesMixin from '@mixins/accounts/profiles';
 import { ResponseMessage } from '@server/utils/ResponseMessage';
 import { Profile } from '@typings/users';
 import { ModalData } from '@typings/utilities';
 import { Meteor } from 'meteor/meteor';
 import { defineComponent } from 'vue';
+import { ProfilesPaginatedResponseDto } from '/imports/api/Profiles/dtos/profiles-paginated-response.dto';
 import { useTemporalStore } from '/imports/ui/stores/temporal';
 
 export default defineComponent({
   name: 'ListProfiles',
   components: { ModalRemove },
-  mixins: [profilesMixin],
   setup() {
     const temporalStore = useTemporalStore();
     return {temporalStore};
@@ -70,6 +79,13 @@ export default defineComponent({
       _id: undefined,
       element: {}
     } as ModalData,
+    loading: true,
+    pagination: {
+      page: 1,
+      itemsPerPage: 10,
+      total: 0
+    },
+    profiles: [] as Profile[],
     headers: [
       {
         key: 'description',
@@ -83,7 +99,26 @@ export default defineComponent({
         class: ['subtitle-1', 'font-weight-light']
       }]
   }),
+  mounted() {
+    this.loadProfiles({ page: this.pagination.page, itemsPerPage: this.pagination.itemsPerPage });
+  },
   methods: {
+    loadProfiles({ page, itemsPerPage }: { page: number; itemsPerPage: number }) {
+      this.loading = true;
+      Meteor.call('profile.listPaginated', { page, limit: itemsPerPage },
+          (error: Meteor.Error, response: ProfilesPaginatedResponseDto) => {
+            if (error) {
+              console.error('Error listing profiles: ', error);
+              this.$alert.showAlertSimple('error', error.reason);
+              this.loading = false;
+              return;
+            }
+
+            this.profiles = response?.data || [];
+            this.pagination.total = response?.total || 0;
+            this.loading = false;
+          });
+    },
     openRemoveModal(profile: Profile) {
       this.modalData.element = profile;
       this.modalData._id = profile._id;
@@ -113,6 +148,7 @@ export default defineComponent({
 
         } else {
           this.$alert.showAlertSimple('success', 'Profile removed successfully!');
+          this.loadProfiles({ page: this.pagination.page, itemsPerPage: this.pagination.itemsPerPage });
         }
       });
 
