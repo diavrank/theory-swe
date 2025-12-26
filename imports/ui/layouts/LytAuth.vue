@@ -10,7 +10,13 @@
         </transition>
       </router-view>
     </v-col>
-    <v-col xs="12" sm="4" md="8" class="right-side d-flex flex-column justify-center">
+    <v-col
+      xs="12"
+      sm="4"
+      md="8"
+      class="right-side d-flex flex-column justify-center"
+      :style="rightSideStyle"
+    >
       <div class="text-h2 font-weight-medium mr-10 text-right text-white">
         Scaffold
       </div>
@@ -23,6 +29,12 @@ import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'LytAuth',
+  computed: {
+    rightSideStyle() {
+      // Keep the image served from Meteor's public folder instead of the Vite assets base
+      return { backgroundImage: "url('/img/meteor.jpg')" };
+    }
+  },
   mounted() {
     document.documentElement.classList.add('auth-no-scroll');
   },
@@ -38,7 +50,6 @@ export default defineComponent({
   margin-top: 300px
 
 .right-side
-  background-image: url('/img/meteor.jpg')
   background-size: cover
   color: var(--body-color)
   position: relative
