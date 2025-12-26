@@ -44,6 +44,8 @@ services:
     volumes:
       - $PWD/data:/bitnami
       - $PWD/database:/opt/database
+    ports:
+      - 27017:27017
     networks:
       - scaffold-net
   mongo-secondary:
@@ -60,6 +62,8 @@ services:
       - MONGODB_INITIAL_PRIMARY_PORT_NUMBER
       - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD
       - MONGODB_REPLICA_SET_KEY
+    ports:
+      - 28017:27017
     networks:
       - scaffold-net
   mongo-arbiter:
@@ -76,6 +80,8 @@ services:
       - MONGODB_INITIAL_PRIMARY_PORT_NUMBER
       - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD
       - MONGODB_REPLICA_SET_KEY
+    ports:
+      - 29017:27017
     networks:
       - scaffold-net
 networks:
