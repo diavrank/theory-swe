@@ -5,7 +5,6 @@ import { resetDatabase } from 'meteor/jessedev:cleaner';
 import { Meteor } from 'meteor/meteor';
 import { StaticProfiles } from '../../../imports/api/Profiles/constants/static-profiles.constant';
 import { systemOptions } from '../../../imports/api/Profiles/constants/system-options.constants';
-import { initializeDatabaseForTest } from '../database/initializeDatabaseForTest';
 import '/imports/api/app.module';
 
 describe('SystemOptionsCtrl', function () {
@@ -14,7 +13,6 @@ describe('SystemOptionsCtrl', function () {
 
 	before(async function () {
 		resetDatabase({ excludedCollections: ['roles', 'role-assignment', 'profiles'] });
-		await initializeDatabaseForTest();
 		adminUser = await Factory.createAsync<Meteor.User>('user');
 		getSystemOptionsMethod = Meteor.server.method_handlers['profile.getSystemOptions'];
 		await Roles.setUserRolesAsync(adminUser._id, StaticProfiles.admin.permissions, StaticProfiles.admin.name);
@@ -27,7 +25,7 @@ describe('SystemOptionsCtrl', function () {
 		chai.assert.sameMembers(returnedPermissions, systemOptions.map(option => option.permission));
 	});
 
-	it('Filters options by user permissions', async function () {
+	it('Filters options by user permissions.', async function () {
 		const limitedProfileName = 'limited-system-options';
 		const limitedPermissions = [systemOptions[0].permission];
 		const limitedUser = await Factory.createAsync<Meteor.User>('user', {

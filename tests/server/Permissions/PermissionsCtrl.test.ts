@@ -5,7 +5,6 @@ import { resetDatabase } from 'meteor/jessedev:cleaner';
 import { Meteor } from 'meteor/meteor';
 import Permissions from '../../../imports/api/Permissions/helpers/permissions.helpers';
 import { StaticProfiles } from '../../../imports/api/Profiles/constants/static-profiles.constant';
-import { initializeDatabaseForTest } from '../database/initializeDatabaseForTest';
 import '/imports/api/app.module';
 import { Profile } from '/imports/api/Profiles/profile.entity';
 
@@ -18,7 +17,6 @@ describe('PermissionsCtrl', function () {
 
 	before(async function () {
 		resetDatabase({ excludedCollections: ['roles', 'role-assignment', 'profiles'] });
-		await initializeDatabaseForTest();
 		adminUser = await Factory.createAsync<Meteor.User>('user');
 		profile = await Factory.createAsync<Profile>('profile', { permissions: [Permissions.USERS.LIST.VALUE] });
 		listPermissionsMethod = Meteor.server.method_handlers['permissions.list'];

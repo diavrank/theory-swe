@@ -5,7 +5,6 @@ import { resetDatabase } from 'meteor/jessedev:cleaner';
 import { Meteor } from 'meteor/meteor';
 import Permissions from '../../../imports/api/Permissions/helpers/permissions.helpers';
 import { StaticProfiles } from '../../../imports/api/Profiles/constants/static-profiles.constant';
-import { initializeDatabaseForTest } from '../database/initializeDatabaseForTest';
 import '/imports/api/app.module';
 
 describe('AuthCtrl', function () {
@@ -14,7 +13,6 @@ describe('AuthCtrl', function () {
 
 	before(async function () {
 		resetDatabase({ excludedCollections: ['roles', 'role-assignment', 'profiles'] });
-		await initializeDatabaseForTest();
 		userWithPermission = <Meteor.User>await Factory.createAsync('user');
 		checkPermissionMethod = Meteor.server.method_handlers['auth.checkPermission'];
 		await Roles.setUserRolesAsync(userWithPermission._id, [Permissions.USERS.LIST.VALUE], StaticProfiles.admin.name);

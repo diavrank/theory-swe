@@ -6,7 +6,6 @@ import { resetDatabase } from 'meteor/jessedev:cleaner';
 import { Meteor } from 'meteor/meteor';
 import Permissions from '../../../imports/api/Permissions/helpers/permissions.helpers';
 import { StaticProfiles } from '../../../imports/api/Profiles/constants/static-profiles.constant';
-import { initializeDatabaseForTest } from '../database/initializeDatabaseForTest';
 import '/imports/api/app.module';
 
 describe('DigitalSignatureCtrl', function () {
@@ -19,7 +18,6 @@ describe('DigitalSignatureCtrl', function () {
 
 	before(async function () {
 		resetDatabase({ excludedCollections: ['roles', 'role-assignment', 'profiles'] });
-		await initializeDatabaseForTest();
 		user = await Factory.createAsync<Meteor.User>('user');
 		signMethod = Meteor.server.method_handlers['digitalSignature.sign'];
 		verifyMethod = Meteor.server.method_handlers['digitalSignature.verify'];
