@@ -3369,6 +3369,11 @@ meteor-node-stubs@^1.2.24:
     util "^0.12.5"
     vm-browserify "^1.1.2"
 
+meteor-user-presence@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/meteor-user-presence/-/meteor-user-presence-1.0.1.tgz#1c0ccd1ad3b7542d7d8b55f45e8a8c8e40466cb8"
+  integrity sha512-R9cRHX8/91OAjqgaCDeDMucGRGeLNmFey6vKnQllKi2fM/n8Ib050xHEpT3yhuKGUAPd8pySzlgmsqjaT6TWFQ==
+
 meteor-vite@^3.8.0:
   version "3.8.0"
   resolved "https://registry.yarnpkg.com/meteor-vite/-/meteor-vite-3.8.0.tgz#c441985d58c61e85369875f29700840a4299bfcd"

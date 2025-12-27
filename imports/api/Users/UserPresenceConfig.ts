@@ -1,7 +1,7 @@
+import { UserPresence } from 'meteor-user-presence';
 import { Meteor } from 'meteor/meteor';
 import Utilities from '../../startup/server/utils/helpers';
 import { User } from './user.entity';
-import { UserPresence } from './userPresence';
 
 // TODO: Maybe this file should be moved to the auth.module.ts
 
