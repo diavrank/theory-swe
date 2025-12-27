@@ -6,7 +6,7 @@ interface Email {
 }
 
 interface Profile {
-	_id?: string;
+	id?: string;
 	profile?: string;
 	name?: string;
 	path?: string;
@@ -23,6 +23,6 @@ interface User {
 }
 
 export {
-	User,
-	Profile
+	Profile, User
 };
+

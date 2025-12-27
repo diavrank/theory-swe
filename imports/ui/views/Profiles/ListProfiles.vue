@@ -63,6 +63,7 @@ import { Profile } from '@typings/users';
 import { ModalData } from '@typings/utilities';
 import { Meteor } from 'meteor/meteor';
 import { defineComponent } from 'vue';
+import { ProfileResponseDto } from '/imports/api/Profiles/dtos/profile-response.dto';
 import { ProfilesPaginatedResponseDto } from '/imports/api/Profiles/dtos/profiles-paginated-response.dto';
 import { useTemporalStore } from '/imports/ui/stores/temporal';
 
@@ -85,7 +86,7 @@ export default defineComponent({
       itemsPerPage: 10,
       total: 0
     },
-    profiles: [] as Profile[],
+    profiles: [] as ProfileResponseDto[],
     headers: [
       {
         key: 'description',
@@ -121,13 +122,12 @@ export default defineComponent({
     },
     openRemoveModal(profile: Profile) {
       this.modalData.element = profile;
-      this.modalData._id = profile._id;
+      this.modalData._id = profile.id;
       this.modalData.element.removed = false;
       this.modalData.mainNameElement = profile.description;
       this.$refs.refModalRemove.dialog = true;
     },
     openEditProfile(profile: Profile) {
-      console.log(profile);
       this.temporalStore.setElement(profile);
       this.$router.push({ name: 'home.profiles.edit' });
     },

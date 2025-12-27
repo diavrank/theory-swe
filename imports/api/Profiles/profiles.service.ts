@@ -46,10 +46,10 @@ export class ProfilesService {
       description: newDescription
     } = updateProfileDto;
 
-    const oldProfile = await this.profileRepository.findOneOrFail(updateProfileDto._id);
+    const oldProfile = await this.profileRepository.findOneOrFail(updateProfileDto.id);
 
-    await this.validateName(newProfileName, updateProfileDto._id);
-    await this.profileRepository.update(updateProfileDto._id, {
+    await this.validateName(newProfileName, updateProfileDto.id);
+    await this.profileRepository.update(updateProfileDto.id, {
       $set: {
         name: newProfileName,
         description: newDescription,
@@ -74,10 +74,10 @@ export class ProfilesService {
   }
 
   async save(saveProfileDto: SaveProfileDto): Promise<Profile> {
-    const { _id, name, description, permissions } = saveProfileDto;
-    await this.validateName(name, _id);
+    const { id, name, description, permissions } = saveProfileDto;
+    await this.validateName(name, id);
 
-    let profileId = _id;
+    let profileId = id;
     if (profileId) {
       await this.update(saveProfileDto);
 
