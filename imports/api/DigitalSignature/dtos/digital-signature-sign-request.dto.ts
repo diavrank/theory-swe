@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString } from 'class-validator';
-import { RequestDto } from '/imports/common/dtos/request.dto';
+import { RequestDto } from 'meteorjs-decorators';
 
 export class DigitalSignatureSignRequestDto extends RequestDto {
     @IsString()

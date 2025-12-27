@@ -1,5 +1,6 @@
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
+import { Inject, Injectable, forwardRef } from 'meteorjs-decorators';
 import fileHelper from '../../startup/server/utils/FileOperations';
 import { StaticProfiles } from '../Profiles/constants/static-profiles.constant';
 import { ProfilesService } from "../Profiles/profiles.service";
@@ -7,9 +8,6 @@ import { SaveUserRequestDto } from './dtos/save-user-request.dto';
 import { UserRequestDto } from './dtos/user-request.dto';
 import { type User } from './user.entity';
 import { UserRepository } from './user.repository';
-import { Inject } from '/imports/common/decorators/inject.decorator';
-import { Injectable } from '/imports/common/decorators/injectable.decorator';
-import { forwardRef } from '/imports/common/utils/forward-ref';
 
 export const PATH_USER_FILES = 'users/';
 

@@ -1,7 +1,7 @@
 import { ProfileRepository } from '../Profiles/profile.repository';
 import { RoleType } from './Permission';
 import { RoleRepository } from './role.repository';
-import { Injectable } from '/imports/common/decorators/injectable.decorator';
+import { Injectable } from 'meteorjs-decorators';
 
 @Injectable()
 export class PermissionsService {

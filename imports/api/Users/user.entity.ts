@@ -1,7 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
-import { Entity, Index } from '/imports/common/decorators/entity.decorator';
-import { BaseEntity } from '/imports/common/entities/base.entity';
+import { BaseEntity, Entity, Index } from 'meteorjs-decorators';
 
 export interface UserStatusType {
 	online: boolean;

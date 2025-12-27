@@ -1,4 +1,4 @@
-import { ResponseDto } from '/imports/common/dtos/response.dto';
+import { ResponseDto } from 'meteorjs-decorators';
 
 export class CheckPermissionResponseDto extends ResponseDto {
     hasPermission: boolean;

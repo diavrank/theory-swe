@@ -1,6 +1,6 @@
 import { SystemOptionType } from '../constants/system-options.constants';
 import { SystemOptionResponseDto } from './system-option-response.dto';
-import { ResponseDto } from '/imports/common/dtos/response.dto';
+import { ResponseDto } from 'meteorjs-decorators';
 
 export class SystemOptionsResponseDto extends ResponseDto {
     data: SystemOptionResponseDto[];

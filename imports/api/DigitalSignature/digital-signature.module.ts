@@ -1,6 +1,6 @@
 import { DigitalSignatureController } from './digital-signature.controller';
 import { DigitalSignatureService } from './digital-signature.service';
-import { Module } from '/imports/common/utils/module';
+import { Module } from 'meteorjs-decorators';
 
 @Module({
     controllers: [

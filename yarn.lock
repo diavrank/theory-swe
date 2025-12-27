@@ -3386,6 +3386,15 @@ meteor-vite@^3.8.0:
     picocolors "^1.0.0"
     semver "^7.6.3"
 
+meteorjs-decorators@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/meteorjs-decorators/-/meteorjs-decorators-1.0.2.tgz#a6d58a5f9eb58672ab715b17ea8f10b459c99cd9"
+  integrity sha512-FkxjTEw1qxhIFKgJQJKNPgHN7WLQ4DbCbuUoplEu6gMizr3N/YtnrOk4Eg2hSF5fl5n3q/4d6MfIKZ1OS1ILfw==
+  dependencies:
+    class-transformer "^0.5.1"
+    class-validator "^0.14.1"
+    reflect-metadata "^0.2.2"
+
 methods@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/methods/-/methods-1.1.2.tgz#5529a4d67654134edcc5266656835b0f851afcee"

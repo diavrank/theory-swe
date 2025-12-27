@@ -2,7 +2,7 @@ import { Roles } from 'meteor/alanning:roles';
 import { UserService } from '../../Users/users.service';
 import { StaticProfiles } from '../constants/static-profiles.constant';
 import { systemOptions, SystemOptionType } from '../constants/system-options.constants';
-import { Injectable } from '/imports/common/decorators/injectable.decorator';
+import { Injectable } from 'meteorjs-decorators';
 
 @Injectable()
 export class SystemOptionsService {

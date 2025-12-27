@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsOptional, IsString, ValidateNested } from "class-validator";
 import { Type } from "class-transformer";
-import { RequestDto } from "/imports/common/dtos/request.dto";
+import { RequestDto } from "meteorjs-decorators";
 import { UserRequestDto } from "./user-request.dto";
 
 export class SaveUserRequestDto extends RequestDto {

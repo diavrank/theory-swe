@@ -1,5 +1,5 @@
 import { SystemOptionType } from '../constants/system-options.constants';
-import { ResponseDto } from '/imports/common/dtos/response.dto';
+import { ResponseDto } from 'meteorjs-decorators';
 
 export class SystemOptionResponseDto extends ResponseDto {
     icon: string;

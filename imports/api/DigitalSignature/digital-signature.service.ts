@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import { DigitalSignatureSignRequestDto } from './dtos/digital-signature-sign-request.dto';
 import { DigitalSignatureVerifyRequestDto } from './dtos/digital-signature-verify-request.dto';
-import { Injectable } from '/imports/common/decorators/injectable.decorator';
+import { Injectable } from 'meteorjs-decorators';
 
 @Injectable()
 export class DigitalSignatureService {

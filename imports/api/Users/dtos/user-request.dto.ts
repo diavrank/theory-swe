@@ -1,6 +1,6 @@
 import { Type } from "class-transformer";
 import { IsEmail, IsOptional, IsString, ValidateNested } from "class-validator";
-import { RequestDto } from "/imports/common/dtos/request.dto";
+import { RequestDto } from "meteorjs-decorators";
 
 class ProfileDto {
     @IsString()

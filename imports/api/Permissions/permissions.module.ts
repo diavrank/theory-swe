@@ -1,7 +1,7 @@
 import { PermissionsController } from './permissions.controller';
 import { PermissionsPublication } from './permissions.publication';
 import { PermissionsService } from './permissions.service';
-import { Module } from '/imports/common/utils/module';
+import { Module } from 'meteorjs-decorators';
 
 @Module({
     controllers: [
