@@ -1,9 +1,9 @@
 import Permissions from '../Permissions/helpers/permissions.helpers';
 import { SaveProfileDto } from './dtos/create-profile.dto';
 import { DeleteProfileDto } from './dtos/delete-profile.dto';
+import { ProfileResponseDto } from './dtos/profile-response.dto';
 import { ProfilesPaginatedRequestDto } from './dtos/profiles-paginated-request.dto';
 import { ProfilesPaginatedResponseDto } from './dtos/profiles-paginated-response.dto';
-import { ProfileResponseDto } from './dtos/profile-response.dto';
 import { ProfilesResponseDto } from './dtos/profiles-response.dto';
 import { ProfilesService } from './profiles.service';
 import { BaseController } from '/imports/common/controllers/base.controller';
@@ -33,7 +33,7 @@ export class ProfilesController extends BaseController {
   @CheckPermissions(Permissions.PROFILES.DELETE.VALUE)
   @Validate(DeleteProfileDto)
   async deleteProfile(deleteProfileDto: DeleteProfileDto) {
-    await this.profilesService.delete(deleteProfileDto.profileId);
+    return this.profilesService.delete(deleteProfileDto.profileId);
   }
 
   @Method('profile.listNonExternal')

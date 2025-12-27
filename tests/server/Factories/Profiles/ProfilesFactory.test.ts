@@ -4,7 +4,7 @@ import { permissionsArray } from '../../../../imports/api/Permissions/helpers/pe
 import { Profile } from '/imports/api/Profiles/profile.entity';
 
 Factory.define('profile', Profile.collection, {
-	name: () => faker.name.jobDescriptor(),
-	description: () => faker.name.title(),
+	name: () => faker.name.title(),
+	description: () => faker.name.jobDescriptor(),
 	permissions: () => faker.random.arrayElements(permissionsArray.map(p => p.VALUE))
 });
