@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsOptional, IsString } from "class-validator";
-import { RequestDto } from "/imports/common/dtos/request.dto";
+import { RequestDto } from "meteorjs-decorators";
 
 export class UserDeleteRequestDto extends RequestDto {
     @IsString()

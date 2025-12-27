@@ -1,11 +1,7 @@
+import { Auth, BaseController, Controller, Dto, Method } from 'meteorjs-decorators';
 import { SystemOptionType } from '../constants/system-options.constants';
 import { SystemOptionsResponseDto } from '../dtos/system-options-response.dto';
 import { SystemOptionsService } from '../services/system-options.service';
-import { BaseController } from '/imports/common/controllers/base.controller';
-import { Auth } from '/imports/common/decorators/auth-guard.decorator';
-import { Controller } from '/imports/common/decorators/controller.decorator';
-import { Dto } from '/imports/common/decorators/dto.decorator';
-import { Method } from '/imports/common/decorators/method.decorator';
 
 @Controller()
 export class SystemOptionsController extends BaseController {

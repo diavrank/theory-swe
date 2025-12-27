@@ -1,5 +1,5 @@
 import { type Profile } from "../profile.entity";
-import { ResponseDto } from "/imports/common/dtos/response.dto";
+import { ResponseDto } from "meteorjs-decorators";
 
 export class ProfileResponseDto extends ResponseDto {
     id: string;

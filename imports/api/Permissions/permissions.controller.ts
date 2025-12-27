@@ -1,13 +1,8 @@
+import { BaseController, CheckPermissions, Controller, Dto, Method, Validate } from 'meteorjs-decorators';
 import { PermissionsResponseDto } from './dtos/permissions-response.dto';
 import { ProfilePermissionsRequestDto } from './dtos/profile-permissions-request.dto';
 import Permissions from './helpers/permissions.helpers';
 import { PermissionsService } from './permissions.service';
-import { BaseController } from '/imports/common/controllers/base.controller';
-import { Controller } from '/imports/common/decorators/controller.decorator';
-import { Dto } from '/imports/common/decorators/dto.decorator';
-import { Method } from '/imports/common/decorators/method.decorator';
-import { CheckPermissions } from '/imports/common/decorators/permissions.decorator';
-import { Validate } from '/imports/common/decorators/validate.decorator';
 
 @Controller()
 export class PermissionsController extends BaseController {

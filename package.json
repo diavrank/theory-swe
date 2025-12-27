@@ -32,7 +32,9 @@
     "iso-datestring-validator": "^2.2.0",
     "load-esm": "^1.0.3",
     "meteor-node-stubs": "^1.2.24",
+    "meteor-user-presence": "^1.0.1",
     "meteor-vite": "^3.8.0",
+    "meteorjs-decorators": "^1.0.2",
     "mimetypes": "^0.1.1",
     "mitt": "^3.0.0",
     "multer": "^2.0.2",
@@ -46,8 +48,7 @@
     "vue-router": "^4.1.5",
     "vuedraggable": "^4.1.0",
     "vuetify": "^3.4.6",
-    "webfontloader": "^1.6.28",
-    "meteor-user-presence": "^1.0.1"
+    "webfontloader": "^1.6.28"
   },
   "devDependencies": {
     "@babel/plugin-proposal-decorators": "^7.25.9",

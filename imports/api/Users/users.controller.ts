@@ -1,5 +1,6 @@
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
+import { Auth, BaseController, CheckPermissions, Controller, DeleteResponse, Dto, Method, Validate } from 'meteorjs-decorators';
 import Permissions from '../Permissions/helpers/permissions.helpers';
 import { SaveUserRequestDto } from './dtos/save-user-request.dto';
 import { UserDeleteRequestDto } from './dtos/user-delete-request.dto';
@@ -7,14 +8,6 @@ import { UserResponseDto } from './dtos/user-response.dto';
 import { User } from './user.entity';
 import './UserPresenceConfig';
 import { UserService } from './users.service';
-import { BaseController } from '/imports/common/controllers/base.controller';
-import { Auth } from '/imports/common/decorators/auth-guard.decorator';
-import { Controller } from '/imports/common/decorators/controller.decorator';
-import { Dto } from '/imports/common/decorators/dto.decorator';
-import { Method } from '/imports/common/decorators/method.decorator';
-import { CheckPermissions } from '/imports/common/decorators/permissions.decorator';
-import { Validate } from '/imports/common/decorators/validate.decorator';
-import { DeleteResponse } from '/imports/common/dtos/delete-response.dto';
 
 // TODO: Maybe these listeners should be moved to auth.module 
 Accounts.onCreateUser((options: any, user: Meteor.User) => {

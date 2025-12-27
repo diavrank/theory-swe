@@ -3,7 +3,7 @@ import { DigitalSignatureModule } from './DigitalSignature/digital-signature.mod
 import { PermissionsModule } from './Permissions/permissions.module';
 import { ProfilesModule } from './Profiles/profiles.module';
 import { UsersModule } from './Users/users.module';
-import { Module } from '/imports/common/utils/module';
+import { Module } from 'meteorjs-decorators';
 
 @Module({
     imports: [

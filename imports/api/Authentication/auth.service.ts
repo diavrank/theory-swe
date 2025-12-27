@@ -1,6 +1,6 @@
 import { Roles } from 'meteor/alanning:roles';
 import { CheckPermissionRequestDto } from './dtos/check-permission-request.dto';
-import { Injectable } from '/imports/common/decorators/injectable.decorator';
+import { Injectable } from 'meteorjs-decorators';
 
 @Injectable()
 export class AuthService {

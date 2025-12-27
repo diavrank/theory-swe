@@ -1,3 +1,3 @@
-import { PaginationRequestDto } from '/imports/common/dtos/pagination-request.dto';
+import { PaginationRequestDto } from 'meteorjs-decorators';
 
 export class ProfilesPaginatedRequestDto extends PaginationRequestDto {}

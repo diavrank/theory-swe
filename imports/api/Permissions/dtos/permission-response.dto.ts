@@ -1,5 +1,5 @@
 import { RoleType } from '../Permission';
-import { ResponseDto } from '/imports/common/dtos/response.dto';
+import { ResponseDto } from 'meteorjs-decorators';
 
 export class PermissionResponseDto extends ResponseDto {
     _id: string;

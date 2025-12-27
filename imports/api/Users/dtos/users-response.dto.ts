@@ -1,7 +1,7 @@
 
 import { type User } from "../user.entity";
 import { UserResponseDto } from "./user-response.dto";
-import { ResponseDto } from "/imports/common/dtos/response.dto";
+import { ResponseDto } from "meteorjs-decorators";
 
 export class UsersResponseDto extends ResponseDto {
     data: UserResponseDto[];

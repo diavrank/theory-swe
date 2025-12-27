@@ -1,13 +1,9 @@
 import { Meteor } from 'meteor/meteor';
+import { BaseController, CheckPermissions, Controller, Method, Validate } from 'meteorjs-decorators';
 import Permissions from '../Permissions/helpers/permissions.helpers';
 import { DigitalSignatureService } from './digital-signature.service';
 import { DigitalSignatureSignRequestDto } from './dtos/digital-signature-sign-request.dto';
 import { DigitalSignatureVerifyRequestDto } from './dtos/digital-signature-verify-request.dto';
-import { BaseController } from '/imports/common/controllers/base.controller';
-import { Controller } from '/imports/common/decorators/controller.decorator';
-import { Method } from '/imports/common/decorators/method.decorator';
-import { CheckPermissions } from '/imports/common/decorators/permissions.decorator';
-import { Validate } from '/imports/common/decorators/validate.decorator';
 import { ResponseMessage } from '/imports/startup/server/utils/ResponseMessage';
 
 @Controller()

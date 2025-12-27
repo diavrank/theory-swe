@@ -1,9 +1,8 @@
+import { Module, forwardRef } from 'meteorjs-decorators';
 import { ProfilesModule } from '../Profiles/profiles.module';
 import { UsersController } from './users.controller';
 import { UsersPublication } from './users.publication';
 import { UserService } from './users.service';
-import { forwardRef } from '/imports/common/utils/forward-ref';
-import { Module } from '/imports/common/utils/module';
 
 @Module({
     imports: [
@@ -17,4 +16,4 @@ import { Module } from '/imports/common/utils/module';
         UserService
     ]
 })
-export class UsersModule {} 
+export class UsersModule { } 
