@@ -110,6 +110,7 @@ import { Field, Form, FormContext } from 'vee-validate';
 import { defineComponent } from 'vue';
 import draggable from 'vuedraggable';
 import { PermissionsResponseDto } from '/imports/api/Permissions/dtos/permissions-response.dto';
+import { SaveProfileDto } from '/imports/api/Profiles/dtos/create-profile.dto';
 import { LOADER_MESSAGES } from '/imports/ui/constants/loader-messages.const';
 import { useTemporalStore } from '/imports/ui/stores/temporal';
 
@@ -136,11 +137,11 @@ export default defineComponent({
       targetButton: ''
     },
     profile: {
-      _id: undefined,
+      id: undefined,
       name: null,
       description: null,
-      permissions: [] as string[]
-    },
+      permissions: []
+    } as SaveProfileDto,
     initialValues: {
       name: null,
       description: null
@@ -206,6 +207,7 @@ export default defineComponent({
             (error: Meteor.Error) => {
               this.$loader.deactivate();
               if (error) {
+                console.error(error);
                 this.$alert.showAlertSimple('error', error.reason);
               } else {
                 this.$alert.showAlertSimple('success', 'Profile saved successfully');
@@ -218,7 +220,7 @@ export default defineComponent({
       this.profile.permissions = this.selfPermissions.map((roleType: RoleType) => roleType._id);
     },
     initPermissionLists() {
-      Meteor.call('permissions.listOthersForIdProfile', { profileId: this.profile._id },
+      Meteor.call('permissions.listOthersForIdProfile', { profileId: this.profile.id },
           (err: Meteor.Error, response: PermissionsResponseDto) => {
             if (err) {
               console.error('Error listing permissions: ', err);
@@ -227,7 +229,7 @@ export default defineComponent({
             this.allPermissions = response.data;
           });
 
-      Meteor.call('permissions.listByIdProfile', { profileId: this.profile._id },
+      Meteor.call('permissions.listByIdProfile', { profileId: this.profile.id },
           (err: Meteor.Error, response: PermissionsResponseDto) => {
             if (err) {
               console.error('Error listing profile permissions: ', err);

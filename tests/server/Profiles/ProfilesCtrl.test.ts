@@ -49,7 +49,8 @@ describe('ProfilesCtrl', function () {
 		it('Update a profile', async function () {
 			let profileToBeUpdated = Factory.tree<Profile>('profile');
 			profileToBeUpdated._id = existingProfile._id;
-			const response = await saveProfileMethod.apply({ userId: adminUser._id }, [profileToBeUpdated]);
+			const newProfileDto = { ...profileToBeUpdated, id: existingProfile._id }
+			const response = await saveProfileMethod.apply({ userId: adminUser._id }, [newProfileDto]);
 			chai.assert.equal(response.id, existingProfile._id);
 		});
 	});

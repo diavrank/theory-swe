@@ -46,10 +46,10 @@ export class ProfilesService {
       description: newDescription
     } = updateProfileDto;
 
-    const oldProfile = await this.profileRepository.findOneOrFail(updateProfileDto._id);
+    const oldProfile = await this.profileRepository.findOneOrFail(updateProfileDto.id);
 
-    await this.validateName(newProfileName, updateProfileDto._id);
-    await this.profileRepository.update(updateProfileDto._id, {
+    await this.validateName(newProfileName, updateProfileDto.id);
+    await this.profileRepository.update(updateProfileDto.id, {
       $set: {
         name: newProfileName,
         description: newDescription,
@@ -74,10 +74,10 @@ export class ProfilesService {
   }
 
   async save(saveProfileDto: SaveProfileDto): Promise<Profile> {
-    const { _id, name, description, permissions } = saveProfileDto;
-    await this.validateName(name, _id);
+    const { id, name, description, permissions } = saveProfileDto;
+    await this.validateName(name, id);
 
-    let profileId = _id;
+    let profileId = id;
     if (profileId) {
       await this.update(saveProfileDto);
 
@@ -118,6 +118,20 @@ export class ProfilesService {
 
   async listNonExternalProfiles(): Promise<Profile[]> {
     return this.profileRepository.find({ name: { $nin: this.getStaticProfilesForExternalUsers() } });
+  }
+
+  async listPaginatedProfiles({ page, limit }: { page: number; limit: number }): Promise<{ profiles: Profile[]; total: number }> {
+    const selector = { name: { $nin: this.getStaticProfileNames() } };
+    const pageNumber = Math.max(1, Number(page) || 1);
+    const pageSize = Math.min(Math.max(Number(limit) || 1, 1), 100);
+    const profiles = await this.profileRepository.find(selector, {
+      sort: { description: 1 },
+      limit: pageSize,
+      skip: (pageNumber - 1) * pageSize
+    });
+    const total = await this.profileRepository.findAll(selector, { fields: { _id: 1 } }).countAsync();
+
+    return { profiles, total };
   }
 
   async profileExists(profileName: string): Promise<boolean> {

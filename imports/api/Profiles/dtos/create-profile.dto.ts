@@ -4,7 +4,7 @@ export class SaveProfileDto {
   @IsString()
   @IsNotEmpty()
   @IsOptional()
-  _id?: string;
+  id?: string;
 
   @IsString()
   @IsNotEmpty()
