@@ -11,6 +11,7 @@ import { StaticProfiles } from '../../../imports/api/Profiles/constants/static-p
 import '../../../imports/api/Users/users.controller';
 import '/imports/api/app.module';
 import { UserRequestDto } from '/imports/api/Users/dtos/user-request.dto';
+import { User } from '/imports/api/Users/user.entity';
 
 describe('UsersCtrl', function () {
 	let adminId: string;
@@ -20,11 +21,12 @@ describe('UsersCtrl', function () {
 	let saveUserMethod: any;
 	let updatePersonalDataMethod: any;
 	let deleteUserMethod: any;
+	let getUsersTotalMethod: any;
 
 	before(async function () {
 		resetDatabase({ excludedCollections: ['roles', 'role-assignment', 'profiles'] });
 		adminId = await Accounts.createUserAsync(Factory.tree('user'));
-		existingUser = <Meteor.User>await Factory.createAsync('user', {
+		existingUser = await Factory.createAsync<Meteor.User>('user', {
 			'emails': [{ address: existingEmail, verified: false }],
 			'username': existingUsername
 		});
@@ -32,6 +34,7 @@ describe('UsersCtrl', function () {
 		saveUserMethod = Meteor.server.method_handlers['user.save'];
 		updatePersonalDataMethod = Meteor.server.method_handlers['user.updatePersonalData'];
 		deleteUserMethod = Meteor.server.method_handlers['user.delete'];
+		getUsersTotalMethod = Meteor.server.method_handlers['users.getTotal'];
 		// Ensure admin has the required permissions for the guarded methods
 		await Roles.setUserRolesAsync(adminId, StaticProfiles.admin.permissions, StaticProfiles.admin.name);
 		sinon.stub(Accounts, 'sendEnrollmentEmail').returns();
@@ -109,6 +112,36 @@ describe('UsersCtrl', function () {
 			} catch (error: any) {
 				chai.assert.instanceOf(error, Meteor.Error);
 				chai.assert.equal(error.reason, 'The new email is already in use');
+			}
+		});
+	});
+
+	describe('users.getTotal', function () {
+		it('Count users excluding the requester', async function () {
+			const extraUser = await Factory.createAsync<Meteor.User>('user');
+			const expectedCount = await User.collection.find({ _id: { $ne: adminId } }).countAsync();
+
+			try {
+				const total = await getUsersTotalMethod.apply({ userId: adminId }, [{}]);
+				chai.assert.equal(total, expectedCount);
+			} finally {
+				await User.collection.removeAsync(extraUser._id);
+			}
+		});
+
+		it('Filters by search term', async function () {
+			const searchableUser = await Factory.createAsync<Meteor.User>('user', {
+				profile: {
+					name: 'Searchable User',
+					profile: StaticProfiles.admin.name
+				}
+			});
+
+			try {
+				const total = await getUsersTotalMethod.apply({ userId: adminId }, [{ search: 'Searchable' }]);
+				chai.assert.isAtLeast(total, 1);
+			} finally {
+				await User.collection.removeAsync(searchableUser._id);
 			}
 		});
 	});

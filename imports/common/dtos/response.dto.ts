@@ -11,11 +11,9 @@ export abstract class ResponseDto {
      * This helps to keep the original structure.
      * @private
      */
-    private preserveNulls(): void{
-        for(const[field,value] of Object.entries(this)){
-            if(!value){
-                this[field] = null;
-            }
+    private preserveNulls(): void {
+        for (const [field, value] of Object.entries(this)) {
+            this[field] = value ?? null;
         }
     }
 }

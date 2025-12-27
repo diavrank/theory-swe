@@ -11,7 +11,7 @@ declare module 'meteor/dburles:factory' {
 		static build<T>(name: string, doc?: T): void;
 		static tree<T>(name: string, doc?: T): T;
 		static create(name: string, doc?: any): Object;
-		static createAsync(name: string, doc?: any): Promise<Object>;
+		static createAsync<T>(name: string, doc?: Partial<T>): Promise<T>;
 		static extend<T>(name: string, doc?: T): Object;
 	}
 }

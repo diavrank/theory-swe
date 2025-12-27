@@ -92,12 +92,12 @@ export class ProfilesService {
     return this.profileRepository.findOneOrFail(profileId);
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: string): Promise<number> {
     const users = await this.getUsersByProfile(id);
     if (users.length > 0) {
       throw new Meteor.Error('403', 'Cannot delete profile: There are users using this profile');
     }
-    await this.profileRepository.delete(id);
+    return this.profileRepository.delete(id);
   }
 
   async getUsersByProfile(profileId: string): Promise<any[]> {
