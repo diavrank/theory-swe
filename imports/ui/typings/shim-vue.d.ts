@@ -1,24 +1,21 @@
+import type { DefineComponent } from 'vue';
+
 declare module '*.vue' {
-	import Vue from 'vue'
-	// noinspection JSDuplicatedDeclaration
-	export default Vue
+	const component: DefineComponent<{}, {}, any>;
+	export default component;
 }
 
-declare module '@/components/*' {
-	import Vue from 'vue'
-	// noinspection JSDuplicatedDeclaration
-	export default Vue
+declare module '@components/*' {
+	const component: DefineComponent<{}, {}, any>;
+	export default component;
 }
 
-declare module '@/views/*' {
-	import Vue from 'vue'
-	// noinspection JSDuplicatedDeclaration
-	export default Vue
+declare module '@views/*' {
+	const component: DefineComponent<{}, {}, any>;
+	export default component;
 }
 
-
-declare module '@/layouts/*' {
-	import Vue from 'vue'
-	// noinspection JSDuplicatedDeclaration
-	export default Vue
+declare module '@layouts/*' {
+	const component: DefineComponent<{}, {}, any>;
+	export default component;
 }

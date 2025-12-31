@@ -28,6 +28,9 @@
       "@server/*": [
         "imports/startup/server/*"
       ],
+      "@root/*": [
+        "./*"
+      ],
       "@middlewares/*": [
         "imports/middlewares/*"
       ],
@@ -58,6 +61,7 @@
     "types": [
       "node",
       "mocha",
+      "vue"
     ]
   },
   "exclude": [

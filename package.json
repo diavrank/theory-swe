@@ -12,9 +12,9 @@
     "visualize": "meteor --production --extra-packages bundle-visualizer"
   },
   "dependencies": {
-    "@babel/core": "^7.20.2",
-    "@babel/runtime": "^7.20.1",
+    "@babel/runtime": "^7.23.5",
     "@mdi/font": "^7.0.96",
+    "@swc/helpers": "0.5.17",
     "@vee-validate/rules": "^4.6.7",
     "@vueuse/core": "^9.13.0",
     "bcrypt": "^5.0.1",
@@ -33,7 +33,6 @@
     "load-esm": "^1.0.3",
     "meteor-node-stubs": "^1.2.24",
     "meteor-user-presence": "^1.0.1",
-    "meteor-vite": "^3.8.0",
     "meteorjs-decorators": "^1.0.2",
     "mimetypes": "^0.1.1",
     "mitt": "^3.0.0",
@@ -48,10 +47,14 @@
     "vue-router": "^4.1.5",
     "vuedraggable": "^4.1.0",
     "vuetify": "^3.4.6",
-    "webfontloader": "^1.6.28"
+    "webfontloader": "^1.6.28",
+    "@koa/cors": "^5.0.0"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-decorators": "^7.25.9",
+    "@meteorjs/rspack": "^0.3.54",
+    "@rsdoctor/rspack-plugin": "1.2.3",
+    "@rspack/cli": "1.6.5",
+    "@rspack/core": "1.6.5",
     "@types/body-parser": "^1.19.6",
     "@types/chai": "^4.2.22",
     "@types/express": "^5.0.6",
@@ -62,21 +65,26 @@
     "@types/node": "^22.13.11",
     "@types/sinon": "^10.0.4",
     "@types/webfontloader": "^1.6.35",
-    "@vitejs/plugin-vue": "^5.2.1",
-    "babel-plugin-module-resolver": "^5.0.0",
+    "@vue/compiler-sfc": "^3.2.39",
     "chai": "^4.3.4",
     "husky": "^7.0.2",
+    "postcss": "^8.4.31",
+    "postcss-loader": "^7.1.2",
+    "postcss-preset-env": "^9.5.0",
     "prettier": "^3.1.0",
     "sass": "^1.56.1",
+    "sass-loader": "^13.3.2",
     "sinon": "^11.1.2",
+    "ts-checker-rspack-plugin": "^1.1.5",
     "typescript": "^5.8.2",
-    "vite": "^6.0.3",
-    "vite-plugin-vuetify": "^2.0.4",
-    "vue-cli-plugin-vuetify": "^2.5.8"
+    "vue-loader": "^17.4.2",
+    "vuetify-loader": "^2.0.0-alpha.9",
+    "webpack": "^5.104.1"
   },
   "meteor": {
+    "modern": true,
     "mainModule": {
-      "client": "client/main.js",
+      "client": "client/main.ts",
       "server": "server/main.ts"
     },
     "testModule": {
