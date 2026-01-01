@@ -1,6 +1,6 @@
-import { defineConfig } from '@meteorjs/rspack';
-import rspack from '@rspack/core';
-import { VueLoaderPlugin } from 'vue-loader';
+const { defineConfig } = require('@meteorjs/rspack');
+const { VueLoaderPlugin } = require('vue-loader');
+const rspack = require('@rspack/core')
 
 // Get the absolute path of the project directory
 //const __filename = fileURLToPath(import.meta.url);
@@ -9,9 +9,11 @@ import { VueLoaderPlugin } from 'vue-loader';
 const projectRoot = process.cwd();
 //const vueLoaderPath = require.resolve('vue-loader');
 
-console.log('projectRoot: ', projectRoot)
+console.log('projectRoot: ', projectRoot);
 
-export default defineConfig((Meteor) => {
+module.exports = defineConfig((Meteor) => {
+
+
 	return {
 		experiments: {
 			css: true,
@@ -47,7 +49,7 @@ export default defineConfig((Meteor) => {
 		...(Meteor.isClient && !Meteor.isTest ? Meteor.splitVendorChunk() : {}),
 		// Disable cache
 		...Meteor.setCache(false),
-		...(Meteor.isClient && {
+		...Meteor.isClient && {
 			plugins: [
 				new VueLoaderPlugin(),
 				new rspack.DefinePlugin({
@@ -56,7 +58,7 @@ export default defineConfig((Meteor) => {
 					__VUE_PROD_HYDRATION_MISMATCH_DETAILS__: JSON.stringify(false),
 				}),
 			],
-		}),
+		},
 		module: {
 			rules: [
 				// Client-only loaders
@@ -64,16 +66,11 @@ export default defineConfig((Meteor) => {
 					? [
 						{
 							test: /\.vue$/,
-							type: 'javascript/auto',
-							use: [
-								{
-									loader: 'vue-loader',
-									options: {
-										// Required for proper single-file component handling in Rspack
-										experimentalInlineMatchResource: true,
-									},
-								},
-							],
+							loader: 'vue-loader',
+							options: {
+								// Note, for the majority of features to be available, make sure this option is `true`
+								experimentalInlineMatchResource: true,
+							},
 						},
 						{ test: /\.scss$/, type: 'css/auto' },
 						{ test: /\.css$/, type: 'css' },
@@ -86,7 +83,7 @@ export default defineConfig((Meteor) => {
 					: []),
 				// TypeScript support (both client and server)
 				{
-					test: /\.(ts|tsx)$/,
+					test: /\.(ts|vue)$/,
 					exclude: /node_modules/,
 					loader: 'builtin:swc-loader',
 					options: {
@@ -99,7 +96,7 @@ export default defineConfig((Meteor) => {
 								syntax: 'typescript',
 								decorators: true,
 							},
-							target: 'es2020',
+							//target: 'es2020',
 							transform: {
 								legacyDecorator: true,
 								decoratorMetadata: true,
