@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.23.5",
+    "@koa/cors": "^5.0.0",
     "@mdi/font": "^7.0.96",
     "@swc/helpers": "0.5.17",
     "@vee-validate/rules": "^4.6.7",
@@ -47,8 +48,7 @@
     "vue-router": "^4.1.5",
     "vuedraggable": "^4.1.0",
     "vuetify": "^3.4.6",
-    "webfontloader": "^1.6.28",
-    "@koa/cors": "^5.0.0"
+    "webfontloader": "^1.6.28"
   },
   "devDependencies": {
     "@meteorjs/rspack": "^0.3.54",
@@ -68,18 +68,12 @@
     "@vue/compiler-sfc": "^3.2.39",
     "chai": "^4.3.4",
     "husky": "^7.0.2",
-    "postcss": "^8.4.31",
-    "postcss-loader": "^7.1.2",
-    "postcss-preset-env": "^9.5.0",
     "prettier": "^3.1.0",
     "sass": "^1.56.1",
     "sass-loader": "^13.3.2",
     "sinon": "^11.1.2",
-    "ts-checker-rspack-plugin": "^1.1.5",
     "typescript": "^5.8.2",
-    "vue-loader": "^17.4.2",
-    "vuetify-loader": "^2.0.0-alpha.9",
-    "webpack": "^5.104.1"
+    "vue-loader": "^17.4.2"
   },
   "meteor": {
     "modern": true,
