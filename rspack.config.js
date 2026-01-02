@@ -1,6 +1,7 @@
 const { defineConfig } = require('@meteorjs/rspack');
 const { VueLoaderPlugin } = require('vue-loader');
 const { rspack } = require('@rspack/core');
+const path = require('path');
 
 const projectRoot = process.cwd();
 /**
@@ -14,6 +15,14 @@ const projectRoot = process.cwd();
  * Use these flags to adjust your build settings based on environment.
  */
 module.exports = defineConfig(Meteor => {
+	const isTestRun = Boolean(
+		Meteor.isTest ||
+		Meteor.isTestLike ||
+		Meteor.isTestFullApp ||
+		process.env.TEST_WATCH ||
+		process.env.METEOR_TEST
+	);
+	const shouldStubAppServer = Meteor.isServer && !Meteor.isTest && isTestRun;
 
 	if (Meteor.isServer) {
 		return {
@@ -48,6 +57,9 @@ module.exports = defineConfig(Meteor => {
 				alias: {
 					'@api': '/imports/api',
 					'@server': '/imports/startup/server',
+					...(shouldStubAppServer
+						? { '/imports/startup/server': path.resolve(projectRoot, 'imports/startup/server/test-noop.ts') }
+						: {}),
 				},
 				// Improve module resolution stability
 				symlinks: true,
