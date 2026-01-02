@@ -143,8 +143,6 @@ module.exports = defineConfig(Meteor => {
 			resolve: {
 				extensions: ['.ts', '.vue', '.json'],
 				alias: {
-					/* '@api': '/imports/api',
-					'@server': '/imports/startup/server', */
 					'@components': '/imports/ui/components',
 					'@views': '/imports/ui/views',
 					'@layouts': '/imports/ui/layouts',

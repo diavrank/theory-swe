@@ -1,7 +1,5 @@
 import fs from 'fs-extra';
 import { Meteor } from 'meteor/meteor';
-// @ts-ignore
-import { loadEsm } from "load-esm";
 import mimeTypes from 'mimetypes';
 import { BASE_URL_STORAGE, firebaseAdminStorage } from '../services/FirebaseAdmin';
 import { ResponseMessage } from './ResponseMessage';
@@ -20,7 +18,7 @@ export default {
 	PATH_USER_FILE: 'users/',
 	async fileTypeModule() {
 		// Import a pure ESM package from a CommonJS TS project
-		const esmModule = await loadEsm<typeof import("file-type")>('file-type');
+		const esmModule = await import("file-type");
 
 		return esmModule;
 	},
