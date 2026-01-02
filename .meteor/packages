@@ -21,7 +21,6 @@ accounts-password@3.2.2-rc340.2
 alanning:roles@4.0.0
 tracker@1.3.4
 zodern:types
-harry97:ssr
 jessedev:cleaner
 dburles:factory
 meteortesting:mocha
