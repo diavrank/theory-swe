@@ -68,7 +68,42 @@ module.exports = defineConfig(Meteor => {
 							experimentalInlineMatchResource: true,
 						},
 					},
-					{ test: /\.scss$/, type: 'css/auto' },
+					{
+						resourceQuery: /lang=sass/,
+						type: 'css/auto',
+						use: [
+							{
+								loader: 'sass-loader',
+								options: {
+									// using `modern-compiler` and `sass-embedded` together significantly improve build performance,
+									// requires `sass-loader >= 14.2.1`
+									api: 'modern-compiler',
+									implementation: require.resolve('sass-embedded'),
+									sassOptions: {
+										syntax: 'indented',
+									},
+								},
+							},
+						],
+					},
+					{
+						test: /\.sass$/,
+						type: 'css/auto',
+						use: [
+							{
+								loader: 'sass-loader',
+								options: {
+									// using `modern-compiler` and `sass-embedded` together significantly improve build performance,
+									// requires `sass-loader >= 14.2.1`
+									api: 'modern-compiler',
+									implementation: require.resolve('sass-embedded'),
+									sassOptions: {
+										syntax: 'indented',
+									},
+								},
+							},
+						],
+					},
 					{ test: /\.css$/, type: 'css' },
 					{
 						test: /\.(png|jpe?g|gif|svg|webp|ico)$/i,
