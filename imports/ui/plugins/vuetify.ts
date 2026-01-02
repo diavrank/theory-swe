@@ -1,12 +1,16 @@
 import '@mdi/font/css/materialdesignicons.css';
 import 'vuetify/styles';
 import { createVuetify } from 'vuetify';
+import * as components from 'vuetify/components';
+import * as directives from 'vuetify/directives';
 import { mdi } from 'vuetify/iconsets/mdi';
 import { aliases, md } from 'vuetify/iconsets/md';
 // @ts-ignore
 import {en, es} from 'vuetify/locale';
 
 export default createVuetify({
+	components,
+	directives,
 	theme: {
 		defaultTheme: 'myCustomLightTheme',
 		themes: {
