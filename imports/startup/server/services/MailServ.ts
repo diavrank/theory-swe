@@ -1,5 +1,6 @@
 import { Accounts } from 'meteor/accounts-base';
 import { Meteor } from 'meteor/meteor';
+import Handlebars from 'handlebars';
 
 type MailpitSettings = {
 	HOST?: string;
@@ -7,6 +8,15 @@ type MailpitSettings = {
 	USER?: string;
 	PASSWORD?: string;
 };
+
+type EmailTemplateData = {
+	productSrc: string;
+	urlWithoutHash: string;
+};
+
+type TemplateFn = (data: EmailTemplateData) => string;
+
+const templateCache = new Map<string, TemplateFn>();
 
 const mailpitConfig: MailpitSettings | undefined = Meteor.settings.private?.MAILPIT;
 
@@ -28,6 +38,23 @@ const getMailpitMailUrl = (config?: MailpitSettings) => {
 const applyRootUrlFromSettings = () => {
 	const rootUrl = Meteor.settings.private?.ROOT_URL;
 	if (rootUrl) process.env.ROOT_URL = rootUrl;
+};
+
+const loadTemplate = async (assetName: string): Promise<TemplateFn> => {
+	const cachedTemplate = templateCache.get(assetName);
+	if (cachedTemplate) return cachedTemplate;
+
+	const templateSource = await Assets.getTextAsync(assetName);
+	const compiledTemplate = Handlebars.compile(templateSource);
+
+	templateCache.set(assetName, compiledTemplate);
+
+	return compiledTemplate;
+};
+
+const renderTemplate = async (assetName: string, data: EmailTemplateData) => {
+	const template = await loadTemplate(assetName);
+	return template(data);
 };
 
 if (Meteor.isDevelopment) {
@@ -58,10 +85,8 @@ emailTemplates.resetPassword = {
 	},
 	async html(_user: Meteor.User, url: string) {
 		const urlWithoutHash = url.replace('#/', '');
-		const emailResetPasswordTemplate = await Assets.getTextAsync(emailResetPassword);
-		SSR.compileTemplate('emailResetPassword', emailResetPasswordTemplate);
 		if (Meteor.isDevelopment) console.info(`Password reset link: ${urlWithoutHash}`);
-		return SSR.render('emailResetPassword', {
+		return renderTemplate(emailResetPassword, {
 			productSrc,
 			urlWithoutHash
 		});
@@ -76,9 +101,7 @@ emailTemplates.enrollAccount = {
 	async html(_user: Meteor.User, url: string) {
 		const urlWithoutHash = url.replace('#/', '');
 		if (Meteor.isDevelopment) console.info(`Set initial password link: ${urlWithoutHash}`);
-		const emailEnrollAccountTemplate = await Assets.getTextAsync(emailEnrollAccount);
-		SSR.compileTemplate('emailEnrollAccount', emailEnrollAccountTemplate);
-		return SSR.render('emailEnrollAccount', {
+		return renderTemplate(emailEnrollAccount, {
 			productSrc,
 			urlWithoutHash
 		});
@@ -93,9 +116,7 @@ emailTemplates.verifyEmail = {
 	async html(_user: Meteor.User, url: string) {
 		const urlWithoutHash = url.replace('#/', '');
 		if (Meteor.isDevelopment) console.info(`Verify email link: ${urlWithoutHash}`);
-		const emailVerifyEmailTemplate = await Assets.getTextAsync(emailVerifyEmail);
-		SSR.compileTemplate('emailVerifyEmail', emailVerifyEmailTemplate);
-		return SSR.render('emailVerifyEmail', {
+		return renderTemplate(emailVerifyEmail, {
 			productSrc,
 			urlWithoutHash
 		});
