@@ -27,6 +27,28 @@ module.exports = defineConfig(Meteor => {
 	if (Meteor.isServer) {
 		return {
 			plugins: [],
+			ignoreWarnings: [
+				{
+					module: /node_modules\/express\/lib\/view\.js/,
+					message: /Critical dependency: the request of a dependency is an expression/,
+				},
+				{
+					module: /node_modules\/routing-controllers\/.*importClassesFromDirectories\.js/,
+					message: /Critical dependency: the request of a dependency is an expression/,
+				},
+				{
+					module: /node_modules\/handlebars\/lib\/index\.js/,
+					message: /require\.extensions is not supported by Rspack/,
+				},
+				{
+					module: /node_modules\/hash-stream-validation\/index\.js/,
+					message: /fast-crc32c/,
+				},
+				{
+					module: /node_modules\/retry-request\/index\.js/,
+					message: /Can't resolve 'request'/,
+				},
+			],
 			module: {
 				rules: [
 					{
