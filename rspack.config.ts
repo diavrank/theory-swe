@@ -1,8 +1,8 @@
 import { defineConfig } from '@meteorjs/rspack';
 import { rspack } from '@rspack/core';
-import { VueLoaderPlugin } from 'vue-loader';
 import { createRequire } from 'module';
 import path from 'path';
+import { VueLoaderPlugin } from 'vue-loader';
 
 const require = createRequire(import.meta.url);
 const projectRoot = process.cwd();
