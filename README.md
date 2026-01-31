@@ -97,9 +97,9 @@ Install mailpit:
 ````shell
 brew install mailpit
 ````
-Open a separate terminal to run mailpit:
+Start mailpit as a service:
 ````shell
-mailpit
+brew services start mailpit
 ````
 
 For production environment:
