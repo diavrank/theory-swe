@@ -1,8 +1,10 @@
-const { defineConfig } = require('@meteorjs/rspack');
-const { VueLoaderPlugin } = require('vue-loader');
-const { rspack } = require('@rspack/core');
-const path = require('path');
+import { defineConfig } from '@meteorjs/rspack';
+import { rspack } from '@rspack/core';
+import { VueLoaderPlugin } from 'vue-loader';
+import { createRequire } from 'module';
+import path from 'path';
 
+const require = createRequire(import.meta.url);
 const projectRoot = process.cwd();
 /**
  * Rspack configuration for Meteor projects.
@@ -14,7 +16,7 @@ const projectRoot = process.cwd();
  *
  * Use these flags to adjust your build settings based on environment.
  */
-module.exports = defineConfig(Meteor => {
+export default defineConfig((Meteor: any) => {
 	const isTestRun = Boolean(
 		Meteor.isTest ||
 		Meteor.isTestLike ||
