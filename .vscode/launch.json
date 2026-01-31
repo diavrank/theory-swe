@@ -18,7 +18,7 @@
       "port": 52094,
       "restart": true,
       "autoAttachChildProcesses": true,
-      "justMyCode": false,
+      "justMyCode": true,
       "smartStep": true,
       "sourceMaps": true,
       "resolveSourceMapLocations": [
@@ -30,16 +30,11 @@
         "${workspaceFolder}/_build/**/*.js"
       ],
       "sourceMapPathOverrides": {
-        "webpack://theory-swe/./*": "${workspaceFolder}/*",
-        "webpack://theory-swe/*": "${workspaceFolder}/*",
         "meteor://%F0%9F%92%BBapp/webpack://theory-swe/./*": "${workspaceFolder}/*",
         "meteor://%F0%9F%92%BBapp/webpack://theory-swe/*": "${workspaceFolder}/*",
         "meteor://%F0%9F%92%BBapp/*": "${workspaceFolder}/*",
         "meteor://💻app/webpack://theory-swe/./*": "${workspaceFolder}/*",
         "meteor://💻app/webpack://theory-swe/*": "${workspaceFolder}/*",
-        "meteor://app/webpack://theory-swe/*": "${workspaceFolder}/*",
-        "meteor://💻app/*": "${workspaceFolder}/*",
-        "meteor://app/*": "${workspaceFolder}/*"
       },
       "skipFiles": [
         "<node_internals>/**",
