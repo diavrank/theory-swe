@@ -12,7 +12,7 @@ COPY . $APP_SOURCE_FOLDER/
 RUN bash $SCRIPTS_FOLDER/build-meteor-bundle.sh
 
 # Use the specific version of Node expected by your Meteor release, per https://docs.meteor.com/changelog.html; this is expected for Meteor 3.4
-FROM node:22.22.0-alpine3.20
+FROM node:22.22.0-alpine3.23
 
 ENV APP_BUNDLE_FOLDER /opt/bundle
 ENV SCRIPTS_FOLDER /docker
@@ -35,7 +35,7 @@ RUN bash $SCRIPTS_FOLDER/build-meteor-npm-dependencies.sh --build-from-source
 
 # Start another Docker stage, so that the final image doesn’t contain the layer with the build dependencies
 # See previous FROM line; this must match
-FROM node:22.22.0-alpine3.20
+FROM node:22.22.0-alpine3.23
 
 ENV APP_BUNDLE_FOLDER /opt/bundle
 ENV SCRIPTS_FOLDER /docker
