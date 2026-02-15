@@ -1,0 +1,50 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Meteor: Run (Debug)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run start:debug",
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "MONGO_URL": "mongodb://localhost:27017/theory-swe"
+      }
+    },
+    {
+      "name": "Meteor: Attach (52094)",
+      "type": "pwa-node",
+      "request": "attach",
+      "port": 52094,
+      "restart": true,
+      "autoAttachChildProcesses": true,
+      "justMyCode": true,
+      "smartStep": true,
+      "sourceMaps": true,
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/**",
+        "!**/node_modules/**"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/.meteor/local/build/programs/server/**/*.js",
+        "${workspaceFolder}/_build/**/*.js"
+      ],
+      "sourceMapPathOverrides": {
+        "meteor://%F0%9F%92%BBapp/webpack://theory-swe/./*": "${workspaceFolder}/*",
+        "meteor://%F0%9F%92%BBapp/webpack://theory-swe/*": "${workspaceFolder}/*",
+        "meteor://%F0%9F%92%BBapp/*": "${workspaceFolder}/*",
+        "meteor://💻app/webpack://theory-swe/./*": "${workspaceFolder}/*",
+        "meteor://💻app/webpack://theory-swe/*": "${workspaceFolder}/*",
+      },
+      "skipFiles": [
+        "<node_internals>/**",
+        "<node_internals>/packages/meteor.js",
+        "<node_internals>/packages/**",
+        "**/packages/meteor.js",
+        "${workspaceFolder}/packages/**",
+        "**/node_modules/**",
+        "**/.meteor/packages/**"
+      ]
+    }
+  ]
+}

@@ -5,6 +5,11 @@ node_modules/
 .uploads
 .binnacle
 settings/settings-development.json
-_vite-bundle/
 # for mongodb database in cloud env
 data/
+
+# Meteor Modern-Tools build context directories
+_build
+*/build-assets
+*/build-chunks
+.rsdoctor

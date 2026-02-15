@@ -30,9 +30,9 @@
 
 <script lang="ts">
 import validateForm from '@mixins/validateForm';
-import { Form, Field, FormContext } from 'vee-validate';
-import { defineComponent } from 'vue';
 import { Meteor } from 'meteor/meteor';
+import { Field, Form, FormContext } from 'vee-validate';
+import { defineComponent } from 'vue';
 import { useAuthStore } from '/imports/ui/stores/auth';
 
 export default defineComponent({
