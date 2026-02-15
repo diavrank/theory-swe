@@ -4234,10 +4234,10 @@ meteor-user-presence@^1.0.1:
   resolved "https://registry.npmjs.org/meteor-user-presence/-/meteor-user-presence-1.0.1.tgz"
   integrity sha512-R9cRHX8/91OAjqgaCDeDMucGRGeLNmFey6vKnQllKi2fM/n8Ib050xHEpT3yhuKGUAPd8pySzlgmsqjaT6TWFQ==
 
-meteorjs-decorators@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.npmjs.org/meteorjs-decorators/-/meteorjs-decorators-1.0.2.tgz"
-  integrity sha512-FkxjTEw1qxhIFKgJQJKNPgHN7WLQ4DbCbuUoplEu6gMizr3N/YtnrOk4Eg2hSF5fl5n3q/4d6MfIKZ1OS1ILfw==
+meteorjs-decorators@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.npmjs.org/meteorjs-decorators/-/meteorjs-decorators-1.0.3.tgz"
+  integrity sha512-CqAPA9UOfQt83WrqfV12ZblZrwe7ki3qhgWQASWOZQuYI59NIyB0sUrxfmjHbufx2yPGXd1fYHd+xA24lGGnTA==
   dependencies:
     class-transformer "^0.5.1"
     class-validator "^0.14.1"
