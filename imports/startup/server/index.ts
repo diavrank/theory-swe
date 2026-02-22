@@ -1,4 +1,5 @@
 // Import server startup through a single index entry point
+import './MongoMonitorGuard';
 import './SecurityConfig';
 import './services/FirebaseAdmin';
 import './services/MailServ';
