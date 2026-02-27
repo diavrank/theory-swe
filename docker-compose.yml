@@ -7,7 +7,7 @@ services:
       - mongo-primary
       - mongo-secondary
       - mongo-arbiter
-    image: scaffold:1.0.0
+    image: ${APP_IMAGE:-scaffold:1.0.0}
     restart: on-failure
     build:
       context: .

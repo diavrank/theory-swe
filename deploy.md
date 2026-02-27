@@ -104,3 +104,43 @@ See logs of app service:
 ````sh
 docker compose logs --tail 50 app
 ````
+
+## GitHub Actions staging deploy (manual button + Ansible)
+
+This repo now includes `.github/workflows/deploy-staging.yml`, which adds a **Run workflow** button in GitHub Actions.
+
+### 1. Configure repository secrets
+
+Add these secrets in **GitHub > Settings > Secrets and variables > Actions**:
+
+- `GCP_VM_HOST`: Public IP or DNS of your staging VM
+- `GCP_VM_SSH_USER`: SSH user (for example `ubuntu`)
+- `GCP_VM_SSH_PORT`: SSH port (usually `22`)
+- `GCP_VM_SSH_PRIVATE_KEY`: Private key content used by GitHub Actions to SSH into the VM
+- `DOCKERHUB_USERNAME`: Docker Hub username (required to push image from GitHub Actions)
+- `DOCKERHUB_PASSWORD`: Docker Hub password/token (required to push image from GitHub Actions)
+
+### 2. Run deployment
+
+Go to **Actions > Deploy Staging VM > Run workflow** and provide:
+
+- `docker_image` (default: `diavrank/scaffold-meteor-vue`)
+- `image_tag` (optional; if empty a tag like `staging-<commit_sha_12>` is generated)
+- `app_dir` (default: `/opt/theory-swe`)
+
+### 3. What the workflow does
+
+It does both image publishing and deployment:
+
+1. Builds Docker image from this repository.
+2. Pushes the image to Docker Hub using `docker_image:image_tag`.
+3. Runs `deploy/ansible/deploy-staging.yml` to deploy that exact tag into the VM.
+
+The Ansible playbook:
+
+1. Connects to the VM over SSH.
+2. Optionally logs in to Docker Hub.
+3. Pulls `docker_image:image_tag`.
+4. Runs `doppler run -- docker compose up -d --no-deps app` in `app_dir` with `APP_IMAGE=docker_image:image_tag`.
+
+Mongo containers are not recreated, only the `app` service is restarted.
