@@ -20,6 +20,8 @@ jobs:
   build-publish-image:
     name: Build and publish image
     runs-on: ubuntu-latest
+    environment:
+      name: staging
     outputs:
       image_tag: ${{ steps.resolve-tag.outputs.image_tag }}
     steps:

@@ -111,7 +111,7 @@ This repo now includes `.github/workflows/deploy-staging.yml`, which adds a **Ru
 
 ### 1. Configure repository secrets
 
-Add these secrets in **GitHub > Settings > Secrets and variables > Actions**:
+Add these secrets in **GitHub > Settings > Environments > `staging` > Environment secrets**:
 
 - `GCP_VM_HOST`: Public IP or DNS of your staging VM
 - `GCP_VM_SSH_USER`: SSH user (for example `ubuntu`)
