@@ -2,6 +2,9 @@
 - name: Deploy Meteor app to staging VM
   hosts: staging
   gather_facts: false
+  become: true
+  become_method: sudo
+  become_user: root
   vars:
     app_dir: /opt/theory-swe
     docker_image: diavrank/scaffold-meteor-vue
