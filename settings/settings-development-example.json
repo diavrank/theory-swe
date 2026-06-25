@@ -9,8 +9,6 @@
       "PASSWORD": ""
     },
     "MONGO_URL": "mongodb://localhost:27017/theory-swe",
-    "REFRESH_PERMISSIONS": false,
-    "REFRESH_STATIC_PROFILES": false,
     "SENDER_EMAILS": {
       "SERVICES": "email@gmail.com"
     }

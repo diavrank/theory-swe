@@ -19,8 +19,6 @@ services:
       - STORAGE_PATH
       - TZ
       - PORT
-      - REFRESH_STATIC_PROFILES
-      - REFRESH_PERMISSIONS
       - EMAIL_SERVICES
     ports:
       - 80:3000
