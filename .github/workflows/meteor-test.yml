@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        meteor: [ '3.4' ]
+        meteor: [ '3.5' ]
     name: Meteor ${{ matrix.meteor }} tests
     steps:
       - uses: actions/checkout@v1
