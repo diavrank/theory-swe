@@ -16,7 +16,7 @@ const projectRoot = process.cwd();
  *
  * Use these flags to adjust your build settings based on environment.
  */
-export default defineConfig((Meteor: any) => {
+export default defineConfig((Meteor) => {
 	const isTestRun = Boolean(
 		Meteor.isTest ||
 		Meteor.isTestLike ||
