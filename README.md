@@ -42,7 +42,7 @@ System Requirements
 
 - Node 24+ [download here](https://nodejs.org/es/download/)
 - npm 11+
-- Meteor 3.3.2 [Installation](https://www.meteor.com/install)
+- Meteor 3.5 [Installation](https://www.meteor.com/install)
 - Mongo [7.0.4](https://www.mongodb.com/download-center/community) and [Mongo Booster](https://nosqlbooster.com/downloads) 
 - **Note:** In some cases it is necesary to disable antivrus in order to works SMTP Server
 
