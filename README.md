@@ -40,7 +40,7 @@ Supported Platforms
 System Requirements
 -------------------
 
-- Node 22+ [download here](https://nodejs.org/es/download/)
+- Node 24+ [download here](https://nodejs.org/es/download/)
 - npm 11+
 - Meteor 3.3.2 [Installation](https://www.meteor.com/install)
 - Mongo [7.0.4](https://www.mongodb.com/download-center/community) and [Mongo Booster](https://nosqlbooster.com/downloads) 
