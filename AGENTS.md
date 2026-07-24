@@ -9,7 +9,7 @@
 ## Stack
 
 - Runtime: Node.js 22+, Meteor 3.3.x
-- Package manager: Yarn 1.x
+- Package manager: npm 11.x
 - Frontend: Vue 3, Vuetify, Pinia, Vue Router
 - Backend: Meteor, routing-controllers, MongoDB
 - Tests: Mocha via `meteor test`
@@ -17,13 +17,13 @@
 
 ## Common Commands
 
-- Install dependencies: `yarn`
-- Start locally: `yarn start`
-- Start with debugger: `yarn start:debug`
-- Run tests: `yarn test`
-- Run tests in watch mode: `yarn test:watch`
-- Run a backfill: `yarn backfill <BackfillName>`
-- Run seed data: `yarn seed`
+- Install dependencies: `npm ci`
+- Start locally: `npm start`
+- Start with debugger: `npm run start:debug`
+- Run tests: `npm test`
+- Run tests in watch mode: `npm run test:watch`
+- Run a backfill: `npm run backfill -- <BackfillName>`
+- Run seed data: `npm run seed -- <SeederName>`
 
 ## Local Environment
 

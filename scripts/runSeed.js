@@ -6,7 +6,7 @@ const path = require('path');
 const [, , seederName, ...extraArgs] = process.argv;
 
 if (!seederName) {
-    console.error('Usage: yarn seed <SeederName> [meteor args]');
+    console.error('Usage: npm run seed -- <SeederName> [meteor args]');
     process.exit(1);
 }
 
@@ -44,4 +44,3 @@ meteorProcess.on('error', (error) => {
     console.error('Unable to start Meteor for seed:', error);
     process.exit(1);
 });
-
