@@ -1,9 +1,10 @@
 import firebaseAdmin from 'firebase-admin';
+import { Meteor } from 'meteor/meteor';
 
 const configuredStorageBucket = process.env.FIREBASE_STORAGE_BUCKET;
 const serviceAccountJson = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
 
-if (!configuredStorageBucket && process.env.NODE_ENV === 'production') {
+if (!configuredStorageBucket && Meteor.isProduction) {
 	throw new Error('FIREBASE_STORAGE_BUCKET is required');
 }
 
