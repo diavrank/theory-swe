@@ -1,7 +1,7 @@
 import fs from 'fs-extra';
 import { Meteor } from 'meteor/meteor';
 import mimeTypes from 'mimetypes';
-import { BASE_URL_STORAGE, firebaseAdminStorage } from '../services/FirebaseAdmin';
+import { firebaseAdminStorage } from '../services/FirebaseAdmin';
 import { ResponseMessage } from './ResponseMessage';
 import Utilities from './helpers';
 
@@ -89,14 +89,16 @@ export default {
 		const responseMessage = new ResponseMessage();
 		const filename = `${name}${Utilities.generateNumberToken(10, 99)}.${mimeTypes.detectExtension(mimeType)}`;
 		const file = firebaseAdminStorage.file(`${path}/${filename}`);
-		const fileUrl = `${BASE_URL_STORAGE}/${firebaseAdminStorage.name}/${path}/${filename}`;
 		try {
 			await file.save(fileBuffer, {
 				metadata: {
 					contentType: mimeType
 				},
-				public: true,
 				validation: false
+			});
+			const [fileUrl] = await file.getSignedUrl({
+				action: 'read',
+				expires: '2491-03-09'
 			});
 			responseMessage.create('File uploaded', undefined, { success: true, fileUrl });
 		} catch (exception) {

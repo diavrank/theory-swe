@@ -1,0 +1,146 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: GitHub environment and Doppler config
+        required: true
+        type: choice
+        options: [staging, production]
+        default: staging
+      architecture:
+        description: VM architecture
+        required: true
+        type: choice
+        options: [1-tier, 2-tier]
+        default: 1-tier
+      cloud_provider:
+        description: Compute cloud (informational)
+        required: true
+        type: choice
+        options: [aws, gcp, azure]
+        default: gcp
+      docker_image:
+        description: Docker Hub image
+        required: false
+        default: diavrank/scaffold-meteor-vue
+      image_tag:
+        description: Docker tag (empty generates one)
+        required: false
+        default: ""
+      infra_repository:
+        description: Repository containing Terraform and deployment assets
+        required: false
+        default: diavrank/terraform-scaffold
+
+permissions:
+  contents: read
+
+jobs:
+  build-publish-image:
+    name: Build and publish image
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    outputs:
+      image_tag: ${{ steps.resolve-tag.outputs.image_tag }}
+    steps:
+      - name: Checkout application
+        uses: actions/checkout@v4
+        with:
+          path: application
+
+      - name: Checkout infrastructure
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.infra_repository }}
+          token: ${{ secrets.INFRA_REPOSITORY_TOKEN || github.token }}
+          path: terraform-scaffold
+
+      - name: Resolve image tag
+        id: resolve-tag
+        shell: bash
+        run: |
+          if [ -n "${{ inputs.image_tag }}" ]; then
+            tag="${{ inputs.image_tag }}"
+          else
+            tag="${{ inputs.environment }}-${GITHUB_SHA::12}"
+          fi
+          echo "image_tag=${tag}" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build and push app image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./application
+          file: ./terraform-scaffold/containers/app/Dockerfile
+          push: true
+          tags: ${{ inputs.docker_image }}:${{ steps.resolve-tag.outputs.image_tag }}
+
+  deploy:
+    name: Deploy ${{ inputs.environment }} to ${{ inputs.cloud_provider }}
+    needs: build-publish-image
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Checkout infrastructure
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ inputs.infra_repository }}
+          token: ${{ secrets.INFRA_REPOSITORY_TOKEN || github.token }}
+
+      - name: Install Ansible
+        run: python3 -m pip install ansible
+
+      - name: Configure SSH
+        env:
+          VM_SSH_PRIVATE_KEY: ${{ secrets.VM_SSH_PRIVATE_KEY }}
+          APP_VM_HOST: ${{ secrets.APP_VM_HOST }}
+          DB_VM_HOST: ${{ secrets.DB_VM_HOST }}
+        run: |
+          test -n "$VM_SSH_PRIVATE_KEY"
+          test -n "$APP_VM_HOST"
+          if [ "${{ inputs.architecture }}" = "2-tier" ]; then
+            test -n "$DB_VM_HOST"
+          fi
+          install -d -m 0700 "$HOME/.ssh"
+          printf '%s\n' "$VM_SSH_PRIVATE_KEY" > "$HOME/.ssh/deploy_key"
+          chmod 0600 "$HOME/.ssh/deploy_key"
+          ssh-keyscan -H "$APP_VM_HOST" >> "$HOME/.ssh/known_hosts"
+          if [ -n "$DB_VM_HOST" ]; then
+            ssh-keyscan -H "$DB_VM_HOST" >> "$HOME/.ssh/known_hosts"
+          fi
+
+      - name: Create Ansible inventory
+        env:
+          APP_VM_HOST: ${{ secrets.APP_VM_HOST }}
+          DB_VM_HOST: ${{ secrets.DB_VM_HOST }}
+          VM_SSH_USER: ${{ secrets.VM_SSH_USER }}
+        run: |
+          test -n "$VM_SSH_USER"
+          connection="ansible_user=${VM_SSH_USER} ansible_ssh_private_key_file=${HOME}/.ssh/deploy_key"
+          if [ "${{ inputs.architecture }}" = "1-tier" ]; then
+            printf '[combined]\ncombined ansible_host=%s %s\n' "$APP_VM_HOST" "$connection" > inventory.ini
+          else
+            printf '[app]\napp ansible_host=%s %s\n\n[database]\ndatabase ansible_host=%s %s\n' \
+              "$APP_VM_HOST" "$connection" "$DB_VM_HOST" "$connection" > inventory.ini
+          fi
+
+      - name: Deploy containers
+        env:
+          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+        run: |
+          ansible-playbook \
+            -i inventory.ini \
+            deploy/ansible/deploy.yml \
+            --extra-vars "deployment_architecture=${{ inputs.architecture }}" \
+            --extra-vars "app_image=${{ inputs.docker_image }}:${{ needs.build-publish-image.outputs.image_tag }}"
