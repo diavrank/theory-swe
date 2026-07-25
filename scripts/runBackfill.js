@@ -6,7 +6,7 @@ const path = require('path');
 const [, , backfillName, ...extraArgs] = process.argv;
 
 if (!backfillName) {
-    console.error('Usage: yarn backfill <BackfillName> [meteor args]');
+    console.error('Usage: npm run backfill -- <BackfillName> [meteor args]');
     process.exit(1);
 }
 

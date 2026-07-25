@@ -1,6 +1,7 @@
 {
   "name": "theory-swe",
   "private": true,
+  "packageManager": "npm@11.16.0",
   "scripts": {
     "start": "MONGO_URL='mongodb://localhost:27017/theory-swe?directConnection=true&serverMonitoringMode=poll&connectTimeoutMS=120000&serverSelectionTimeoutMS=120000' meteor --settings ./settings/settings-development.json",
     "start:debug": "MONGO_URL=mongodb://localhost:27017/theory-swe meteor debug --settings ./settings/settings-development.json",

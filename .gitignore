@@ -5,6 +5,7 @@ node_modules/
 .uploads
 .binnacle
 settings/settings-development.json
+settings/firebase-service-account.json
 # for mongodb database in cloud env
 data/
 

@@ -40,9 +40,9 @@ Supported Platforms
 System Requirements
 -------------------
 
-- Node 22+ [download here](https://nodejs.org/es/download/)
-- Yarn 1.22.0+
-- Meteor 3.3.2 [Installation](https://www.meteor.com/install)
+- Node 24+ [download here](https://nodejs.org/es/download/)
+- npm 11+
+- Meteor 3.5 [Installation](https://www.meteor.com/install)
 - Mongo [7.0.4](https://www.mongodb.com/download-center/community) and [Mongo Booster](https://nosqlbooster.com/downloads) 
 - **Note:** In some cases it is necesary to disable antivrus in order to works SMTP Server
 
@@ -64,7 +64,7 @@ mongorestore --db theory-swe ./database/theory-swe
 **Run the backfills:**
 
 ```shell
-yarn backfill <backfill_name>
+npm run backfill -- <backfill_name>
 ```
 
 Available backfills:
@@ -82,7 +82,7 @@ mongodump --db theory-swe --out ./database/
 
 - Run the following commands to install the dependencies:
 ```shell
-yarn
+npm ci
 ```
 
 **Configure environment variables file (Optional)**
@@ -111,14 +111,14 @@ Running project
 **On Mac OS X and Linux**
 - Run the following commands:
 ```shell
-yarn run:mac
+npm start
 ```
 
 **On Windows**
 - Run the following commands:
 ```shell
 SET MONGO_URL=mongodb://localhost:27017/theory-swe
-yarn run:windows
+npm run run:windows
 ```
 
 Usage
