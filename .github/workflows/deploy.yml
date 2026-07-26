@@ -54,6 +54,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ${{ inputs.infra_repository }}
+          # Set INFRA_REPOSITORY_TOKEN only for private repositories; github.token is the fallback for public access.
           token: ${{ secrets.INFRA_REPOSITORY_TOKEN || github.token }}
           path: terraform-scaffold
 
