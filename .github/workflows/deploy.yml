@@ -91,11 +91,18 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     steps:
+      - name: Checkout application
+        uses: actions/checkout@v4
+        with:
+          path: application
+
       - name: Checkout infrastructure
         uses: actions/checkout@v4
         with:
           repository: ${{ inputs.infra_repository }}
+          # Set INFRA_REPOSITORY_TOKEN only for private repositories; github.token is the fallback for public access.
           token: ${{ secrets.INFRA_REPOSITORY_TOKEN || github.token }}
+          path: terraform-scaffold
 
       - name: Install Ansible
         run: python3 -m pip install ansible
@@ -120,6 +127,7 @@ jobs:
           fi
 
       - name: Create Ansible inventory
+        working-directory: terraform-scaffold
         env:
           APP_VM_HOST: ${{ secrets.APP_VM_HOST }}
           DB_VM_HOST: ${{ secrets.DB_VM_HOST }}
@@ -135,6 +143,7 @@ jobs:
           fi
 
       - name: Deploy containers
+        working-directory: terraform-scaffold
         env:
           DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -144,4 +153,5 @@ jobs:
             -i inventory.ini \
             deploy/ansible/deploy.yml \
             --extra-vars "deployment_architecture=${{ inputs.architecture }}" \
-            --extra-vars "app_image=${{ inputs.docker_image }}:${{ needs.build-publish-image.outputs.image_tag }}"
+            --extra-vars "app_image=${{ inputs.docker_image }}:${{ needs.build-publish-image.outputs.image_tag }}" \
+            --extra-vars "application_repository_root=${{ github.workspace }}/application"
