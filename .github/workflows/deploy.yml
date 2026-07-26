@@ -26,9 +26,18 @@ on:
         required: false
         default: diavrank/scaffold-meteor-vue
       image_tag:
-        description: Docker tag (empty generates one)
+        description: Docker tag for a non-release deploy (empty generates one)
         required: false
         default: ""
+      release_tag:
+        description: Release tag to deploy (for example v1.2.3; overrides image_tag)
+        required: false
+        default: ""
+      build_image:
+        description: Build and publish the image (disable to reuse an existing tag)
+        required: true
+        type: boolean
+        default: true
       infra_repository:
         description: Repository containing Terraform and deployment assets
         required: false
@@ -44,13 +53,49 @@ jobs:
     environment: ${{ inputs.environment }}
     outputs:
       image_tag: ${{ steps.resolve-tag.outputs.image_tag }}
+      application_ref: ${{ steps.resolve-tag.outputs.application_ref }}
     steps:
+      - name: Resolve image tag
+        id: resolve-tag
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag }}
+          REQUESTED_IMAGE_TAG: ${{ inputs.image_tag }}
+        run: |
+          if [ -n "$RELEASE_TAG" ]; then
+            if [[ ! "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z][0-9A-Za-z.-]*)?$ ]]; then
+              echo "::error::release_tag must be a release-please tag such as v1.2.3"
+              exit 1
+            fi
+            tag="$RELEASE_TAG"
+            application_ref="$RELEASE_TAG"
+          elif [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            tag="$GITHUB_REF_NAME"
+            application_ref="$GITHUB_REF"
+          elif [ -n "$REQUESTED_IMAGE_TAG" ]; then
+            tag="$REQUESTED_IMAGE_TAG"
+            application_ref="$GITHUB_SHA"
+          else
+            tag="${{ inputs.environment }}-${GITHUB_SHA::12}"
+            application_ref="$GITHUB_SHA"
+          fi
+
+          if [[ ! "$tag" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$ ]]; then
+            echo "::error::Resolved Docker image tag is invalid"
+            exit 1
+          fi
+
+          echo "image_tag=${tag}" >> "$GITHUB_OUTPUT"
+          echo "application_ref=${application_ref}" >> "$GITHUB_OUTPUT"
+
       - name: Checkout application
         uses: actions/checkout@v4
         with:
+          ref: ${{ steps.resolve-tag.outputs.application_ref }}
           path: application
 
       - name: Checkout infrastructure
+        if: ${{ inputs.build_image }}
         uses: actions/checkout@v4
         with:
           repository: ${{ inputs.infra_repository }}
@@ -58,26 +103,19 @@ jobs:
           token: ${{ secrets.INFRA_REPOSITORY_TOKEN || github.token }}
           path: terraform-scaffold
 
-      - name: Resolve image tag
-        id: resolve-tag
-        shell: bash
-        run: |
-          if [ -n "${{ inputs.image_tag }}" ]; then
-            tag="${{ inputs.image_tag }}"
-          else
-            tag="${{ inputs.environment }}-${GITHUB_SHA::12}"
-          fi
-          echo "image_tag=${tag}" >> "$GITHUB_OUTPUT"
-
-      - uses: docker/setup-buildx-action@v3
+      - name: Set up Docker Buildx
+        if: ${{ inputs.build_image }}
+        uses: docker/setup-buildx-action@v3
 
       - name: Log in to Docker Hub
+        if: ${{ inputs.build_image }}
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Build and push app image
+        if: ${{ inputs.build_image }}
         uses: docker/build-push-action@v6
         with:
           context: ./application
@@ -94,6 +132,7 @@ jobs:
       - name: Checkout application
         uses: actions/checkout@v4
         with:
+          ref: ${{ needs.build-publish-image.outputs.application_ref }}
           path: application
 
       - name: Checkout infrastructure

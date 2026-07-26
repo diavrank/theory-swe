@@ -128,3 +128,36 @@ User to login:
 
  - **Username/Email:** admin or admin@example.com
  - **Password:** Theory_5w3
+
+Releases and deployments
+------------------------
+
+Releases are managed by Release Please on the `dev` branch. Use Conventional
+Commit messages (including squash-merge commit titles) to select the next
+Semantic Version. The automated release history starts from the `1.0.0`
+baseline:
+
+- `fix: correct password validation` creates a patch release (`1.2.3` to
+  `1.2.4`).
+- `feat: add audit export` creates a minor release (`1.2.3` to `1.3.0`).
+- Add `!` after the type, such as `feat!: replace the authentication API`, or
+  include a `BREAKING CHANGE:` footer to create a major release (`1.2.3` to
+  `2.0.0`).
+
+After releasable commits reach `dev`, Release Please opens or updates one
+release pull request containing the version changes and changelog. Merging that
+pull request creates the corresponding GitHub release and immutable `vX.Y.Z`
+Git tag. The workflow uses the repository-provided `GITHUB_TOKEN`; no release
+secret is required. Repository settings must allow GitHub Actions to create
+pull requests.
+
+To deploy a release, run the **Deploy** workflow and enter its tag (for example
+`v1.2.3`) in `release_tag`. This checks out that exact tag and publishes the
+Docker image with the same tag. Alternatively, select a release tag in the
+workflow's branch/tag selector and leave `release_tag` empty. To redeploy that
+exact image without rebuilding or changing it, use the same release tag and
+disable `build_image`.
+
+For development or other manual deployments, leave `release_tag` empty. An
+explicit `image_tag` is still supported; if both fields are empty, the workflow
+uses `<environment>-<12-character commit SHA>`.
