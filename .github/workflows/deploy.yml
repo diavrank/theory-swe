@@ -1,6 +1,8 @@
 name: Deploy
 
 on:
+  release:
+    types: [published]
   workflow_dispatch:
     inputs:
       environment:
@@ -29,10 +31,6 @@ on:
         description: Docker tag for a non-release deploy (empty generates one)
         required: false
         default: ""
-      release_tag:
-        description: Release tag to deploy (for example v1.2.3; overrides image_tag)
-        required: false
-        default: ""
       build_image:
         description: Build and publish the image (disable to reuse an existing tag)
         required: true
@@ -46,11 +44,19 @@ on:
 permissions:
   contents: read
 
+env:
+  DEPLOYMENT_ENVIRONMENT: ${{ github.event_name == 'release' && 'production' || inputs.environment }}
+  DEPLOYMENT_ARCHITECTURE: ${{ github.event_name == 'release' && '1-tier' || inputs.architecture }}
+  CLOUD_PROVIDER: ${{ github.event_name == 'release' && 'gcp' || inputs.cloud_provider }}
+  DOCKER_IMAGE: ${{ github.event_name == 'release' && 'diavrank/scaffold-meteor-vue' || inputs.docker_image }}
+  INFRA_REPOSITORY: ${{ github.event_name == 'release' && 'diavrank/terraform-scaffold' || inputs.infra_repository }}
+  BUILD_IMAGE: ${{ github.event_name == 'release' && 'true' || inputs.build_image }}
+
 jobs:
   build-publish-image:
     name: Build and publish image
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    environment: ${{ env.DEPLOYMENT_ENVIRONMENT }}
     outputs:
       image_tag: ${{ steps.resolve-tag.outputs.image_tag }}
       application_ref: ${{ steps.resolve-tag.outputs.application_ref }}
@@ -59,12 +65,12 @@ jobs:
         id: resolve-tag
         shell: bash
         env:
-          RELEASE_TAG: ${{ inputs.release_tag }}
+          RELEASE_TAG: ${{ github.event_name == 'release' && github.event.release.tag_name || '' }}
           REQUESTED_IMAGE_TAG: ${{ inputs.image_tag }}
         run: |
           if [ -n "$RELEASE_TAG" ]; then
             if [[ ! "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z][0-9A-Za-z.-]*)?$ ]]; then
-              echo "::error::release_tag must be a release-please tag such as v1.2.3"
+              echo "::error::GitHub Release tags must use SemVer, such as v1.2.3"
               exit 1
             fi
             tag="$RELEASE_TAG"
@@ -76,7 +82,7 @@ jobs:
             tag="$REQUESTED_IMAGE_TAG"
             application_ref="$GITHUB_SHA"
           else
-            tag="${{ inputs.environment }}-${GITHUB_SHA::12}"
+            tag="${DEPLOYMENT_ENVIRONMENT}-${GITHUB_SHA::12}"
             application_ref="$GITHUB_SHA"
           fi
 
@@ -95,39 +101,39 @@ jobs:
           path: application
 
       - name: Checkout infrastructure
-        if: ${{ inputs.build_image }}
+        if: ${{ env.BUILD_IMAGE == 'true' }}
         uses: actions/checkout@v4
         with:
-          repository: ${{ inputs.infra_repository }}
+          repository: ${{ env.INFRA_REPOSITORY }}
           # Set INFRA_REPOSITORY_TOKEN only for private repositories; github.token is the fallback for public access.
           token: ${{ secrets.INFRA_REPOSITORY_TOKEN || github.token }}
           path: terraform-scaffold
 
       - name: Set up Docker Buildx
-        if: ${{ inputs.build_image }}
+        if: ${{ env.BUILD_IMAGE == 'true' }}
         uses: docker/setup-buildx-action@v3
 
       - name: Log in to Docker Hub
-        if: ${{ inputs.build_image }}
+        if: ${{ env.BUILD_IMAGE == 'true' }}
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Build and push app image
-        if: ${{ inputs.build_image }}
+        if: ${{ env.BUILD_IMAGE == 'true' }}
         uses: docker/build-push-action@v6
         with:
           context: ./application
           file: ./terraform-scaffold/containers/app/Dockerfile
           push: true
-          tags: ${{ inputs.docker_image }}:${{ steps.resolve-tag.outputs.image_tag }}
+          tags: ${{ env.DOCKER_IMAGE }}:${{ steps.resolve-tag.outputs.image_tag }}
 
   deploy:
-    name: Deploy ${{ inputs.environment }} to ${{ inputs.cloud_provider }}
+    name: Deploy ${{ env.DEPLOYMENT_ENVIRONMENT }} to ${{ env.CLOUD_PROVIDER }}
     needs: build-publish-image
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    environment: ${{ env.DEPLOYMENT_ENVIRONMENT }}
     steps:
       - name: Checkout application
         uses: actions/checkout@v4
@@ -138,7 +144,7 @@ jobs:
       - name: Checkout infrastructure
         uses: actions/checkout@v4
         with:
-          repository: ${{ inputs.infra_repository }}
+          repository: ${{ env.INFRA_REPOSITORY }}
           # Set INFRA_REPOSITORY_TOKEN only for private repositories; github.token is the fallback for public access.
           token: ${{ secrets.INFRA_REPOSITORY_TOKEN || github.token }}
           path: terraform-scaffold
@@ -154,7 +160,7 @@ jobs:
         run: |
           test -n "$VM_SSH_PRIVATE_KEY"
           test -n "$APP_VM_HOST"
-          if [ "${{ inputs.architecture }}" = "2-tier" ]; then
+          if [ "$DEPLOYMENT_ARCHITECTURE" = "2-tier" ]; then
             test -n "$DB_VM_HOST"
           fi
           install -d -m 0700 "$HOME/.ssh"
@@ -174,7 +180,7 @@ jobs:
         run: |
           test -n "$VM_SSH_USER"
           connection="ansible_user=${VM_SSH_USER} ansible_ssh_private_key_file=${HOME}/.ssh/deploy_key"
-          if [ "${{ inputs.architecture }}" = "1-tier" ]; then
+          if [ "$DEPLOYMENT_ARCHITECTURE" = "1-tier" ]; then
             printf '[combined]\ncombined ansible_host=%s %s\n' "$APP_VM_HOST" "$connection" > inventory.ini
           else
             printf '[app]\napp ansible_host=%s %s\n\n[database]\ndatabase ansible_host=%s %s\n' \
@@ -191,6 +197,6 @@ jobs:
           ansible-playbook \
             -i inventory.ini \
             deploy/ansible/deploy.yml \
-            --extra-vars "deployment_architecture=${{ inputs.architecture }}" \
-            --extra-vars "app_image=${{ inputs.docker_image }}:${{ needs.build-publish-image.outputs.image_tag }}" \
+            --extra-vars "deployment_architecture=${DEPLOYMENT_ARCHITECTURE}" \
+            --extra-vars "app_image=${DOCKER_IMAGE}:${{ needs.build-publish-image.outputs.image_tag }}" \
             --extra-vars "application_repository_root=${{ github.workspace }}/application"
